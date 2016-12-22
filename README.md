@@ -1,69 +1,59 @@
-Symfony Standard Edition
-========================
+Snowtricks project - A OpenClassrooms project
+==============================================
 
-Welcome to the Symfony Standard Edition - a fully-functional Symfony
-application that you can use as the skeleton for your new applications.
+This project is build with love and passion by Travis, SensioLabsInsight and Gitlab.
 
-For details on how to download and get started with Symfony, see the
-[Installation][1] chapter of the Symfony Documentation.
+**_Travis_**
 
-What's inside?
+[![Build Status](https://travis-ci.org/Guikingone/Snowtricks.svg?branch=master)](https://travis-ci.org/Guikingone/Snowtricks)
+
+**_SensiolabsInsight_**
+
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/6dee7435-03fd-46d6-94ad-1d037582d6a5/big.png)](https://insight.sensiolabs.com/projects/6dee7435-03fd-46d6-94ad-1d037582d6a5)
+
+**_Gitlab_**
+
+
+
+Contexte
 --------------
 
-The Symfony Standard Edition is configured with the following defaults:
+Jimmy Sweat est un entrepreneur ambitieux. Son objectif est d'en faire un outil pour apprendre les figures (tricks) du snowboard, de permettre la vulgarisation du snowboard auprès du plus grand nombre. Il souhaite capitaliser sur du contenu apporté par les internautes afin d’acquérir une base de données riche et suscitant l’intérêt des internautes qui passerait par le site web. Par la suite, Jimmy souhaite développer un business de mise en relation avec les marques de snowboard grâce au trafic que le contenu aura généré.
 
-  * An AppBundle you can use to start coding;
+Pour ce projet, nous allons nous concentrer sur la création technique du site pour Jimmy.
 
-  * Twig as the only configured template engine;
+Description
+--------------
 
-  * Doctrine ORM/DBAL;
+Jimmy vous a contacté pour que vous lui développiez le prochain super site communautaire qui fera fureur.
 
-  * Swiftmailer;
+Voici un grand angle de l’ensemble des fonctionnalités de l’application web :
 
-  * Annotations enabled for everything.
+un annuaire des figures de snowboard (vous trouverez une [liste des figures](https://fr.wikipedia.org/wiki/Snowboard_freestyle#Les_types_de_tricks) sur Wikipédia pour vous aider - inutile de toutes les inclure, dix suffiront. Le reste sera saisis par les internautes) ;
+consulter la page d’une figure ;
+un espace de discussion commun à toutes les figures.
+Toutes les pages sont visibles.
 
-It comes pre-configured with the following bundles:
+Voyons maintenant plus en détail ce qui devra être visible sur le site web. Voici la liste de toutes les pages qu’il vous faudra créer :
 
-  * **FrameworkBundle** - The core Symfony framework bundle
+la page d’accueil où figurera la liste des figures de snowboard ;
+la page de création de figure de snowboard ;
+la page de modification de figure de snowboard ;
+la page de présentation d’une figure (contenant l’espace de discussion commun autour d’une figure).
+L’ensemble des spécifications détaillées pour les pages à développer sont accessibles ici : [Spécifications détaillées](https://docs.google.com/document/d/1rN0zCJnxFBA2RFnCfQU5jqzTf5vySVDmcggf3ues8BI/edit).
 
-  * [**SensioFrameworkExtraBundle**][6] - Adds several enhancements, including
-    template and routing annotation capability
+_**Nota Bene**_
 
-  * [**DoctrineBundle**][7] - Adds support for the Doctrine ORM
+Il faut que les URLs de page permettent une compréhension rapide de ce que la page représente et que le référencement naturel soit facilité.
 
-  * [**TwigBundle**][8] - Adds support for the Twig templating engine
+L’utilisation de bundles tierces est autorisée.
 
-  * [**SecurityBundle**][9] - Adds security by integrating Symfony's security
-    component
+Le design du site web est laissé complètement libre. Néanmoins il faudra que le site soit consultable aussi bien sur un ordinateur que sur mobile (téléphone mobile, tablette, phablette…).
 
-  * [**SwiftmailerBundle**][10] - Adds support for Swiftmailer, a library for
-    sending emails
+En premier lieu il vous faudra écrire l’ensemble des issues/tickets afin de découper votre travail méthodiquement et vous assurer que l’ensemble du besoin client soit bien compris avec votre mentor. Les tickets/issues seront écrits dans un repository Github que vous aurez créé au préalable.
 
-  * [**MonologBundle**][11] - Adds support for Monolog, a logging library
+L’ensemble des figures de snowboard doivent être présentes à l’initialisation de l’application web. Vous créerez une commande Symfony permettant de parser un fichier YAML que vous aurez créé avec l’ensemble de ces figures. Vous indiquerez dans le fichier README comment utiliser la commande.
 
-  * **WebProfilerBundle** (in dev/test env) - Adds profiling functionality and
-    the web debug toolbar
+Usage 
+-------
 
-  * **SensioDistributionBundle** (in dev/test env) - Adds functionality for
-    configuring and working with Symfony distributions
-
-  * [**SensioGeneratorBundle**][13] (in dev/test env) - Adds code generation
-    capabilities
-
-  * **DebugBundle** (in dev/test env) - Adds Debug and VarDumper component
-    integration
-
-All libraries and bundles included in the Symfony Standard Edition are
-released under the MIT or BSD license.
-
-Enjoy!
-
-[1]:  https://symfony.com/doc/3.2/setup.html
-[6]:  https://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/index.html
-[7]:  https://symfony.com/doc/3.2/doctrine.html
-[8]:  https://symfony.com/doc/3.2/templating.html
-[9]:  https://symfony.com/doc/3.2/security.html
-[10]: https://symfony.com/doc/3.2/email.html
-[11]: https://symfony.com/doc/3.2/logging.html
-[12]: https://symfony.com/doc/3.2/assetic/asset_management.html
-[13]: https://symfony.com/doc/current/bundles/SensioGeneratorBundle/index.html
