@@ -79,4 +79,18 @@ class TricksRepositoryTest extends WebTestCase
             }
         }
     }
+
+    /**
+     * Test if a Trick can be found by his name and remove.
+     */
+    public function testTricksSuppression()
+    {
+        $client = self::createKernel();
+
+        $tricks = $client->getContainer()->get('doctrine.orm.entity_manager')
+            ->getRepository('AppBundle:Repository:TricksRepository')
+            ->findOneBy(array('name' => 'Backflip'));
+
+        $client->getContainer()->get('doctrine.orm.entity_manager')->remove($tricks);
+    }
 }

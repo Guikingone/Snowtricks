@@ -93,6 +93,9 @@ class BackTest extends WebTestCase
         }
     }
 
+    /**
+     * Test if the app.back service can refuse a validation using the Trick $id.
+     */
     public function testBackNoValidationMethod()
     {
         $kernel = static::createKernel();
