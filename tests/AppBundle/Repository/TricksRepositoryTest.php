@@ -12,6 +12,7 @@
 namespace tests\AppBundle\Repository;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use AppBundle\Entity\Tricks;
 
 /**
  * Class TricksRepositoryTest.

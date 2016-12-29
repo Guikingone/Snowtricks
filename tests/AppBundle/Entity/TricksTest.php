@@ -12,6 +12,8 @@
 namespace tests\AppBundle\Entity;
 
 use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
+use AppBundle\Entity\Tricks;
+use UserBundle\Entity\User;
 
 /**
  * Class TricksTest.
@@ -28,13 +30,11 @@ class TricksTest extends TestCase
         $tricks = new Tricks();
         $tricks->setName('Backflip');
         $tricks->setCreationDate('26/12/2016');
-        $tricks->setAuthor('Guik');
         $tricks->setGroup('Flip');
         $tricks->setResume('A simple backflip content ...');
 
         $this->assertEquals('Backflip', $tricks->getName());
         $this->assertEquals('26/12/2016', $tricks->getCreationDate());
-        $this->assertEquals('Guik', $tricks->getAuthor());
         $this->assertArrayHasKey('Flip', $tricks->getGroups());
         $this->assertEquals('A simple backflip content ...', $tricks->getResume());
     }
@@ -46,9 +46,9 @@ class TricksTest extends TestCase
     {
         // Create a user in order to simulate the authentication process.
         $author = new User();
-        $author->setName('Loulier');
-        $author->setFirstName('Guillaume');
-        $author->setUsername('Guikingone');
+        $author->setFirstName('Arnaud');
+        $author->setLastName('Duchemin');
+        $author->setUsername('Duduche');
         $author->setRoles('ROLE_ADMIN');
 
         $tricks = new Tricks();

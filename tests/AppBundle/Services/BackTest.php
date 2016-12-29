@@ -49,6 +49,10 @@ class BackTest extends WebTestCase
                 Tricks::class,
                 $service->getTricksByName('Backflip')
             );
+            $this->assertInstanceOf(
+                Commentary::class,
+                $service->getCommentaryByTricks('Backflip')
+            );
             // Store the return to test the value passed through the getters.
             $tricks = $service->getTricksByName('Backflip');
             $this->assertEquals(

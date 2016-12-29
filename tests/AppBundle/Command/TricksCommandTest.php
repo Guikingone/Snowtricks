@@ -48,7 +48,7 @@ class TricksCommandTest extends WebTestCase
 
         $application->setAutoExit(false);
         $input = new ArrayInput([
-            'command' => 'appbundle:tricks',
+            'command' => 'appbundle:tricks:hydrate',
         ]);
 
         $application->run($input);
