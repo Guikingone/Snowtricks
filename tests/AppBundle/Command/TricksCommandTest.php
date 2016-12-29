@@ -11,13 +11,12 @@
 
 namespace tests\AppBundle\Command;
 
-
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 
 /**
- * Class TricksCommandTest
+ * Class TricksCommandTest.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
@@ -33,7 +32,7 @@ class TricksCommandTest extends WebTestCase
 
         $application->setAutoExit(false);
         $input = new ArrayInput([
-            'command' => 'appbundle:tricks'
+            'command' => 'appbundle:tricks',
         ]);
 
         $application->run($input);
@@ -49,7 +48,7 @@ class TricksCommandTest extends WebTestCase
 
         $application->setAutoExit(false);
         $input = new ArrayInput([
-            'command' => 'appbundle:tricks'
+            'command' => 'appbundle:tricks',
         ]);
 
         $application->run($input);
@@ -60,6 +59,7 @@ class TricksCommandTest extends WebTestCase
         $tricks = $doctrine->getRepository('AppBundle:Tricks')->findAll();
 
         if (is_array($tricks)) {
+            $this->assertArrayHasKey('Flip', $tricks->getGroups());
         }
     }
 }

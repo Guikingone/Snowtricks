@@ -14,14 +14,14 @@ namespace tests\AppBundle\Entity;
 use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
 
 /**
- * Class TricksTest
+ * Class TricksTest.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
 class TricksTest extends TestCase
 {
     /**
-     * Test the hydratation of the Entity
+     * Test the hydratation of the Entity.
      */
     public function testEntityBoot()
     {
@@ -37,5 +37,32 @@ class TricksTest extends TestCase
         $this->assertEquals('Guik', $tricks->getAuthor());
         $this->assertArrayHasKey('Flip', $tricks->getGroups());
         $this->assertEquals('A simple backflip content ...', $tricks->getResume());
+    }
+
+    /**
+     * Test if a Author can be added to a Tricks.
+     */
+    public function testAuthorEntityHydratation()
+    {
+        // Create a user in order to simulate the authentication process.
+        $author = new User();
+        $author->setName('Loulier');
+        $author->setFirstName('Guillaume');
+        $author->setUsername('Guikingone');
+        $author->setRoles('ROLE_ADMIN');
+
+        $tricks = new Tricks();
+        $tricks->setName('Backflip');
+        $tricks->setCreationDate('26/12/2016');
+        $tricks->setAuthor($author);
+        $tricks->setGroup('Flip');
+        $tricks->setResume('A simple test.');
+
+        // Keep the same test in order to validate the new author.
+        $this->assertEquals('Backflip', $tricks->getName());
+        $this->assertEquals('26/12/2016', $tricks->getCreationDate());
+        $this->assertEquals($author->getName(), $tricks->getAuthor());
+        $this->assertArrayHasKey('Flip', $tricks->getGroups());
+        $this->assertEquals('A simple test.', $tricks->getResume());
     }
 }

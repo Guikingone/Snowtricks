@@ -14,7 +14,7 @@ namespace tests\AppBundle\Repository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
- * Class TricksRepositoryTest
+ * Class TricksRepositoryTest.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
@@ -87,10 +87,12 @@ class TricksRepositoryTest extends WebTestCase
     {
         $client = self::createKernel();
 
-        $tricks = $client->getContainer()->get('doctrine.orm.entity_manager')
-            ->getRepository('AppBundle:Repository:TricksRepository')
-            ->findOneBy(array('name' => 'Backflip'));
+        $doctrine = $client->getContainer()->get('doctrine.orm.entity_manager');
+        $tricks = $doctrine->getRepository('AppBundle:Repository:TricksRepository')
+                 ->findOneBy(array('name' => 'Backflip'));
 
         $client->getContainer()->get('doctrine.orm.entity_manager')->remove($tricks);
+
+        $this->assertEmpty($doctrine->getRepository('AppBundle:TricksRepository')->findAll());
     }
 }

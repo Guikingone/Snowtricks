@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Class BackTest
+ * Class BackTest.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */

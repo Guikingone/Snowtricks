@@ -5,8 +5,7 @@ namespace AppBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 /**
- * Class HomeController
- * @package AppBundle\Controller
+ * Class HomeController.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
