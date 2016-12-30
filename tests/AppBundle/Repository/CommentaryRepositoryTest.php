@@ -11,7 +11,8 @@
 
 namespace tests\AppBundle\Repository;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Doctrine\ORM\EntityManager;
 use AppBundle\Entity\tricks;
 use AppBundle\Entity\Commentary;
 use UserBundle\Entity\User;
@@ -21,12 +22,17 @@ use UserBundle\Entity\User;
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
-class CommentaryRepositoryTest extends WebTestCase
+class CommentaryRepositoryTest extends KernelTestCase
 {
     /**
-     * Set the commentary entity in BDD.
+     * @var EntityManager
      */
-    public function setUp()
+    private $doctrine;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
     {
         // Create a user in order to simulate the authentication process.
         $author = new User();
@@ -49,10 +55,10 @@ class CommentaryRepositoryTest extends WebTestCase
         $commentary->setTricks($tricks);
         $commentary->setContent('A simple commentary');
 
-        $kernel = self::createKernel();
-        $doctrine = $kernel->getContainer()->get('doctrine.orm.entity_manager');
-        $doctrine->persist($commentary);
-        $doctrine->flush();
+        self::bootKernel();
+        $this->doctrine = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
+        $this->doctrine->persist($commentary);
+        $this->doctrine->flush();
     }
 
     /**
@@ -60,10 +66,7 @@ class CommentaryRepositoryTest extends WebTestCase
      */
     public function testAllCommentaryIsFound()
     {
-        $kernel = static::createKernel();
-        $doctrine = $kernel->getContainer()->get('doctrine.orm.entity_manager');
-
-        $commentary = $doctrine->getRepository('AppBundle:Commentary')->findAll();
+        $commentary = $this->doctrine->getRepository('AppBundle:Commentary')->findAll();
 
         if (is_array($commentary)) {
             $this->assertNotNull($commentary);
@@ -75,10 +78,7 @@ class CommentaryRepositoryTest extends WebTestCase
      */
     public function testCommentaryIsFoundById()
     {
-        $kernel = static::createKernel();
-        $doctrine = $kernel->getContainer()->get('doctrine.orm.entity_manager');
-
-        $commentary = $doctrine->getRepository('AppBundle:Commentary')->findOneBy(['id' => 0]);
+        $commentary = $this->doctrine->getRepository('AppBundle:Commentary')->findOneBy(['id' => 0]);
 
         if (is_object($commentary)) {
             $this->assertInstanceOf(
@@ -99,10 +99,7 @@ class CommentaryRepositoryTest extends WebTestCase
      */
     public function testCommentaryIsFoundByTricksId()
     {
-        $kernel = static::createKernel();
-        $doctrine = $kernel->getContainer()->get('doctrine.orm.entity_manager');
-
-        $commentary = $doctrine->getRepository('AppBundle:Commentary')->findBy(['tricks' => 0]);
+        $commentary = $this->doctrine->getRepository('AppBundle:Commentary')->findBy(['tricks' => 0]);
 
         if (is_array($commentary)) {
             foreach ($commentary as $cmt) {
@@ -116,10 +113,7 @@ class CommentaryRepositoryTest extends WebTestCase
      */
     public function testSingleCommentaryIsFoundByTricksId()
     {
-        $kernel = static::createKernel();
-        $doctrine = $kernel->getContainer()->get('doctrine.orm.entity_manager');
-
-        $commentary = $doctrine->getRepository('AppBundle:Commentary')->findOneBy(['tricks' => 0]);
+        $commentary = $this->doctrine->getRepository('AppBundle:Commentary')->findOneBy(['tricks' => 0]);
 
         if (is_object($commentary)) {
             $this->assertInstanceOf(
@@ -138,18 +132,26 @@ class CommentaryRepositoryTest extends WebTestCase
      */
     public function testCommentaryIsRemove()
     {
-        $kernel = static::createKernel();
-        $doctrine = $kernel->getContainer()->get('doctrine.orm.entity_manager');
-
-        $commentary = $doctrine->getRepository('AppBundle:Commentary')->findAll();
+        $commentary = $this->doctrine->getRepository('AppBundle:Commentary')->findAll();
 
         foreach ($commentary as $cmt) {
-            $doctrine->remove($cmt);
+            $this->doctrine->remove($cmt);
         }
 
         // try to find the entities after remove.
-        $commentaries = $doctrine->getRepository('AppBundle:Commentary')->findAll();
+        $commentaries = $this->doctrine->getRepository('AppBundle:Commentary')->findAll();
 
         $this->assertEmpty($commentaries);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function tearDown()
+    {
+        parent::tearDown();
+
+        $this->doctrine->close();
+        $this->doctrine = null;
     }
 }

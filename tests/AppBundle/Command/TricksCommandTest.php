@@ -11,8 +11,9 @@
 
 namespace tests\AppBundle\Command;
 
+use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 
 /**
@@ -20,14 +21,22 @@ use Symfony\Component\Console\Input\ArrayInput;
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
-class TricksCommandTest extends WebTestCase
+class TricksCommandTest extends KernelTestCase
 {
     /**
-     * Set the command into the application.
+     * @var EntityManager
      */
-    public function setUp()
+    private $doctrine;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
     {
-        $kernel = static::createKernel();
+        $kernel = self::bootKernel();
+        // Instantiate Doctrine for BDD queries after command.
+        $this->doctrine = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
+
         $application = new Application($kernel);
 
         $application->setAutoExit(false);
@@ -43,7 +52,7 @@ class TricksCommandTest extends WebTestCase
      */
     public function testTricksIsHydrated()
     {
-        $kernel = static::createKernel();
+        $kernel = self::bootKernel();
         $application = new Application($kernel);
 
         $application->setAutoExit(false);
@@ -53,13 +62,21 @@ class TricksCommandTest extends WebTestCase
 
         $application->run($input);
 
-        // Use Doctrine to find the tricks saved.
-        $doctrine = $kernel->getContainer()->get('doctrine.orm.entity_manager');
-
-        $tricks = $doctrine->getRepository('AppBundle:Tricks')->findAll();
+        $tricks = $this->doctrine->getRepository('AppBundle:Tricks')->findAll();
 
         if (is_array($tricks)) {
             $this->assertArrayHasKey('Flip', $tricks->getGroups());
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function tearDown()
+    {
+        parent::tearDown();
+
+        $this->doctrine->close();
+        $this->doctrine = null;
     }
 }

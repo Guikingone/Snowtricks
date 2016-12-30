@@ -11,7 +11,7 @@
 
 namespace tests\AppBundle\Entity;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
 use AppBundle\Entity\Tricks;
 use AppBundle\Entity\Commentary;
 use UserBundle\Entity\User;
@@ -21,7 +21,7 @@ use UserBundle\Entity\User;
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
-class CommentaryTest extends WebTestCase
+class CommentaryTest extends TestCase
 {
     /**
      * Test the boot of the entity.

@@ -11,7 +11,8 @@
 
 namespace tests\AppBundle\Services;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Doctrine\ORM\EntityManager;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,12 +26,22 @@ use UserBundle\Entity\User;
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
-class BackTest extends WebTestCase
+class BackTest extends KernelTestCase
 {
     /**
-     * Set the entity into the BDD.
+     * @var Back
      */
-    public function setUp()
+    private $back;
+
+    /**
+     * @var EntityManager
+     */
+    private $doctrine;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
     {
         // Create a user in order to simulate the authentication process.
         $author = new User();
@@ -46,10 +57,12 @@ class BackTest extends WebTestCase
         $tricks->setGroup('Flip');
         $tricks->setResume('A simple backflip content ...');
 
-        $kernel = static::createKernel();
-        $doctrine = $kernel->getContainer()->get('doctrine.orm.entity_manager');
-        $doctrine->persist($tricks);
-        $doctrine->flush();
+        self::bootKernel();
+        $this->doctrine = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
+        $this->doctrine->persist($tricks);
+        $this->doctrine->flush();
+
+        $this->back = static::$kernel->getContainer()->get('app.back');
     }
 
     /**
@@ -57,11 +70,8 @@ class BackTest extends WebTestCase
      */
     public function testBackServiceIsFound()
     {
-        $kernel = static::createKernel();
-        $service = $kernel->getContainer()->get('app.back');
-
-        if (is_object($service)) {
-            $this->assertInstanceOf(Back::class, $service);
+        if (is_object($this->back)) {
+            $this->assertInstanceOf(Back::class, $this->back);
         }
     }
 
@@ -70,21 +80,18 @@ class BackTest extends WebTestCase
      */
     public function testBackReturnEntityMethod()
     {
-        $kernel = static::createKernel();
-        $service = $kernel->getContainer()->get('app.back');
-
-        if (is_object($service) && $service instanceof Back) {
+        if (is_object($this->back) && $this->back instanceof Back) {
             $this->assertInstanceOf(
                 Tricks::class,
-                $service->getTricksByName('Backflip')
+                $this->back->getTricksByName('Backflip')
             );
 
             // Store the return to test the value passed through an array.
-            $commentaries = $service->getCommentariesBytricks('Backflip');
+            $commentaries = $this->back->getCommentariesBytricks('Backflip');
             $this->assertArrayHasKey('Backflip', $commentaries);
 
             // Store the return to test the value passed through the getters.
-            $tricks = $service->getTricksByName('Backflip');
+            $tricks = $this->back->getTricksByName('Backflip');
             $this->assertEquals(
                 'BackFlip',
                 $tricks->getName('BackFlip')
@@ -97,13 +104,10 @@ class BackTest extends WebTestCase
      */
     public function testBackTricksAddingMethod()
     {
-        $kernel = static::createKernel();
-        $service = $kernel->getContainer()->get('app.back');
-
-        if (is_object($service) && $service instanceof Back) {
+        if (is_object($this->back) && $this->back instanceof Back) {
             $this->assertInstanceOf(
                 FormView::class,
-                $service->addtricks(new Request())
+                $this->back->addtricks(new Request())
             );
         }
     }
@@ -113,17 +117,13 @@ class BackTest extends WebTestCase
      */
     public function testBackValidationMethod()
     {
-        $kernel = static::createKernel();
-        $service = $kernel->getContainer()->get('app.back');
+        $trick = $this->doctrine->getRepository('AppBundle:Tricks')
+                                ->findOneBy(['name' => 'Backflip']);
 
-        $doctrine = $kernel->getContainer()->get('doctrine.orm.entity_manager')
-                           ->getRepository('AppBundle:Tricks')
-                           ->findOneBy(['name' => 'Backflip']);
-
-        if (is_object($service) && $service instanceof Back) {
+        if (is_object($this->back) && $this->back instanceof Back) {
             $this->assertInstanceof(
                 RedirectResponse::class,
-                $service->validateTricks($doctrine->getId())
+                $this->back->validateTricks($trick->getId())
             );
         }
     }
@@ -133,17 +133,13 @@ class BackTest extends WebTestCase
      */
     public function testBackNoValidationMethod()
     {
-        $kernel = static::createKernel();
-        $service = $kernel->getContainer()->get('app.back');
+        $trick = $this->doctrine->getRepository('AppBundle:Tricks')
+                                ->findOneBy(['name' => 'Backflip']);
 
-        $doctrine = $kernel->getContainer()->get('doctrine.orm.entity_manager')
-                           ->getRepository('AppBundle:Tricks')
-                           ->findOneBy(['name' => 'Backflip']);
-
-        if (is_object($service) && $service instanceof Back) {
+        if (is_object($this->back) && $this->back instanceof Back) {
             $this->assertEquals(
                 RedirectResponse::class,
-                $service->refuseValidation($doctrine->getId())
+                $this->back->refuseValidation($trick->getId())
             );
         }
     }
@@ -153,17 +149,13 @@ class BackTest extends WebTestCase
      */
     public function testBackTricksSuppressionMethod()
     {
-        $kernel = static::createKernel();
-        $service = $kernel->getContainer()->get('app.back');
+        $tricks = $this->doctrine->getRepository('AppBundle:Tricks')
+                                 ->findOneBy(['name' => 'Backflip']);
 
-        $tricks = $kernel->getContainer()->get('doctrine.orm.entity_manager')
-            ->getRepository('AppBundle:Tricks')
-            ->findOneBy(['name' => 'Backflip']);
-
-        if (is_object($service) && $service instanceof Back) {
+        if (is_object($this->back) && $this->back instanceof Back) {
             $this->assertInstanceOf(
                 RedirectResponse::class,
-                $service->deleteTricks($tricks->getId())
+                $this->back->deleteTricks($tricks->getId())
             );
         }
     }
@@ -173,13 +165,10 @@ class BackTest extends WebTestCase
      */
     public function testBackCommentaryAddMethod()
     {
-        $kernel = static::createKernel();
-        $service = $kernel->getContainer()->get('app.back');
-
-        if (is_object($service) && $service instanceof Back) {
+        if (is_object($this->back) && $this->back instanceof Back) {
             $this->assertInstanceOf(
                 FormView::class,
-                $service->addCommentary(new Request())
+                $this->back->addCommentary(new Request())
             );
         }
     }
@@ -190,14 +179,22 @@ class BackTest extends WebTestCase
      */
     public function testBackCommentaryDeletingMethod()
     {
-        $kernel = static::createKernel();
-        $service = $kernel->getContainer()->get('app.back');
-
-        if (is_object($service) && $service instanceof Back) {
+        if (is_object($this->back) && $this->back instanceof Back) {
             $this->assertInstanceOf(
                 RedirectResponse::class,
-                $service->deleteCommentary('Backflip', 2)
+                $this->back->deleteCommentary('Backflip', 2)
             );
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function tearDown()
+    {
+        parent::tearDown();
+
+        $this->doctrine->close();
+        $this->doctrine = null;
     }
 }

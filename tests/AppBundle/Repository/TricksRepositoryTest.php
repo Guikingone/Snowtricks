@@ -11,7 +11,8 @@
 
 namespace tests\AppBundle\Repository;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Doctrine\ORM\EntityManager;
 use AppBundle\Entity\Tricks;
 use UserBundle\Entity\User;
 
@@ -20,12 +21,17 @@ use UserBundle\Entity\User;
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
-class TricksRepositoryTest extends WebTestCase
+class TricksRepositoryTest extends KernelTestCase
 {
     /**
-     * Set up the entity used during this tests.
+     * @var EntityManager
      */
-    public function setUp()
+    private $doctrine;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
     {
         // Create a user in order to simulate the authentication process.
         $author = new User();
@@ -43,10 +49,10 @@ class TricksRepositoryTest extends WebTestCase
         $tricks->setPublished(true);
         $tricks->setValidated(true);
 
-        $kernel = self::createKernel();
-        $doctrine = $kernel->getContainer()->get('doctrine.orm.entity_manager');
-        $doctrine->persist($tricks);
-        $doctrine->flush();
+        self::bootKernel();
+        $this->doctrine = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
+        $this->doctrine->persist($tricks);
+        $this->doctrine->flush();
     }
 
     /**
@@ -54,11 +60,8 @@ class TricksRepositoryTest extends WebTestCase
      */
     public function testTricksFindByName()
     {
-        $kernel = self::createKernel();
-        $doctrine = $kernel->getContainer()->get('doctrine.orm.entity_manager');
-
-        $tricks = $doctrine->getRepository('AppBundle:Tricks')
-                           ->findOneBy(array('name' => 'Backflip'));
+        $tricks = $this->doctrine->getRepository('AppBundle:Tricks')
+                                 ->findOneBy(array('name' => 'Backflip'));
 
         if (is_object($tricks)) {
             $this->assertEquals('Backflip', $tricks->getName());
@@ -76,11 +79,8 @@ class TricksRepositoryTest extends WebTestCase
      */
     public function testTricksFindByGroup()
     {
-        $kernel = self::createKernel();
-        $doctrine = $kernel->getContainer()->get('doctrine.orm.entity_manager');
-
-        $tricks = $doctrine->getRepository('AppBundle:Tricks')
-                           ->findBy(array('group' => 'Flip'));
+        $tricks = $this->doctrine->getRepository('AppBundle:Tricks')
+                                 ->findBy(array('group' => 'Flip'));
 
         if (is_array($tricks)) {
             foreach ($tricks as $trick) {
@@ -94,9 +94,6 @@ class TricksRepositoryTest extends WebTestCase
      */
     public function testTricksFindByAuthor()
     {
-        $kernel = static::createKernel();
-        $doctrine = $kernel->getContainer()->get('doctrine.orm.entity_manager');
-
         // Create a user in order to simulate the authentication process.
         $author = new User();
         $author->setName('Loulier');
@@ -104,8 +101,8 @@ class TricksRepositoryTest extends WebTestCase
         $author->setUsername('Guikingone');
         $author->setRoles('ROLE_ADMIN');
 
-        $tricks = $doctrine->getRepository('AppBundle:Tricks')
-                           ->findOneBy(['author' => $author]);
+        $tricks = $this->doctrine->getRepository('AppBundle:Tricks')
+                                 ->findOneBy(['author' => $author]);
 
         if (is_object($tricks)) {
             $this->assertInstanceOf(
@@ -124,11 +121,8 @@ class TricksRepositoryTest extends WebTestCase
      */
     public function testTricksSuppression()
     {
-        $kernel = self::createKernel();
-        $doctrine = $kernel->getContainer()->get('doctrine.orm.entity_manager');
-
-        $tricks = $doctrine->getRepository('AppBundle:Tricks')
-                           ->findOneBy(array('name' => 'Backflip'));
+        $tricks = $this->doctrine->getRepository('AppBundle:Tricks')
+                                 ->findOneBy(array('name' => 'Backflip'));
 
         if (is_object($tricks)) {
             $this->assertInstanceOf(
@@ -138,9 +132,20 @@ class TricksRepositoryTest extends WebTestCase
         }
 
         if (is_object($tricks) && $tricks instanceof Tricks) {
-            $doctrine->remove($tricks);
+            $this->doctrine->remove($tricks);
         }
 
-        $this->assertEmpty($doctrine->getRepository('AppBundle:Tricks')->findAll());
+        $this->assertEmpty($this->doctrine->getRepository('AppBundle:Tricks')->findAll());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function tearDown()
+    {
+        parent::tearDown();
+
+        $this->doctrine->close();
+        $this->doctrine = null;
     }
 }

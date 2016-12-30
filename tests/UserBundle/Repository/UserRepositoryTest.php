@@ -11,7 +11,8 @@
 
 namespace tests\UserBundle\Repository;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Doctrine\ORM\EntityManager;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use UserBundle\Entity\User;
 
 /**
@@ -19,12 +20,17 @@ use UserBundle\Entity\User;
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
-class UserRepositoryTest extends WebTestCase
+class UserRepositoryTest extends KernelTestCase
 {
     /**
-     * Set the entity in the BDD.
+     * @var EntityManager
      */
-    public function setUp()
+    private $doctrine;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
     {
         $user = new User();
         $user->setFirstName('Arnaud');
@@ -34,23 +40,29 @@ class UserRepositoryTest extends WebTestCase
         $user->setUsername('Nono');
         $user->setPassword('Lk__DTHE');
         $user->setRoles('ROLE_ADMIN');
+        $user->setValidated(true);
+        $user->setToken('654a6d4dzd19de4yhqdf4af4a1fa66fa4');
 
-        $kernel = self::createKernel();
-        $doctrine = $kernel->getContainer()->get('doctrine.orm.entity_manager');
-        $doctrine->persist($user);
-        $doctrine->flush();
+        self::bootKernel();
+        $this->doctrine = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
+        $this->doctrine->persist($user);
+        $this->doctrine->flush();
     }
 
     /**
-     * Test if the Entity can be found using his name.
+     * Test if the user can be found using his name.
      */
-    public function testEntityIsFoundByName()
+    public function testUserIsFoundByName()
     {
-        $kernel = static::createKernel();
+        $user = $this->doctrine->getRepository('UserBundle:User')
+                               ->findOneBy(['firstname' => 'Arnaud']);
 
-        $doctrine = $kernel->getContainer()->get('doctrine.orm.entity_manager');
-
-        $user = $doctrine->getRepository('UserBundle:User')->findOneBy(['firstname' => 'Arnaud']);
+        if (is_object($user)) {
+            $this->assertInstanceof(
+                User::class,
+                $user
+            );
+        }
 
         if (is_object($user) && $user instanceof User) {
             $this->assertEquals('Arnaud', $user->getFirstName());
@@ -60,6 +72,19 @@ class UserRepositoryTest extends WebTestCase
             $this->assertEquals('Nono', $user->getUsername());
             $this->assertEquals('Lk__DTHE', $user->getPassword());
             $this->assertArrayHasKey('ROLE_ADMIN', $user->getRoles());
+            $this->assertTrue($user->getValidated());
+            $this->assertEquals('654a6d4dzd19de4yhqdf4af4a1fa66fa4', $user->getToken());
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function tearDown()
+    {
+        parent::tearDown();
+
+        $this->doctrine->close();
+        $this->doctrine = null;
     }
 }
