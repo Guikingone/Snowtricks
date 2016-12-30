@@ -13,6 +13,7 @@ namespace tests\AppBundle\Repository;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use AppBundle\Entity\Tricks;
+use UserBundle\Entity\User;
 
 /**
  * Class TricksRepositoryTest.
@@ -26,10 +27,17 @@ class TricksRepositoryTest extends WebTestCase
      */
     public function setUp()
     {
+        // Create a user in order to simulate the authentication process.
+        $author = new User();
+        $author->setName('Loulier');
+        $author->setFirstName('Guillaume');
+        $author->setUsername('Guikingone');
+        $author->setRoles('ROLE_ADMIN');
+
         $tricks = new Tricks();
         $tricks->setName('Backflip');
         $tricks->setCreationDate('26/12/2016');
-        $tricks->setAuthor('Guik');
+        $tricks->setAuthor($author);
         $tricks->setGroup('Flip');
         $tricks->setResume('A simple backflip content ...');
         $tricks->setPublished(true);
@@ -46,11 +54,11 @@ class TricksRepositoryTest extends WebTestCase
      */
     public function testTricksFindByName()
     {
-        $client = self::createKernel();
+        $kernel = self::createKernel();
+        $doctrine = $kernel->getContainer()->get('doctrine.orm.entity_manager');
 
-        $tricks = $client->getContainer()->get('doctrine.orm.entity_manager')
-                         ->getRepository('AppBundle:Repository:TricksRepository')
-                         ->findOneBy(array('name' => 'Backflip'));
+        $tricks = $doctrine->getRepository('AppBundle:Tricks')
+                           ->findOneBy(array('name' => 'Backflip'));
 
         if (is_object($tricks)) {
             $this->assertEquals('Backflip', $tricks->getName());
@@ -68,11 +76,11 @@ class TricksRepositoryTest extends WebTestCase
      */
     public function testTricksFindByGroup()
     {
-        $client = self::createKernel();
+        $kernel = self::createKernel();
+        $doctrine = $kernel->getContainer()->get('doctrine.orm.entity_manager');
 
-        $tricks = $client->getContainer()->get('doctrine.orm.entity_manager')
-            ->getRepository('AppBundle:Repository:TricksRepository')
-            ->findBy(array('group' => 'Flip'));
+        $tricks = $doctrine->getRepository('AppBundle:Tricks')
+                           ->findBy(array('group' => 'Flip'));
 
         if (is_array($tricks)) {
             foreach ($tricks as $trick) {
@@ -82,18 +90,57 @@ class TricksRepositoryTest extends WebTestCase
     }
 
     /**
+     * Test if a Tricks can be found using the author.
+     */
+    public function testTricksFindByAuthor()
+    {
+        $kernel = static::createKernel();
+        $doctrine = $kernel->getContainer()->get('doctrine.orm.entity_manager');
+
+        // Create a user in order to simulate the authentication process.
+        $author = new User();
+        $author->setName('Loulier');
+        $author->setFirstName('Guillaume');
+        $author->setUsername('Guikingone');
+        $author->setRoles('ROLE_ADMIN');
+
+        $tricks = $doctrine->getRepository('AppBundle:Tricks')
+                           ->findOneBy(['author' => $author]);
+
+        if (is_object($tricks)) {
+            $this->assertInstanceOf(
+                Tricks::class,
+                $tricks
+            );
+        }
+
+        if (is_object($tricks) && $tricks instanceof Tricks) {
+            $this->assertEquals($author, $tricks->getAuthor());
+        }
+    }
+
+    /**
      * Test if a Trick can be found by his name and remove.
      */
     public function testTricksSuppression()
     {
-        $client = self::createKernel();
+        $kernel = self::createKernel();
+        $doctrine = $kernel->getContainer()->get('doctrine.orm.entity_manager');
 
-        $doctrine = $client->getContainer()->get('doctrine.orm.entity_manager');
-        $tricks = $doctrine->getRepository('AppBundle:Repository:TricksRepository')
-                 ->findOneBy(array('name' => 'Backflip'));
+        $tricks = $doctrine->getRepository('AppBundle:Tricks')
+                           ->findOneBy(array('name' => 'Backflip'));
 
-        $client->getContainer()->get('doctrine.orm.entity_manager')->remove($tricks);
+        if (is_object($tricks)) {
+            $this->assertInstanceOf(
+                Tricks::class,
+                $tricks
+            );
+        }
 
-        $this->assertEmpty($doctrine->getRepository('AppBundle:TricksRepository')->findAll());
+        if (is_object($tricks) && $tricks instanceof Tricks) {
+            $doctrine->remove($tricks);
+        }
+
+        $this->assertEmpty($doctrine->getRepository('AppBundle:Tricks')->findAll());
     }
 }

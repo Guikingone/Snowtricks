@@ -66,7 +66,7 @@ class CommentaryTest extends WebTestCase
         $this->assertEquals('A simple commentary', $commentary->getContent());
 
         // Test the relation between entity in order to validate the typehint.
-        $this->assertEquals($author->getName(), $commentary->getAuthor());
-        $this->assertArrayHasKey($tricks->getName(), $commentary->getTricks());
+        $this->assertEquals($author, $commentary->getAuthor());
+        $this->assertArrayHasKey($tricks, $commentary->getTricks());
     }
 }

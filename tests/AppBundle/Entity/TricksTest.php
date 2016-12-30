@@ -58,7 +58,7 @@ class TricksTest extends TestCase
         $tricks->setGroup('Flip');
         $tricks->setResume('A simple test.');
 
-        // Keep the same test in order to validate the new author.
+        // Keep the same tests in order to validate the new author.
         $this->assertEquals('Backflip', $tricks->getName());
         $this->assertEquals('26/12/2016', $tricks->getCreationDate());
         $this->assertEquals($author->getName(), $tricks->getAuthor());

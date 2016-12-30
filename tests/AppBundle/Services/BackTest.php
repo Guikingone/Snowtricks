@@ -13,8 +13,12 @@ namespace tests\AppBundle\Services;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use AppBundle\Services\Back;
+use AppBundle\Entity\Tricks;
+use AppBundle\Entity\Commentary;
+use UserBundle\Entity\User;
 
 /**
  * Class BackTest.
@@ -23,6 +27,31 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class BackTest extends WebTestCase
 {
+    /**
+     * Set the entity into the BDD.
+     */
+    public function setUp()
+    {
+        // Create a user in order to simulate the authentication process.
+        $author = new User();
+        $author->setFirstName('Arnaud');
+        $author->setLastName('Duchemin');
+        $author->setUsername('Duduche');
+        $author->setRoles('ROLE_ADMIN');
+
+        $tricks = new Tricks();
+        $tricks->setName('Backflip');
+        $tricks->setAuthor($author);
+        $tricks->setCreationDate('26/12/2016');
+        $tricks->setGroup('Flip');
+        $tricks->setResume('A simple backflip content ...');
+
+        $kernel = static::createKernel();
+        $doctrine = $kernel->getContainer()->get('doctrine.orm.entity_manager');
+        $doctrine->persist($tricks);
+        $doctrine->flush();
+    }
+
     /**
      * Test if the back service can be found and if he's the right class.
      */
@@ -49,10 +78,11 @@ class BackTest extends WebTestCase
                 Tricks::class,
                 $service->getTricksByName('Backflip')
             );
-            $this->assertInstanceOf(
-                Commentary::class,
-                $service->getCommentaryByTricks('Backflip')
-            );
+
+            // Store the return to test the value passed through an array.
+            $commentaries = $service->getCommentariesBytricks('Backflip');
+            $this->assertArrayHasKey('Backflip', $commentaries);
+
             // Store the return to test the value passed through the getters.
             $tricks = $service->getTricksByName('Backflip');
             $this->assertEquals(
@@ -85,13 +115,14 @@ class BackTest extends WebTestCase
     {
         $kernel = static::createKernel();
         $service = $kernel->getContainer()->get('app.back');
+
         $doctrine = $kernel->getContainer()->get('doctrine.orm.entity_manager')
-                           ->getRepository('AppBundle:TricksRepository')
-                           ->findOneBy(['name' => 'backflip']);
+                           ->getRepository('AppBundle:Tricks')
+                           ->findOneBy(['name' => 'Backflip']);
 
         if (is_object($service) && $service instanceof Back) {
             $this->assertInstanceof(
-                Response::class,
+                RedirectResponse::class,
                 $service->validateTricks($doctrine->getId())
             );
         }
@@ -104,14 +135,68 @@ class BackTest extends WebTestCase
     {
         $kernel = static::createKernel();
         $service = $kernel->getContainer()->get('app.back');
+
         $doctrine = $kernel->getContainer()->get('doctrine.orm.entity_manager')
-                           ->getRepository('AppBundle:TricksRepository')
-                           ->findOneBy(['name' => 'backflip']);
+                           ->getRepository('AppBundle:Tricks')
+                           ->findOneBy(['name' => 'Backflip']);
 
         if (is_object($service) && $service instanceof Back) {
             $this->assertEquals(
-                Response::class,
+                RedirectResponse::class,
                 $service->refuseValidation($doctrine->getId())
+            );
+        }
+    }
+
+    /**
+     * Test if the app.back method for deleting a tricks works.
+     */
+    public function testBackTricksSuppressionMethod()
+    {
+        $kernel = static::createKernel();
+        $service = $kernel->getContainer()->get('app.back');
+
+        $tricks = $kernel->getContainer()->get('doctrine.orm.entity_manager')
+            ->getRepository('AppBundle:Tricks')
+            ->findOneBy(['name' => 'Backflip']);
+
+        if (is_object($service) && $service instanceof Back) {
+            $this->assertInstanceOf(
+                RedirectResponse::class,
+                $service->deleteTricks($tricks->getId())
+            );
+        }
+    }
+
+    /**
+     * Test if the app.back method to add a commentary works.
+     */
+    public function testBackCommentaryAddMethod()
+    {
+        $kernel = static::createKernel();
+        $service = $kernel->getContainer()->get('app.back');
+
+        if (is_object($service) && $service instanceof Back) {
+            $this->assertInstanceOf(
+                FormView::class,
+                $service->addCommentary(new Request())
+            );
+        }
+    }
+
+    /**
+     * Test if the app.back method who delete a commentary linked to a tricks
+     * using his id and the tricks name works.
+     */
+    public function testBackCommentaryDeletingMethod()
+    {
+        $kernel = static::createKernel();
+        $service = $kernel->getContainer()->get('app.back');
+
+        if (is_object($service) && $service instanceof Back) {
+            $this->assertInstanceOf(
+                RedirectResponse::class,
+                $service->deleteCommentary('Backflip', 2)
             );
         }
     }
