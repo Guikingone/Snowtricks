@@ -11,7 +11,7 @@
 namespace tests\AppBundle\Forms;
 
 use Symfony\Component\Form\Test\TypeTestCase;
-use AppBundl\Form\Type\TricksType;
+use AppBundle\Form\Type\TricksType;
 use AppBundle\Entity\Tricks;
 
 /**

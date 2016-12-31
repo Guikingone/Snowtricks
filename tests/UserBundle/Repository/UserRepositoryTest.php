@@ -35,11 +35,11 @@ class UserRepositoryTest extends KernelTestCase
         $user = new User();
         $user->setFirstname('Arnaud');
         $user->setLastname('Tricks');
-        $user->setBirthdate('12-05-1978');
+        $user->setBirthdate(New \DateTime());
         $user->setOccupation('Professional snowboarder');
         $user->setUsername('Nono');
         $user->setPassword('Lk__DTHE');
-        $user->setRoles('ROLE_ADMIN');
+        $user->setRoles(['ROLE_ADMIN']);
         $user->setValidated(true);
         $user->setToken('654a6d4dzd19de4yhqdf4af4a1fa66fa4');
         $user->setValidated(true);
@@ -69,11 +69,11 @@ class UserRepositoryTest extends KernelTestCase
         if (is_object($user) && $user instanceof User) {
             $this->assertEquals('Arnaud', $user->getFirstname());
             $this->assertEquals('Tricks', $user->getLastname());
-            $this->assertEquals('12-05-1978', $user->getBirthdate());
+            $this->assertEquals(new \DateTime(), $user->getBirthdate());
             $this->assertEquals('Professional snowboarder', $user->getOccupation());
             $this->assertEquals('Nono', $user->getUsername());
             $this->assertEquals('Lk__DTHE', $user->getPassword());
-            $this->assertArrayHasKey('ROLE_ADMIN', $user->getRoles());
+            $this->assertContains('ROLE_ADMIN', $user->getRoles());
             $this->assertTrue($user->getValidated());
             $this->assertEquals('654a6d4dzd19de4yhqdf4af4a1fa66fa4', $user->getToken());
             $this->assertTrue($user->getValidated());
