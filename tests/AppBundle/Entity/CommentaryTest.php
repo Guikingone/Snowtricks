@@ -43,8 +43,8 @@ class CommentaryTest extends TestCase
     {
         // Create a user in order to simulate the authentication process.
         $author = new User();
-        $author->setName('Loulier');
-        $author->setFirstName('Guillaume');
+        $author->setFirstname('Guillaume');
+        $author->setLastname('Loulier');
         $author->setUsername('Guikingone');
         $author->setRoles('ROLE_ADMIN');
 
@@ -53,20 +53,20 @@ class CommentaryTest extends TestCase
         $tricks->setName('Backflip');
         $tricks->setCreationDate('26/12/2016');
         $tricks->setAuthor($author);
-        $tricks->setGroup('Flip');
+        $tricks->setGroups('Flip');
         $tricks->setResume('A simple test.');
 
         $commentary = new Commentary();
         $commentary->setAuthor($author);
-        $commentary->setDate('26/12/2016');
+        $commentary->setPublicationDate('26/12/2016');
         $commentary->setTricks($tricks);
         $commentary->setContent('A simple commentary');
 
-        $this->assertEquals('26/12/2016', $commentary->getDate());
+        $this->assertEquals('26/12/2016', $commentary->getPublicationDate());
         $this->assertEquals('A simple commentary', $commentary->getContent());
 
         // Test the relation between entity in order to validate the typehint.
         $this->assertEquals($author, $commentary->getAuthor());
-        $this->assertArrayHasKey($tricks, $commentary->getTricks());
+        $this->assertEquals($tricks, $commentary->getTricks());
     }
 }

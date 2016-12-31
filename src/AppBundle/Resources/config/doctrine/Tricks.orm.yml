@@ -1,0 +1,34 @@
+AppBundle\Entity\Tricks:
+    type: entity
+    table: null
+    repositoryClass: AppBundle\Repository\TricksRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        name:
+            type: string
+            length: 255
+        creationDate:
+            type: datetime
+        groups:
+            type: string
+            length: 100
+        resume:
+            type: text
+        published:
+            type: boolean
+        validated:
+            type: boolean
+    oneToMany:
+        commentary:
+            targetEntity: AppBundle\Entity\Commentary
+            mappedBy: tricks
+    manyToOne:
+        author:
+            targetEntity: UserBundle\Entity\User
+            inversedBy: tricks
+    lifecycleCallbacks: {  }

@@ -36,21 +36,21 @@ class CommentaryRepositoryTest extends KernelTestCase
     {
         // Create a user in order to simulate the authentication process.
         $author = new User();
-        $author->setName('Loulier');
-        $author->setFirstName('Guillaume');
+        $author->setLastname('Loulier');
+        $author->setFirstname('Guillaume');
         $author->setUsername('Guikingone');
-        $author->setRoles('ROLE_ADMIN');
+        $author->setRoles(['ROLE_ADMIN']);
 
         // Create a tricks to link the commentary to this specific tricks.
         $tricks = new Tricks();
         $tricks->setName('Backflip');
-        $tricks->setCreationDate('26-12-2016');
+        $tricks->setCreationDate(new \DateTime());
         $tricks->setAuthor($author);
-        $tricks->setGroup('Flip');
+        $tricks->setGroups('Flip');
         $tricks->setResume('A simple test.');
 
         $commentary = new Commentary();
-        $commentary->setCreationDate('26-12-2016');
+        $commentary->setPublicationDate(new \DateTime());
         $commentary->setAuthor($author);
         $commentary->setTricks($tricks);
         $commentary->setContent('A simple commentary');

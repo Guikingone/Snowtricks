@@ -1,0 +1,30 @@
+AppBundle\Entity\Commentary:
+    type: entity
+    table: null
+    repositoryClass: AppBundle\Repository\CommentaryRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        publicationDate:
+            type: datetime
+        content:
+            type: string
+            length: 255
+    manyToOne:
+        tricks:
+            targetEntity: AppBundle\Entity\Tricks
+            inversedBy: commentary
+            joinColumn:
+                name: tricks_id
+                referencedColumnName: id
+        author:
+            targetEntity: UserBundle\Entity\User
+            inversedBy: commentary
+            joinColumn:
+                name: author_id
+                referencedColumnName: id
+    lifecycleCallbacks: {  }

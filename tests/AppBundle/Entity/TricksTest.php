@@ -29,13 +29,13 @@ class TricksTest extends TestCase
     {
         $tricks = new Tricks();
         $tricks->setName('Backflip');
-        $tricks->setCreationDate('26/12/2016');
-        $tricks->setGroup('Flip');
+        $tricks->setCreationDate(new \DateTime());
+        $tricks->setGroups('Flip');
         $tricks->setResume('A simple backflip content ...');
 
         $this->assertEquals('Backflip', $tricks->getName());
-        $this->assertEquals('26/12/2016', $tricks->getCreationDate());
-        $this->assertArrayHasKey('Flip', $tricks->getGroups());
+        $this->assertEquals(new \DateTime(), $tricks->getCreationDate());
+        $this->assertEquals('Flip', $tricks->getGroups());
         $this->assertEquals('A simple backflip content ...', $tricks->getResume());
     }
 
@@ -46,23 +46,23 @@ class TricksTest extends TestCase
     {
         // Create a user in order to simulate the authentication process.
         $author = new User();
-        $author->setFirstName('Arnaud');
-        $author->setLastName('Duchemin');
+        $author->setFirstname('Arnaud');
+        $author->setLastname('Duchemin');
         $author->setUsername('Duduche');
-        $author->setRoles('ROLE_ADMIN');
+        $author->setRoles(['ROLE_ADMIN']);
 
         $tricks = new Tricks();
         $tricks->setName('Backflip');
-        $tricks->setCreationDate('26/12/2016');
+        $tricks->setCreationDate(new \DateTime());
         $tricks->setAuthor($author);
-        $tricks->setGroup('Flip');
+        $tricks->setGroups(['Flip' => 'Flip']);
         $tricks->setResume('A simple test.');
 
         // Keep the same tests in order to validate the new author.
         $this->assertEquals('Backflip', $tricks->getName());
-        $this->assertEquals('26/12/2016', $tricks->getCreationDate());
-        $this->assertEquals($author->getName(), $tricks->getAuthor());
-        $this->assertArrayHasKey('Flip', $tricks->getGroups());
+        $this->assertEquals(new \DateTime(), $tricks->getCreationDate());
+        $this->assertEquals($author, $tricks->getAuthor());
+        $this->assertContains('Flip', $tricks->getGroups());
         $this->assertEquals('A simple test.', $tricks->getResume());
     }
 }

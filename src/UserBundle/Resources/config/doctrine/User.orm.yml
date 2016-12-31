@@ -1,0 +1,51 @@
+UserBundle\Entity\User:
+    type: entity
+    table: null
+    repositoryClass: UserBundle\Repository\UserRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        firstname:
+            type: string
+            length: 255
+        lastname:
+            type: string
+            length: 255
+        birthdate:
+            type: datetime
+        occupation:
+            type: string
+            length: 255
+        username:
+            type: string
+            length: 255
+        password:
+            type: string
+            length: '100'
+        roles:
+            type: array
+        token:
+            type: string
+            length: '36'
+        validated:
+            type: boolean
+        locked:
+            type: boolean
+    oneToMany:
+        tricks:
+            targetEntity: AppBundle\Entity\Tricks
+            mappedBy: author
+            joinColumn:
+                name: tricks_id
+                referencedColumnName: id
+        commentary:
+            targetEntity: AppBundle\Entity\Commentary
+            mappedBy: author
+            joinColumn:
+                name: commentary_id
+                referencedColumnName: id
+    lifecycleCallbacks: {  }

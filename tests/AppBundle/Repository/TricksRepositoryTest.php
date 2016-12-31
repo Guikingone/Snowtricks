@@ -35,8 +35,8 @@ class TricksRepositoryTest extends KernelTestCase
     {
         // Create a user in order to simulate the authentication process.
         $author = new User();
-        $author->setName('Loulier');
-        $author->setFirstName('Guillaume');
+        $author->setLastname('Loulier');
+        $author->setFirstname('Guillaume');
         $author->setUsername('Guikingone');
         $author->setRoles('ROLE_ADMIN');
 
@@ -44,7 +44,7 @@ class TricksRepositoryTest extends KernelTestCase
         $tricks->setName('Backflip');
         $tricks->setCreationDate('26/12/2016');
         $tricks->setAuthor($author);
-        $tricks->setGroup('Flip');
+        $tricks->setGroups('Flip');
         $tricks->setResume('A simple backflip content ...');
         $tricks->setPublished(true);
         $tricks->setValidated(true);
@@ -96,8 +96,8 @@ class TricksRepositoryTest extends KernelTestCase
     {
         // Create a user in order to simulate the authentication process.
         $author = new User();
-        $author->setName('Loulier');
-        $author->setFirstName('Guillaume');
+        $author->setLastname('Loulier');
+        $author->setFirstname('Guillaume');
         $author->setUsername('Guikingone');
         $author->setRoles('ROLE_ADMIN');
 
