@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Snowtricks project.
  *
@@ -8,33 +9,33 @@
  * file that was distributed with this source code.
  */
 
-namespace tests\AppBundle\Forms;
+namespace tests\UserBundle\Forms;
 
 use Symfony\Component\Form\Test\TypeTestCase;
-use AppBundl\Form\Type\TricksType;
-use AppBundle\Entity\Tricks;
+use UserBundle\Form\type\LoginType;
+use UserBundle\Entity\User;
 
 /**
- * Class TricksFormsTest.
+ * Class LoginTypeTest.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
-class TricksFormsTest extends TypeTestCase
+class LoginTypeTest extends TypeTestCase
 {
     /**
-     * Test if data's can be passed through the form.
+     * Test the login form via 'basic' login data's.
      */
     public function testSubmitData()
     {
         $data = [
-            'name' => 'Backflip',
-            'group' => 'Flip',
-            'content' => 'A simple content',
+            'pseudo' => 'Guik',
+            'password' => 'Ie1FGDL'
         ];
 
-        $form = $this->factory->create(TricksType::class);
+        $form = $this->factory->create(LoginType::class);
 
-        $instance = Tricks::fromArray($data);
+        $instance = User::fromArray($data);
+
         $form->submit($instance);
 
         $this->assertTrue($form->isSubmitted());

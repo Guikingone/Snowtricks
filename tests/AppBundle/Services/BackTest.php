@@ -11,11 +11,8 @@
 
 namespace tests\AppBundle\Services;
 
-use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
+use Doctrine\ORM\EntityManager;
 use AppBundle\Services\Back;
 use AppBundle\Entity\Tricks;
 use AppBundle\Entity\Commentary;
@@ -81,14 +78,19 @@ class BackTest extends KernelTestCase
     public function testBackReturnEntityMethod()
     {
         if (is_object($this->back) && $this->back instanceof Back) {
+            // Store the result to test the class.
+            $trick = $this->back->getTricksByName('Backflip');
             $this->assertInstanceOf(
                 Tricks::class,
-                $this->back->getTricksByName('Backflip')
+                $trick
             );
 
             // Store the return to test the value passed through an array.
             $commentaries = $this->back->getCommentariesBytricks('Backflip');
-            $this->assertArrayHasKey('Backflip', $commentaries);
+            $this->assertArrayHasKey(
+                'Backflip',
+                $commentaries->getTricks()
+            );
 
             // Store the return to test the value passed through the getters.
             $tricks = $this->back->getTricksByName('Backflip');
@@ -100,76 +102,48 @@ class BackTest extends KernelTestCase
     }
 
     /**
-     * Test if the add tricks method return the right class.
+     * Test if the app.back service can validate a trick using his name.
      */
-    public function testBackTricksAddingMethod()
-    {
-        if (is_object($this->back) && $this->back instanceof Back) {
-            $this->assertInstanceOf(
-                FormView::class,
-                $this->back->addtricks(new Request())
-            );
-        }
-    }
-
-    /**
-     * Test if the app.back service can validate a trick using his $id.
-     */
-    public function testBackValidationMethod()
+    public function testTricksValidationMethod()
     {
         $trick = $this->doctrine->getRepository('AppBundle:Tricks')
                                 ->findOneBy(['name' => 'Backflip']);
 
         if (is_object($this->back) && $this->back instanceof Back) {
-            $this->assertInstanceof(
-                RedirectResponse::class,
-                $this->back->validateTricks($trick->getId())
-            );
+            // Validate the tricks find earlier.
+            $this->back->validateTricks($trick->getName());
+
+            $this->assertTrue($trick->getValidated());
         }
     }
 
     /**
-     * Test if the app.back service can refuse a validation using the Trick $id.
+     * Test if the app.back service can refuse a validation using the Trick name.
      */
-    public function testBackNoValidationMethod()
+    public function testTricksNoValidationMethod()
     {
         $trick = $this->doctrine->getRepository('AppBundle:Tricks')
                                 ->findOneBy(['name' => 'Backflip']);
 
         if (is_object($this->back) && $this->back instanceof Back) {
-            $this->assertEquals(
-                RedirectResponse::class,
-                $this->back->refuseValidation($trick->getId())
-            );
+            // Refuse the tricks find earlier.
+            $this->back->refuseTricks($trick->getName());
+
+            $this->assertFalse($trick->getValidated());
         }
     }
 
     /**
-     * Test if the app.back method for deleting a tricks works.
+     * Test if the app.back method who delete all the commentaries
+     * linked to a trick work.
      */
-    public function testBackTricksSuppressionMethod()
-    {
-        $tricks = $this->doctrine->getRepository('AppBundle:Tricks')
-                                 ->findOneBy(['name' => 'Backflip']);
-
-        if (is_object($this->back) && $this->back instanceof Back) {
-            $this->assertInstanceOf(
-                RedirectResponse::class,
-                $this->back->deleteTricks($tricks->getId())
-            );
-        }
-    }
-
-    /**
-     * Test if the app.back method to add a commentary works.
-     */
-    public function testBackCommentaryAddMethod()
+    public function testCommentariesDeletingMethod()
     {
         if (is_object($this->back) && $this->back instanceof Back) {
-            $this->assertInstanceOf(
-                FormView::class,
-                $this->back->addCommentary(new Request())
-            );
+            // Store the result to test the class.
+            $this->back->deleteCommentary('Backflip');
+            // Find a single commentary using tricks name and commentary id.
+            $this->assertNull($this->back->getCommentariesByTricks('Backflip'));
         }
     }
 
@@ -177,13 +151,36 @@ class BackTest extends KernelTestCase
      * Test if the app.back method who delete a commentary linked to a tricks
      * using his id and the tricks name works.
      */
-    public function testBackCommentaryDeletingMethod()
+    public function testCommentaryDeletingByTricksMethod()
     {
         if (is_object($this->back) && $this->back instanceof Back) {
-            $this->assertInstanceOf(
-                RedirectResponse::class,
-                $this->back->deleteCommentary('Backflip', 2)
+            // Store the result to test the class.
+            $this->back->deleteCommentary('Backflip', 2);
+            // Find a single commentary using tricks name and commentary id.
+            $this->assertNull(
+                $this->back->getCommentaryByTricks(
+                    'Backflip',
+                    2
+                )
             );
+        }
+    }
+
+    /**
+     * Test if the app.back method for deleting a tricks using his name works.
+     */
+    public function testTricksSuppressionMethod()
+    {
+        $tricks = $this->doctrine->getRepository('AppBundle:Tricks')
+                                 ->findOneBy(['name' => 'Backflip']);
+
+        if (is_object($this->back) && $this->back instanceof Back) {
+            // Delete the tricks using his name
+            $this->back->deleteTricks($tricks->getName());
+            // Use the service to find the trick and save memory.
+            $trick = $this->back->getTricksByName('Backflip');
+
+            $this->assertNull($trick);
         }
     }
 

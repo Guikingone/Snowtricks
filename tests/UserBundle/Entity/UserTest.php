@@ -27,7 +27,6 @@ class UserTest extends TestCase
     public function testEntityBoot()
     {
         $user = new User();
-
         $user->setFirstName('Arnaud');
         $user->setLastName('Tricks');
         $user->setBirthDate('12-05-1978');
@@ -35,8 +34,9 @@ class UserTest extends TestCase
         $user->setUsername('Nono');
         $user->setPassword('Lk__DTHE');
         $user->setRoles('ROLE_ADMIN');
-        $user->setLocked(false);
         $user->setToken('dd21498e61e26a5a42d3g9r4z2a364f2s3a2');
+        $user->setValidated(true);
+        $user->setLocked(false);
 
         $this->assertEquals('Arnaud', $user->getFirstName());
         $this->assertEquals('Tricks', $user->getLastName());
@@ -46,5 +46,7 @@ class UserTest extends TestCase
         $this->assertEquals('Lk__DTHE', $user->getPassword());
         $this->assertArrayHasKey('ROLE_ADMIN', $user->getRoles());
         $this->assertEquals('dd21498e61e26a5a42d3g9r4z2a364f2s3a2', $user->getToken());
+        $this->assertTrue($user->getValidated());
+        $this->assertFalse($user->getLocked());
     }
 }

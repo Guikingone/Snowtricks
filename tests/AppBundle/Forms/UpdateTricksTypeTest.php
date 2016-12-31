@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Snowtricks project.
  *
@@ -11,15 +12,15 @@
 namespace tests\AppBundle\Forms;
 
 use Symfony\Component\Form\Test\TypeTestCase;
-use AppBundl\Form\Type\TricksType;
+use AppBundle\Form\Type\UpdateTricksType;
 use AppBundle\Entity\Tricks;
 
 /**
- * Class TricksFormsTest.
+ * Class UpdateTricksTypeTest.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
-class TricksFormsTest extends TypeTestCase
+class UpdateTricksTypeTest extends TypeTestCase
 {
     /**
      * Test if data's can be passed through the form.
@@ -32,7 +33,7 @@ class TricksFormsTest extends TypeTestCase
             'content' => 'A simple content',
         ];
 
-        $form = $this->factory->create(TricksType::class);
+        $form = $this->factory->create(UpdateTricksType::class);
 
         $instance = Tricks::fromArray($data);
         $form->submit($instance);

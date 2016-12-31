@@ -11,10 +11,8 @@
 
 namespace tests\UserBundle\Services;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
+use Doctrine\ORM\EntityManager;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use UserBundle\Services\Security;
 use UserBundle\Entity\User;
 
@@ -23,8 +21,18 @@ use UserBundle\Entity\User;
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
-class SecurityTest extends WebTestCase
+class SecurityTest extends KernelTestCase
 {
+    /**
+     * @var Security
+     */
+    private $security;
+
+    /**
+     * @var EntityManager
+     */
+    private $doctrine;
+
     /**
      * Set the entity for BDD.
      */
@@ -40,10 +48,12 @@ class SecurityTest extends WebTestCase
         $user->setRoles('ROLE_ADMIN');
         $user->setLocked(false);
 
-        $kernel = static::createKernel();
-        $doctrine = $kernel->getContainer()->get('doctrine.orm.entity_manager');
-        $doctrine->persist($user);
-        $doctrine->flush();
+        self::bootKernel();
+        $this->doctrine = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
+        $this->doctrine->persist($user);
+        $this->doctrine->flush();
+
+        $this->security = static::$kernel->getContainer()->get('app.security');
     }
 
     /**
@@ -51,29 +61,8 @@ class SecurityTest extends WebTestCase
      */
     public function testServiceIsFound()
     {
-        $kernel = static::createKernel();
-
-        $service = $kernel->getContainer()->get('app.security');
-
-        if (is_object($service)) {
-            $this->assertInstanceOf(Security::class, $service);
-        }
-    }
-
-    /**
-     * Test if the form for creating the users is available.
-     */
-    public function testUserForm()
-    {
-        $kernel = static::createKernel();
-
-        $service = $kernel->getContainer()->get('app.security');
-
-        if (is_object($service) && $service instanceof Security) {
-            $this->assertInstanceOf(
-                FormView::class,
-                $service->addUser(new Request())
-            );
+        if (is_object($this->security)) {
+            $this->assertInstanceOf(Security::class, $this->security);
         }
     }
 
@@ -82,14 +71,10 @@ class SecurityTest extends WebTestCase
      */
     public function testUserRecap()
     {
-        $kernel = static::createKernel();
-
-        $service = $kernel->getContainer()->get('app.security');
-
-        if (is_object($service) && $service instanceof Security) {
+        if (is_object($this->security) && $this->security instanceof Security) {
             $this->assertArrayHasKey(
                 'Arnaud',
-                $service->getUsers()
+                $this->security->getUsers()
             );
         }
     }
@@ -99,14 +84,10 @@ class SecurityTest extends WebTestCase
      */
     public function testUserIsFoundByName()
     {
-        $kernel = static::createKernel();
-
-        $service = $kernel->getContainer()->get('app.security');
-
-        if (is_object($service) && $service instanceof Security) {
+        if (is_object($this->security) && $this->security instanceof Security) {
             $this->assertInstanceOf(
                 User::class,
-                $service->getUser('Arnaud')
+                $this->security->getUser('Arnaud')
             );
         }
     }
@@ -116,13 +97,9 @@ class SecurityTest extends WebTestCase
      */
     public function testUserIsNotValidated()
     {
-        $kernel = static::createKernel();
-
-        $service = $kernel->getContainer()->get('app.security');
-
-        if (is_object($service) && $service instanceof Security) {
+        if (is_object($this->security) && $this->security instanceof Security) {
             // Store into an array the list of users.
-            $user = $service->getUsersNotValidated();
+            $user = $this->security->getUsersNotValidated();
             if (is_array($user)) {
                 foreach ($user as $usr) {
                     $this->assertInstanceOf(
@@ -139,13 +116,9 @@ class SecurityTest extends WebTestCase
      */
     public function testUserIsValidated()
     {
-        $kernel = static::createKernel();
-
-        $service = $kernel->getContainer()->get('app.security');
-
-        if (is_object($service) && $service instanceof Security) {
+        if (is_object($this->security) && $this->security instanceof Security) {
             // Store into an array the list of users.
-            $user = $service->getUsersValidated();
+            $user = $this->security->getUsersValidated();
             if (is_array($user)) {
                 foreach ($user as $usr) {
                     $this->assertInstanceOf(
@@ -162,15 +135,9 @@ class SecurityTest extends WebTestCase
      */
     public function testUserLock()
     {
-        $kernel = static::createKernel();
-
-        $service = $kernel->getContainer()->get('app.security');
-
-        if (is_object($service) && $service instanceof Security) {
-            $this->assertInstanceOf(
-                RedirectResponse::class,
-                $service->lockUser('Tricks')
-            );
+        if (is_object($this->security) && $this->security instanceof Security) {
+            $user = $this->security->lockUser('Tricks');
+            $this->assertTrue($user->getLocked());
         }
     }
 
@@ -179,15 +146,9 @@ class SecurityTest extends WebTestCase
      */
     public function testUserUnlock()
     {
-        $kernel = static::createKernel();
-
-        $service = $kernel->getContainer()->get('app.security');
-
-        if (is_object($service) && $service instanceof Security) {
-            $this->assertInstanceOf(
-                RedirectResponse::class,
-                $service->unlockUser('Tricks')
-            );
+        if (is_object($this->security) && $this->security instanceof Security) {
+            $user = $this->security->unlockUser('Tricks');
+            $this->assertFalse($user->getLocked());
         }
     }
 
@@ -196,17 +157,30 @@ class SecurityTest extends WebTestCase
      */
     public function testFindUsersLocked()
     {
-        $kernel = static::createKernel();
-
-        $service = $kernel->getContainer()->get('app.security');
-
-        if (is_object($service) && $service instanceof Security) {
+        if (is_object($this->security) && $this->security instanceof Security) {
             // Store the result into an array
-            $users = $service->getLockedUsers();
+            $users = $this->security->getLockedUsers();
             if (is_array($users)) {
                 foreach ($users as $user) {
                     $this->assertInstanceOf(User::class, $user);
                     $this->assertTrue($user->getLocked());
+                }
+            }
+        }
+    }
+
+    /**
+     * Test if the service can find every users unlocked.
+     */
+    public function testFindUsersUnLocked()
+    {
+        if (is_object($this->security) && $this->security instanceof Security) {
+            // Store the result into an array
+            $users = $this->security->getUnLockedUsers();
+            if (is_array($users)) {
+                foreach ($users as $user) {
+                    $this->assertInstanceOf(User::class, $user);
+                    $this->assertFalse($user->getLocked());
                 }
             }
         }

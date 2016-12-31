@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Snowtricks project.
  *
@@ -11,15 +12,15 @@
 namespace tests\AppBundle\Forms;
 
 use Symfony\Component\Form\Test\TypeTestCase;
-use AppBundl\Form\Type\TricksType;
-use AppBundle\Entity\Tricks;
+use AppBundle\Form\Type\CommentaryType;
+use AppBundle\Entity\Commentary;
 
 /**
- * Class TricksFormsTest.
+ * Class CommentaryTypeTest.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
-class TricksFormsTest extends TypeTestCase
+class CommentaryTypeTest extends TypeTestCase
 {
     /**
      * Test if data's can be passed through the form.
@@ -27,14 +28,12 @@ class TricksFormsTest extends TypeTestCase
     public function testSubmitData()
     {
         $data = [
-            'name' => 'Backflip',
-            'group' => 'Flip',
-            'content' => 'A simple content',
+            'content' => 'A simple comment !',
         ];
 
-        $form = $this->factory->create(TricksType::class);
+        $form = $this->factory->create(CommentaryType::class);
 
-        $instance = Tricks::fromArray($data);
+        $instance = Commentary::fromArray($data);
         $form->submit($instance);
 
         $this->assertTrue($form->isSubmitted());
