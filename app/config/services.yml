@@ -12,6 +12,16 @@ services:
             - '@event_dispatcher'
             - '@workflow.tricks_process'
 
+    user.security:
+        class: UserBundle\Services\Security
+        arguments:
+           - '@doctrine.orm.entity_manager'
+           - '@form.factory'
+           - '@security.authorization_checker'
+           - '@security.password_encoder'
+           - '@security.token_storage'
+           - '@event_dispatcher'
+
     # Tricks listeners.
     app.trick_listener:
         class: AppBundle\Listeners\TricksListeners

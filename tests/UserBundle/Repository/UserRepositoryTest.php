@@ -35,7 +35,7 @@ class UserRepositoryTest extends KernelTestCase
         $user = new User();
         $user->setFirstname('Arnaud');
         $user->setLastname('Tricks');
-        $user->setBirthdate(New \DateTime());
+        $user->setBirthdate(new \DateTime());
         $user->setOccupation('Professional snowboarder');
         $user->setUsername('Nono');
         $user->setPassword('Lk__DTHE');

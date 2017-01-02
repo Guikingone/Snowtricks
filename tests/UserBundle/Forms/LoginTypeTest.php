@@ -29,7 +29,7 @@ class LoginTypeTest extends TypeTestCase
     {
         $data = [
             'pseudo' => 'Guik',
-            'password' => 'Ie1FGDL'
+            'password' => 'Ie1FGDL',
         ];
 
         $form = $this->factory->create(LoginType::class);

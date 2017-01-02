@@ -66,11 +66,11 @@ class Back
     /**
      * Back constructor.
      *
-     * @param EntityManager $doctrine
-     * @param FormFactory   $form
-     * @param Session       $session
+     * @param EntityManager            $doctrine
+     * @param FormFactory              $form
+     * @param Session                  $session
      * @param TraceableEventDispatcher $eventDispatcher
-     * @param Workflow      $workflow
+     * @param Workflow                 $workflow
      */
     public function __construct(
         EntityManager $doctrine,
@@ -192,8 +192,6 @@ class Back
     {
         $tricks = $this->doctrine->getRepository('AppBundle:Tricks')
                                  ->findOneBy(['name' => $name]);
-        // Lock the publication of the trick.
-        $tricks->setPublished(false);
 
         if (is_object($tricks) && !$tricks instanceof Tricks) {
             throw new \LogicException(
@@ -203,6 +201,9 @@ class Back
                 )
             );
         }
+
+        // Lock the publication of the trick.
+        $tricks->setPublished(false);
 
         $form = $this->form->create(UpdateTricksType::class, $tricks);
         $form->handleRequest($request);
@@ -262,7 +263,10 @@ class Back
 
                 // Dispatch a new Event.
                 $event = new TricksValidatedEvent($trick);
-                $this->eventDispatcher->dispatch(TricksValidatedEvent::NAME, $event);
+                $this->eventDispatcher->dispatch(
+                    TricksValidatedEvent::NAME,
+                    $event
+                );
             }
         }
 

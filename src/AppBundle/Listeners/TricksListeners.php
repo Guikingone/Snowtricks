@@ -13,9 +13,11 @@ namespace AppBundle\Listeners;
 
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Symfony\Bundle\TwigBundle\TwigEngine;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
+use Symfony\Component\Workflow\Exception\InvalidDefinitionException;
 use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Workflow;
 
@@ -55,6 +57,16 @@ class TricksListeners
     private $session;
 
     /**
+     * @var TokenStorage
+     */
+    private $storage;
+
+    /**
+     * @var RequestStack
+     */
+    private $requestStack;
+
+    /**
      * TricksListeners constructor.
      *
      * @param Workflow             $workflow
@@ -62,19 +74,22 @@ class TricksListeners
      * @param TwigEngine           $templating
      * @param Session              $session
      * @param TokenStorage         $storage
+     * @param RequestStack         $requestStack
      */
     public function __construct(
         Workflow $workflow,
         AuthorizationChecker $security,
         TwigEngine $templating,
         Session $session,
-        TokenStorage $storage
+        TokenStorage $storage,
+        RequestStack $requestStack
     ) {
         $this->workflow = $workflow;
         $this->security = $security;
         $this->templating = $templating;
         $this->session = $session;
         $this->storage = $storage;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -84,6 +99,9 @@ class TricksListeners
      * @param LifecycleEventArgs $args
      *
      * @throws \LogicException
+     * @throws InvalidDefinitionException
+     * @throws LogicException
+     * @throws \InvalidArgumentException
      */
     public function prePersist(LifecycleEventArgs $args)
     {
@@ -114,7 +132,31 @@ class TricksListeners
         }
 
         if ($entity instanceof Commentary) {
-            $entity->setAuthor($this->storage->getToken()->getUser());
+            $request = $this->requestStack->getCurrentRequest()->get('name');
+            // Find the tricks linked by the request.
+            $name = $args->getObjectManager()
+                         ->getRepository('AppBundle:Tricks')
+                         ->findOneBy(['name' => $request]);
+
+            if (is_object($name) && $name instanceof Tricks) {
+                $entity->setAuthor($this->storage->getToken()->getUser());
+                $entity->setTricks($name);
+                $name->addCommentary($entity);
+            } else {
+                throw new \InvalidArgumentException(
+                    sprintf(
+                        'The entity MUST be a instance of Tricks !,
+                         given "%s"', get_class($name)
+                    )
+                );
+            }
+        } else {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'The entity MUST be a instance of Commentary !,
+                         given "%s"', get_class($entity)
+                )
+            );
         }
     }
 

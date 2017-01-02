@@ -2,13 +2,15 @@
 
 namespace UserBundle\Entity;
 
+use AppBundle\Entity\Commentary;
 use Doctrine\Common\Collections\ArrayCollection;
 use AppBundle\Entity\Tricks;
+use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 /**
  * User.
  */
-class User
+class User implements AdvancedUserInterface
 {
     /**
      * @var int
@@ -397,7 +399,7 @@ class User
      *
      * @return User
      */
-    public function addCommentary(\AppBundle\Entity\Commentary $commentary)
+    public function addCommentary(Commentary $commentary)
     {
         $this->commentary[] = $commentary;
 
@@ -409,7 +411,7 @@ class User
      *
      * @param \AppBundle\Entity\Commentary $commentary
      */
-    public function removeCommentary(\AppBundle\Entity\Commentary $commentary)
+    public function removeCommentary(Commentary $commentary)
     {
         $this->commentary->removeElement($commentary);
     }
@@ -422,5 +424,35 @@ class User
     public function getCommentary()
     {
         return $this->commentary;
+    }
+
+    public function isAccountNonExpired()
+    {
+        // TODO: Implement isAccountNonExpired() method.
+    }
+
+    public function isAccountNonLocked()
+    {
+        // TODO: Implement isAccountNonLocked() method.
+    }
+
+    public function isCredentialsNonExpired()
+    {
+        // TODO: Implement isCredentialsNonExpired() method.
+    }
+
+    public function isEnabled()
+    {
+        // TODO: Implement isEnabled() method.
+    }
+
+    public function getSalt()
+    {
+        return null;
+    }
+
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
     }
 }

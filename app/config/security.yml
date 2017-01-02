@@ -1,9 +1,11 @@
-# To get started with security, check out the documentation:
-# http://symfony.com/doc/current/security.html
 security:
-
-    # http://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
+    encoders:
+        UserBundle\Entity\User: bcrypt
     providers:
+        user:
+            entity:
+                class: UserBundle:User
+                property: username
         in_memory:
             memory: ~
 
@@ -15,10 +17,7 @@ security:
 
         main:
             anonymous: ~
-            # activate different ways to authenticate
+            provider: user
 
-            # http_basic: ~
-            # http://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
-
-            # form_login: ~
-            # http://symfony.com/doc/current/cookbook/security/form_login_setup.html
+    access_control:
+       - { path: ^/admin, roles: ROLE_ADMIN }

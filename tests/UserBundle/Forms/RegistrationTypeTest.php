@@ -12,6 +12,7 @@
 namespace tests\UserBundle\Forms;
 
 use Symfony\Component\Form\Test\TypeTestCase;
+use UserBundle\Form\Type\RegisterType;
 use UserBundle\Form\Type\RegistrationType;
 use UserBundle\Entity\User;
 
@@ -28,13 +29,13 @@ class RegistrationTypeTest extends TypeTestCase
     public function testSubmitData()
     {
         $data = [
-            'pseudo' => 'Guik',
+            'username' => 'Guik',
             'email' => 'contact.guillaume@kdl.fr',
             'password' => 'Ie1FGDL',
-            'password_repeat' => 'Ie1FGDL'
+            'password_repeat' => 'Ie1FGDL',
         ];
 
-        $form = $this->factory->create(RegistrationType::class);
+        $form = $this->factory->create(RegisterType::class);
 
         $instance = User::fromArray($data);
 
