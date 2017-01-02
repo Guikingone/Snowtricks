@@ -34,6 +34,32 @@ framework:
     php_errors:
         log: true
 
+    # Workflow phase
+    workflows:
+       tricks_process:
+           type: 'workflow'
+           marking_store:
+               type: 'multiple_state'
+               arguments:
+                   - 'currentState'
+           support:
+               - AppBundle\Entity\Tricks
+           places:
+               - initialisation
+               - validation
+               - publication
+               - online
+           transitions:
+               start_phase:
+                   from: initialisation
+                   to: validation
+               validation_phase:
+                   from: validation
+                   to: publication
+               publication_phase:
+                   from: publication
+                   to: online
+
 # Twig Configuration
 twig:
     debug:            "%kernel.debug%"

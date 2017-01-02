@@ -11,7 +11,7 @@ use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class TricksType
+ * Class TricksType.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
@@ -19,7 +19,7 @@ class TricksType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -38,7 +38,7 @@ class TricksType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'AppBundle\Entity\Tricks'
+            'data_class' => 'AppBundle\Entity\Tricks',
         ]);
     }
 

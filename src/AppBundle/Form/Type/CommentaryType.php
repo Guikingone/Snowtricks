@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class CommentaryType
+ * Class CommentaryType.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
@@ -17,7 +17,7 @@ class CommentaryType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -34,7 +34,7 @@ class CommentaryType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'AppBundle\Entity\Commentary'
+            'data_class' => 'AppBundle\Entity\Commentary',
         ]);
     }
 

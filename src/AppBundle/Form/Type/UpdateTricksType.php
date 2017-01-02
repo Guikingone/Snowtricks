@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
- * Class UpdateTricksType
+ * Class UpdateTricksType.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
@@ -21,7 +21,7 @@ class UpdateTricksType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -33,9 +33,9 @@ class UpdateTricksType extends AbstractType
                         'min' => 2,
                         'max' => 255,
                         'minMessage' => 'Votre entrée est trop courte, veuillez réessayer.',
-                        'maxMessage' => 'Votre entrée est top longue, veuillez réessayer.'
-                    ])
-                ]
+                        'maxMessage' => 'Votre entrée est top longue, veuillez réessayer.',
+                    ]),
+                ],
             ])
             ->add('groups', ChoiceType::class, [
                 'constraints' => [
@@ -44,18 +44,18 @@ class UpdateTricksType extends AbstractType
                         'min' => 2,
                         'max' => 100,
                         'minMessage' => 'Votre entrée est trop courte, veuillez réessayer.',
-                        'maxMessage' => 'Votre entrée est top longue, veuillez réessayer.'
-                    ])
-                ]
+                        'maxMessage' => 'Votre entrée est top longue, veuillez réessayer.',
+                    ]),
+                ],
             ])
             ->add('resume', TextareaType::class, [
                 'constraints' => [
                     new NotBlank(),
                     new Length([
                         'min' => 10,
-                        'minMessage' => 'Votre entrée est trop courte, veuillez réessayer.'
-                    ])
-                ]
+                        'minMessage' => 'Votre entrée est trop courte, veuillez réessayer.',
+                    ]),
+                ],
             ])
         ;
     }
@@ -68,7 +68,7 @@ class UpdateTricksType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'AppBundle\Entity\Tricks'
+            'data_class' => 'AppBundle\Entity\Tricks',
         ]);
     }
 

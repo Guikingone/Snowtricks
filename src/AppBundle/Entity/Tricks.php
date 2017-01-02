@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use UserBundle\Entity\User;
 
 /**
- * Tricks
+ * Tricks.
  */
 class Tricks
 {
@@ -36,12 +36,12 @@ class Tricks
     private $resume;
 
     /**
-     * @var boolean
+     * @var bool
      */
     private $published;
 
     /**
-     * @var boolean
+     * @var bool
      */
     private $validated;
 
@@ -49,8 +49,10 @@ class Tricks
 
     private $commentary;
 
+    public $currentState;
+
     /**
-     * Get id
+     * Get id.
      *
      * @return int
      */
@@ -60,7 +62,7 @@ class Tricks
     }
 
     /**
-     * Set name
+     * Set name.
      *
      * @param string $name
      *
@@ -74,7 +76,7 @@ class Tricks
     }
 
     /**
-     * Get name
+     * Get name.
      *
      * @return string
      */
@@ -84,7 +86,7 @@ class Tricks
     }
 
     /**
-     * Set creationDate
+     * Set creationDate.
      *
      * @param \DateTime $creationDate
      *
@@ -98,7 +100,7 @@ class Tricks
     }
 
     /**
-     * Get creationDate
+     * Get creationDate.
      *
      * @return \DateTime
      */
@@ -108,7 +110,7 @@ class Tricks
     }
 
     /**
-     * Set groups
+     * Set groups.
      *
      * @param string $groups
      *
@@ -122,7 +124,7 @@ class Tricks
     }
 
     /**
-     * Get groups
+     * Get groups.
      *
      * @return string
      */
@@ -132,7 +134,7 @@ class Tricks
     }
 
     /**
-     * Set resume
+     * Set resume.
      *
      * @param string $resume
      *
@@ -146,7 +148,7 @@ class Tricks
     }
 
     /**
-     * Get resume
+     * Get resume.
      *
      * @return string
      */
@@ -156,9 +158,9 @@ class Tricks
     }
 
     /**
-     * Set published
+     * Set published.
      *
-     * @param boolean $published
+     * @param bool $published
      *
      * @return Tricks
      */
@@ -170,9 +172,9 @@ class Tricks
     }
 
     /**
-     * Get published
+     * Get published.
      *
-     * @return boolean
+     * @return bool
      */
     public function getPublished()
     {
@@ -180,9 +182,9 @@ class Tricks
     }
 
     /**
-     * Set validated
+     * Set validated.
      *
-     * @param boolean $validated
+     * @param bool $validated
      *
      * @return Tricks
      */
@@ -194,9 +196,9 @@ class Tricks
     }
 
     /**
-     * Get validated
+     * Get validated.
      *
-     * @return boolean
+     * @return bool
      */
     public function getValidated()
     {
@@ -204,7 +206,7 @@ class Tricks
     }
 
     /**
-     * Constructor
+     * Constructor.
      */
     public function __construct()
     {
@@ -212,7 +214,7 @@ class Tricks
     }
 
     /**
-     * Add commentary
+     * Add commentary.
      *
      * @param \AppBundle\Entity\Commentary $commentary
      *
@@ -226,7 +228,7 @@ class Tricks
     }
 
     /**
-     * Remove commentary
+     * Remove commentary.
      *
      * @param \AppBundle\Entity\Commentary $commentary
      */
@@ -236,7 +238,7 @@ class Tricks
     }
 
     /**
-     * Get commentary
+     * Get commentary.
      *
      * @return \Doctrine\Common\Collections\Collection
      */
@@ -246,7 +248,7 @@ class Tricks
     }
 
     /**
-     * Set author
+     * Set author.
      *
      * @param \UserBundle\Entity\User $author
      *
@@ -260,7 +262,7 @@ class Tricks
     }
 
     /**
-     * Get author
+     * Get author.
      *
      * @return \UserBundle\Entity\User
      */

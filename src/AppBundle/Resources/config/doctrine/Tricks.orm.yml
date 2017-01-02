@@ -27,6 +27,7 @@ AppBundle\Entity\Tricks:
         commentary:
             targetEntity: AppBundle\Entity\Commentary
             mappedBy: tricks
+            cascade: ['persist', 'remove']
     manyToOne:
         author:
             targetEntity: UserBundle\Entity\User

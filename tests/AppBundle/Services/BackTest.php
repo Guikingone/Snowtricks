@@ -15,7 +15,6 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Doctrine\ORM\EntityManager;
 use AppBundle\Services\Back;
 use AppBundle\Entity\Tricks;
-use AppBundle\Entity\Commentary;
 use UserBundle\Entity\User;
 
 /**
@@ -42,16 +41,16 @@ class BackTest extends KernelTestCase
     {
         // Create a user in order to simulate the authentication process.
         $author = new User();
-        $author->setFirstName('Arnaud');
-        $author->setLastName('Duchemin');
-        $author->setUsername('Duduche');
-        $author->setRoles('ROLE_ADMIN');
+        $author->setFirstname('Arnaud');
+        $author->setLastname('Duchemin');
+        $author->setLastname('Duduche');
+        $author->setRoles(['ROLE_ADMIN']);
 
         $tricks = new Tricks();
         $tricks->setName('Backflip');
         $tricks->setAuthor($author);
-        $tricks->setCreationDate('26/12/2016');
-        $tricks->setGroup('Flip');
+        $tricks->setCreationDate(new \DateTime());
+        $tricks->setGroups('Flip');
         $tricks->setResume('A simple backflip content ...');
 
         self::bootKernel();
@@ -86,8 +85,8 @@ class BackTest extends KernelTestCase
             );
 
             // Store the return to test the value passed through an array.
-            $commentaries = $this->back->getCommentariesBytricks('Backflip');
-            $this->assertArrayHasKey(
+            $commentaries = $this->back->getCommentariesByTricks('Backflip');
+            $this->assertContains(
                 'Backflip',
                 $commentaries->getTricks()
             );
@@ -141,7 +140,7 @@ class BackTest extends KernelTestCase
     {
         if (is_object($this->back) && $this->back instanceof Back) {
             // Store the result to test the class.
-            $this->back->deleteCommentary('Backflip');
+            $this->back->deleteCommentaries('Backflip');
             // Find a single commentary using tricks name and commentary id.
             $this->assertNull($this->back->getCommentariesByTricks('Backflip'));
         }

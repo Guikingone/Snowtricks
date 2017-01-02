@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use AppBundle\Entity\Tricks;
 
 /**
- * User
+ * User.
  */
 class User
 {
@@ -46,6 +46,11 @@ class User
     private $password;
 
     /**
+     * @var string
+     */
+    private $email;
+
+    /**
      * @var array
      */
     private $roles;
@@ -69,9 +74,8 @@ class User
 
     private $tricks;
 
-
     /**
-     * Get id
+     * Get id.
      *
      * @return int
      */
@@ -81,7 +85,7 @@ class User
     }
 
     /**
-     * Set firstname
+     * Set firstname.
      *
      * @param string $firstname
      *
@@ -95,7 +99,7 @@ class User
     }
 
     /**
-     * Get firstname
+     * Get firstname.
      *
      * @return string
      */
@@ -105,7 +109,7 @@ class User
     }
 
     /**
-     * Set lastname
+     * Set lastname.
      *
      * @param string $lastname
      *
@@ -119,7 +123,7 @@ class User
     }
 
     /**
-     * Get lastname
+     * Get lastname.
      *
      * @return string
      */
@@ -129,7 +133,7 @@ class User
     }
 
     /**
-     * Set birthdate
+     * Set birthdate.
      *
      * @param \DateTime $birthdate
      *
@@ -143,7 +147,7 @@ class User
     }
 
     /**
-     * Get birthdate
+     * Get birthdate.
      *
      * @return \DateTime
      */
@@ -153,7 +157,7 @@ class User
     }
 
     /**
-     * Set occupation
+     * Set occupation.
      *
      * @param string $occupation
      *
@@ -167,7 +171,7 @@ class User
     }
 
     /**
-     * Get occupation
+     * Get occupation.
      *
      * @return string
      */
@@ -177,7 +181,7 @@ class User
     }
 
     /**
-     * Set username
+     * Set username.
      *
      * @param string $username
      *
@@ -191,7 +195,7 @@ class User
     }
 
     /**
-     * Get username
+     * Get username.
      *
      * @return string
      */
@@ -201,7 +205,7 @@ class User
     }
 
     /**
-     * Set password
+     * Set password.
      *
      * @param string $password
      *
@@ -215,7 +219,7 @@ class User
     }
 
     /**
-     * Get password
+     * Get password.
      *
      * @return string
      */
@@ -225,7 +229,31 @@ class User
     }
 
     /**
-     * Set roles
+     * Set email.
+     *
+     * @param string $email
+     *
+     * @return User
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * Get email.
+     *
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Set roles.
      *
      * @param array $roles
      *
@@ -239,7 +267,7 @@ class User
     }
 
     /**
-     * Get roles
+     * Get roles.
      *
      * @return array
      */
@@ -249,7 +277,7 @@ class User
     }
 
     /**
-     * Set token
+     * Set token.
      *
      * @param string $token
      *
@@ -263,7 +291,7 @@ class User
     }
 
     /**
-     * Get token
+     * Get token.
      *
      * @return string
      */
@@ -273,9 +301,9 @@ class User
     }
 
     /**
-     * Set validated
+     * Set validated.
      *
-     * @param boolean $validated
+     * @param bool $validated
      *
      * @return User
      */
@@ -287,7 +315,7 @@ class User
     }
 
     /**
-     * Get validated
+     * Get validated.
      *
      * @return bool
      */
@@ -297,9 +325,9 @@ class User
     }
 
     /**
-     * Set locked
+     * Set locked.
      *
-     * @param boolean $locked
+     * @param bool $locked
      *
      * @return User
      */
@@ -311,7 +339,7 @@ class User
     }
 
     /**
-     * Get locked
+     * Get locked.
      *
      * @return bool
      */
@@ -321,7 +349,7 @@ class User
     }
 
     /**
-     * Constructor
+     * Constructor.
      */
     public function __construct()
     {
@@ -329,7 +357,7 @@ class User
     }
 
     /**
-     * Add trick
+     * Add trick.
      *
      * @param \AppBundle\Entity\Tricks $trick
      *
@@ -343,7 +371,7 @@ class User
     }
 
     /**
-     * Remove trick
+     * Remove trick.
      *
      * @param \AppBundle\Entity\Tricks $trick
      */
@@ -353,7 +381,7 @@ class User
     }
 
     /**
-     * Get tricks
+     * Get tricks.
      *
      * @return \Doctrine\Common\Collections\Collection
      */
@@ -363,7 +391,7 @@ class User
     }
 
     /**
-     * Add commentary
+     * Add commentary.
      *
      * @param \AppBundle\Entity\Commentary $commentary
      *
@@ -377,7 +405,7 @@ class User
     }
 
     /**
-     * Remove commentary
+     * Remove commentary.
      *
      * @param \AppBundle\Entity\Commentary $commentary
      */
@@ -387,7 +415,7 @@ class User
     }
 
     /**
-     * Get commentary
+     * Get commentary.
      *
      * @return \Doctrine\Common\Collections\Collection
      */

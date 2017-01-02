@@ -33,6 +33,7 @@ class UserTest extends TestCase
         $user->setOccupation('Professional snowboarder');
         $user->setUsername('Nono');
         $user->setPassword('Lk__DTHE');
+        $user->setEmail('contact@snowtricks.fr');
         $user->setRoles(['ROLE_ADMIN']);
         $user->setToken('dd21498e61e26a5a42d3g9r4z2a364f2s3a2');
         $user->setValidated(true);
@@ -44,6 +45,7 @@ class UserTest extends TestCase
         $this->assertEquals('Professional snowboarder', $user->getOccupation());
         $this->assertEquals('Nono', $user->getUsername());
         $this->assertEquals('Lk__DTHE', $user->getPassword());
+        $this->assertEquals('contact@snowtricks.fr', $user->getEmail());
         $this->assertContains('ROLE_ADMIN', $user->getRoles());
         $this->assertEquals('dd21498e61e26a5a42d3g9r4z2a364f2s3a2', $user->getToken());
         $this->assertTrue($user->getValidated());

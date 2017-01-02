@@ -26,6 +26,9 @@ UserBundle\Entity\User:
         password:
             type: string
             length: '100'
+        email:
+            type: string
+            length: 100
         roles:
             type: array
         token:
