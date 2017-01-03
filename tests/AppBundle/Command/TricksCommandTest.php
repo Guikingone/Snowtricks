@@ -11,10 +11,10 @@
 
 namespace tests\AppBundle\Command;
 
-use Doctrine\ORM\EntityManager;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Console\Tester\CommandTester;
+use Doctrine\ORM\EntityManager;
 
 /**
  * Class TricksCommandTest.
@@ -29,25 +29,6 @@ class TricksCommandTest extends KernelTestCase
     private $doctrine;
 
     /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
-    {
-        $kernel = self::bootKernel();
-        // Instantiate Doctrine for BDD queries after command.
-        $this->doctrine = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
-
-        $application = new Application($kernel);
-
-        $application->setAutoExit(false);
-        $input = new ArrayInput([
-            'command' => 'appbundle:tricks',
-        ]);
-
-        $application->run($input);
-    }
-
-    /**
      * Test if the different tricks are hydrated.
      */
     public function testTricksIsHydrated()
@@ -55,12 +36,18 @@ class TricksCommandTest extends KernelTestCase
         $kernel = self::bootKernel();
         $application = new Application($kernel);
 
-        $application->setAutoExit(false);
-        $input = new ArrayInput([
-            'command' => 'appbundle:tricks:hydrate',
-        ]);
+        // Instantiate Doctrine for BDD queries after command.
+        $this->doctrine = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
 
-        $application->run($input);
+        $command = $application->find('appbundle:tricks:hydrate');
+        if ($command) {
+            $commandTester = new CommandTester($command);
+            $commandTester->execute([
+                'command' => $command->getName()
+            ]);
+        }
+
+        $commandTester->getDisplay();
 
         $tricks = $this->doctrine->getRepository('AppBundle:Tricks')->findAll();
 

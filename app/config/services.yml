@@ -2,6 +2,15 @@ parameters:
 #    parameter_name: value
 
 services:
+    # Command manager
+    app.manager:
+        class: AppBundle\Services\FileManager
+        arguments:
+           - '%kernel.root_dir%'
+           - '@doctrine.orm.entity_manager'
+        tags:
+            - { name: kernel.event_listener, event: file.updated, method: checkCache }
+
     # Main service
     app.back:
         class: AppBundle\Services\Back
@@ -27,6 +36,12 @@ services:
             - { name: doctrine.event_listener, event: postPersist }
             - { name: kernel.event_listener, event: tricks.validated, method: onValidateTricks }
             - { name: kernel.event_listener, event: tricks.refused, method: onRefusetricks }
+
+    # Tricks command
+    app.command.tricks:
+        class: AppBundle\Command\LoadTricksCommand
+        tags:
+           - { name: console.command }
 
     # User service
     user.security:

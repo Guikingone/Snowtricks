@@ -12,8 +12,6 @@ tricks_details:
     path:     /tricks/{name}
     methods: ['GET', 'POST']
     defaults: { _controller: AppBundle:Home:tricksDetails }
-    requirements: name
-        condition: s+
 
 community:
     path:     /community
@@ -42,3 +40,6 @@ forgot_password:
     path:    /password/forgot
     methods: 'POST'
     defaults: { _controller: UserBundle:Security:password }
+
+logout:
+    path:    /logout

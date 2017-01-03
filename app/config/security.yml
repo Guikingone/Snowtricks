@@ -9,21 +9,25 @@ security:
         in_memory:
             memory: ~
 
+    role_hierarchy:
+        ROLE_SUPERADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+        ROLE_ADMIN: ROLE_USER
+
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-
+        # Main firewall used for back usage.
         main:
             anonymous: ~
             provider: user
-            secured_area:
-                form_login:
-                    login_path: login
-                    check_path: login
-                    crsf_token_generator: security.crsf.token_manager
-
+            form_login:
+               login_path: login
+               check_path: login
+            logout:
+               path:    /logout
+               target:  /
 
     access_control:
        - { path: ^/admin, roles: ROLE_ADMIN }
