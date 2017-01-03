@@ -18,6 +18,12 @@ security:
         main:
             anonymous: ~
             provider: user
+            secured_area:
+                form_login:
+                    login_path: login
+                    check_path: login
+                    crsf_token_generator: security.crsf.token_manager
+
 
     access_control:
        - { path: ^/admin, roles: ROLE_ADMIN }

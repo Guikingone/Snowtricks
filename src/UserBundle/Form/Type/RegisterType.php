@@ -13,7 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use UserBundle\Entity\User;
 
 /**
- * Class RegisterType
+ * Class RegisterType.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
@@ -21,7 +21,7 @@ class RegisterType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -31,7 +31,7 @@ class RegisterType extends AbstractType
             ->add('password', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'first_options' => ['label' => 'Mot de passe'],
-                'second_options' => ['label' => 'Veuillez répéter le mot de passe']
+                'second_options' => ['label' => 'Veuillez répéter le mot de passe'],
             ])
         ;
     }
@@ -44,7 +44,7 @@ class RegisterType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => User::class
+            'data_class' => User::class,
         ]);
     }
 

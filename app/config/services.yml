@@ -12,16 +12,6 @@ services:
             - '@event_dispatcher'
             - '@workflow.tricks_process'
 
-    user.security:
-        class: UserBundle\Services\Security
-        arguments:
-           - '@doctrine.orm.entity_manager'
-           - '@form.factory'
-           - '@security.authorization_checker'
-           - '@security.password_encoder'
-           - '@security.token_storage'
-           - '@event_dispatcher'
-
     # Tricks listeners.
     app.trick_listener:
         class: AppBundle\Listeners\TricksListeners
@@ -37,3 +27,30 @@ services:
             - { name: doctrine.event_listener, event: postPersist }
             - { name: kernel.event_listener, event: tricks.validated, method: onValidateTricks }
             - { name: kernel.event_listener, event: tricks.refused, method: onRefusetricks }
+
+    # User service
+    user.security:
+        class: UserBundle\Services\Security
+        arguments:
+           - '@doctrine.orm.entity_manager'
+           - '@form.factory'
+           - '@security.authorization_checker'
+           - '@security.authentication_utils'
+           - '@security.password_encoder'
+           - '@security.token_storage'
+           - '@event_dispatcher'
+           - '@request_stack'
+           - '@workflow.user_process'
+
+    # user form listeners.
+    app.user_listener:
+        class: UserBundle\Listeners\RegisterListeners
+        arguments:
+            - '@security.password_encoder'
+            - '@session'
+            - '@templating'
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: postPersist }
+            - { name: kernel.event_listener, event: user.validated, method: onValidatedUser }
+
