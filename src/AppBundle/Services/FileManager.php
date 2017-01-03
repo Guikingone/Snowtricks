@@ -29,13 +29,11 @@ class FileManager
     // Store the kernel.root.dir
     private $rootDir;
 
-    /**
-     * @var EntityManager
-     */
-    private $doctrine;
-
     // Store the cache.
     protected $cache;
+
+    // Store the path of files.
+    private $paths;
 
     /**
      * @var array
@@ -52,6 +50,7 @@ class FileManager
     {
         $this->rootDir = $rootDir;
         $this->doctrine = $doctrine;
+        $this->paths = $this->rootDir . '/files';
     }
 
     /**
@@ -63,9 +62,8 @@ class FileManager
      */
     public function loadTricks()
     {
-        $config = $this->rootDir . '/files';
-        $this->cache = new ConfigCache($config, false);
-        $locator = new FileLocator($config);
+        $this->cache = new ConfigCache($this->paths, false);
+        $locator = new FileLocator($this->paths);
 
         if ($this->cache->isFresh()) {
             $file = $locator->locate('tricks.yml', null, false);
@@ -76,7 +74,6 @@ class FileManager
                         $this->rootDir . '/files/tricks.yml'
                     )
                 );
-
                 // Create a new Tricks to save the entries.
                 $trick = new Tricks();
                 foreach ($values['tricks'] as $value) {

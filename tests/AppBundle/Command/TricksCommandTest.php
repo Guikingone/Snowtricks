@@ -33,8 +33,8 @@ class TricksCommandTest extends KernelTestCase
      */
     public function testTricksIsHydrated()
     {
-        $kernel = self::bootKernel();
-        $application = new Application($kernel);
+        self::bootKernel();
+        $application = new Application(self::$kernel);
 
         // Instantiate Doctrine for BDD queries after command.
         $this->doctrine = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');

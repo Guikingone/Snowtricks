@@ -53,7 +53,6 @@ class LoadTricksCommand extends ContainerAwareCommand
                 '=========================================================================================',
                 '',
             ]);
-
         $this->getContainer()->get('app.manager')->loadTricks();
     }
 }
