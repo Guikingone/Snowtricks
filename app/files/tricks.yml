@@ -1,9 +1,7 @@
-tricks:
-    name: Backflip
-    groups:
-    resume:
+"Backflip":
+    groups: flip
+    resume: A simple trick
 
-tricks:
-    name: Backflip
-    groups:
-    resume:
+"Frontflip":
+    groups: flip
+    resume: A second trick !

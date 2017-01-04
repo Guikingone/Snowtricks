@@ -2,7 +2,7 @@ parameters:
 #    parameter_name: value
 
 services:
-    # Command manager
+    # File manager
     app.manager:
         class: AppBundle\Services\FileManager
         arguments:
@@ -37,11 +37,19 @@ services:
             - { name: kernel.event_listener, event: tricks.validated, method: onValidateTricks }
             - { name: kernel.event_listener, event: tricks.refused, method: onRefusetricks }
 
-    # Tricks command
-    app.command.tricks:
+    # Tricks hydrate command
+    app.command.tricks_hydrate:
         class: AppBundle\Command\LoadTricksCommand
+        arguments:
+            - '%kernel.root_dir%'
         tags:
            - { name: console.command }
+
+    # Tricks update command
+    app.command.tricks_update:
+        class: AppBundle\Command\CheckTricksCommand
+        tags:
+            - { name: console.command }
 
     # User service
     user.security:

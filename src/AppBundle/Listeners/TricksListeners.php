@@ -108,12 +108,7 @@ class TricksListeners
         $entity = $args->getObject();
 
         if (!$entity instanceof Tricks || !$entity instanceof Commentary) {
-            throw new \LogicException(
-                sprintf(
-                    'The entity submitted MUST be a instance of Tricks or Commentary, 
-                    given "%s"', get_class($entity)
-                )
-            );
+            return;
         }
 
         if ($entity instanceof Tricks && $this->security->isGranted('ROLE_ADMIN')) {
@@ -176,12 +171,7 @@ class TricksListeners
         $entity = $args->getObject();
 
         if (!$entity instanceof Tricks) {
-            throw new \LogicException(
-                sprintf(
-                    'The entity submitted MUST be of type Tricks, 
-                    given "%s"', get_class($entity)
-                )
-            );
+            return;
         }
 
         if ($entity->getPublished() && $entity->getValidated() === true) {

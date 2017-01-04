@@ -62,17 +62,12 @@ class RegisterListeners
      *
      * @throws \LogicException
      */
-    public function onPrePersist(LifecycleEventArgs $args)
+    public function prePersist(LifecycleEventArgs $args)
     {
         $entity = $args->getObject();
 
         if (!$entity instanceof User) {
-            throw new \LogicException(
-                sprintf(
-                    'The entity MUST be a instance of User, 
-                    given "%s"', get_class($entity)
-                )
-            );
+            return;
         }
 
         $password = $this->encoder->encodePassword($entity, $entity->getPassword());
@@ -86,17 +81,12 @@ class RegisterListeners
      * @throws \RuntimeException
      * @throws \Twig_Error
      */
-    public function onPostPersist(LifecycleEventArgs $args)
+    public function postPersist(LifecycleEventArgs $args)
     {
         $entity = $args->getObject();
 
         if (!$entity instanceof User) {
-            throw new \LogicException(
-                sprintf(
-                    'The entity MUST be a instance of User, 
-                    given "%s"', get_class($entity)
-                )
-            );
+            return;
         }
 
         $token = random_int(0, 2942954362);

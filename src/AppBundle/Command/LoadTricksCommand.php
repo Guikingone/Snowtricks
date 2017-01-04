@@ -11,6 +11,7 @@
 
 namespace AppBundle\Command;
 
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
@@ -43,6 +44,8 @@ class LoadTricksCommand extends ContainerAwareCommand
      * @throws \LogicException
      * @throws ParseException
      * @throws ORMInvalidArgumentException
+     * @throws \InvalidArgumentException
+     * @throws OptimisticLockException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

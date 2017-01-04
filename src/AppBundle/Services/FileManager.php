@@ -13,6 +13,7 @@ namespace AppBundle\Services;
 
 use AppBundle\Entity\Tricks;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\ConfigCache;
@@ -20,7 +21,7 @@ use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Class FileManager
+ * Class FileManager.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
@@ -38,81 +39,88 @@ class FileManager
     /**
      * @var array
      */
-    private $tricks;
+    private $tricks = [];
 
     /**
      * Manager constructor.
      *
-     * @param             $rootDir
-     * @param EntityManager     $doctrine
+     * @param               $rootDir
+     * @param EntityManager $doctrine
      */
     public function __construct($rootDir, EntityManager $doctrine)
     {
         $this->rootDir = $rootDir;
         $this->doctrine = $doctrine;
-        $this->paths = $this->rootDir . '/files';
     }
 
     /**
      * Allow to build the cache for files used.
      *
+     * @throws \InvalidArgumentException
      * @throws ParseException
      * @throws \LogicException
      * @throws ORMInvalidArgumentException
+     * @throws OptimisticLockException
      */
     public function loadTricks()
     {
-        $this->cache = new ConfigCache($this->paths, false);
-        $locator = new FileLocator($this->paths);
+        try {
+            // Store the files path into the class.
+            $this->paths = $this->rootDir.'/files';
+            $locator = new FileLocator($this->paths);
 
-        if ($this->cache->isFresh()) {
-            $file = $locator->locate('tricks.yml', null, false);
-            if ($file) {
+            // Find the file and save him into the cache.
+            $file = $locator->locate('tricks.yml', null, true);
+            $this->cache = new ConfigCache($file, true);
+
+            if ($file && $this->cache->isFresh()) {
                 // Grab the data's passed through the file.
                 $values = Yaml::parse(
                     file_get_contents(
-                        $this->rootDir . '/files/tricks.yml'
+                        $this->cache->getPath()
                     )
                 );
-                // Create a new Tricks to save the entries.
+                // Instantiate the entity in order to save memory into the loop.
                 $trick = new Tricks();
-                foreach ($values['tricks'] as $value) {
+                foreach ($values as $value => $item) {
+                    // Clone the entity to respect the loop.
                     $tricks = clone $trick;
-                    $tricks->setName($value['tricks']['name']);
+                    $tricks->setName($value);
                     $tricks->setCreationDate(new \DateTime());
-                    $tricks->setGroups($value['tricks']['groups']);
-                    $tricks->setResume($value['tricks']['resume']);
+                    $tricks->setGroups($item['groups']);
+                    $tricks->setResume($item['resume']);
                     $tricks->setValidated(true);
                     $tricks->setPublished(true);
 
-                    // Store the result in order to persist.
-                    $this->tricks[$tricks->getName()][$tricks];
+                    // Store in array for future check.
+                    $this->tricks[$tricks->getName()] = $tricks;
                 }
 
                 foreach ($this->tricks as $trick) {
-                    if (!$trick instanceof Tricks) {
-                        throw new \LogicException(
-                            sprintf(
-                                'The entity MUST be a instance of Tricks !
-                                Given "%s"', get_class($trick)
-                            )
-                        );
-                    }
-
                     $this->doctrine->persist($trick);
                 }
+
+                $this->doctrine->flush();
+            } else {
+                throw new \LogicException(
+                    sprintf(
+                        'The cache MUST be fresh during the loading phase !'
+                    )
+                );
             }
+        } catch (\InvalidArgumentException $exception) {
+            $exception->getMessage();
         }
     }
 
     /**
      * Check if the cache is fresh, in other case,
      * the listener linked to the Event check the file and update the BDD.
+     *
+     * @throws \LogicException
      */
     public function checkCache()
     {
-        if (!$this->cache->isFresh()) {
 
-        }
     }
 }
