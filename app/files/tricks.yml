@@ -1,7 +1,7 @@
 "Backflip":
     groups: flip
-    resume: A simple trick
+    resume: A simple tricks
 
-"Frontflip":
+"FrontFlip":
     groups: flip
-    resume: A second trick !
+    resume: A simple second tricks !

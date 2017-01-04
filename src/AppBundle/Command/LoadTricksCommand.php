@@ -15,6 +15,8 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
+use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Exception\ParseException;
@@ -33,6 +35,7 @@ class LoadTricksCommand extends ContainerAwareCommand
     {
         $this
             ->setName('appbundle:tricks:hydrate')
+            ->addArgument('version', InputArgument::REQUIRED, 'The version of the hydratation')
             ->setDescription('Load the tricks')
             ->setHelp('Allow to load the tricks in BDD by parsing .yml file')
         ;
@@ -41,6 +44,7 @@ class LoadTricksCommand extends ContainerAwareCommand
     /**
      * {@inheritdoc}
      *
+     * @throws InvalidArgumentException
      * @throws \LogicException
      * @throws ParseException
      * @throws ORMInvalidArgumentException
@@ -56,6 +60,14 @@ class LoadTricksCommand extends ContainerAwareCommand
                 '=========================================================================================',
                 '',
             ]);
-        $this->getContainer()->get('app.manager')->loadTricks();
+        if ($input->getArgument('version') === 'cache') {
+            $progress = new ProgressBar($output, 200);
+            $progress->start();
+            $this->getContainer()->get('app.manager')->loadTricksWithCache($progress);
+        } elseif ($input->getArgument('version') === 'nocache') {
+            $progress = new ProgressBar($output, 100);
+            $progress->start();
+            $this->getContainer()->get('app.manager')->loadTricksWithoutCache($progress);
+        }
     }
 }
