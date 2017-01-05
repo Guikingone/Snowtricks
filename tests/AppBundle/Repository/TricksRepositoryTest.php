@@ -13,6 +13,8 @@ namespace tests\AppBundle\Repository;
 
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Doctrine\ORM\EntityManager;
+
+// Entity
 use AppBundle\Entity\Tricks;
 use UserBundle\Entity\User;
 
@@ -38,11 +40,11 @@ class TricksRepositoryTest extends KernelTestCase
         $author->setLastname('Loulier');
         $author->setFirstname('Guillaume');
         $author->setUsername('Guikingone');
-        $author->setRoles('ROLE_ADMIN');
+        $author->setRoles(['ROLE_ADMIN']);
 
         $tricks = new Tricks();
         $tricks->setName('Backflip');
-        $tricks->setCreationDate('26/12/2016');
+        $tricks->setCreationDate(new \DateTime());
         $tricks->setAuthor($author);
         $tricks->setGroups('Flip');
         $tricks->setResume('A simple backflip content ...');
@@ -66,8 +68,8 @@ class TricksRepositoryTest extends KernelTestCase
         if (is_object($tricks)) {
             $this->assertEquals('Backflip', $tricks->getName());
             $this->assertEquals('26/12/2016', $tricks->getCreationDate());
-            $this->assertEquals('Guik', $tricks->getAuthor());
-            $this->assertArrayHasKey('Flip', $tricks->getGroups());
+            $this->assertEquals('Guillaume', $tricks->getAuthor()->getFirstname());
+            $this->assertContains('Flip', $tricks->getGroups());
             $this->assertEquals('A simple backflip content ...', $tricks->getResume());
             $this->assertEquals(true, $tricks->getPublished());
             $this->assertEquals(true, $tricks->getValidated());
@@ -99,7 +101,7 @@ class TricksRepositoryTest extends KernelTestCase
         $author->setLastname('Loulier');
         $author->setFirstname('Guillaume');
         $author->setUsername('Guikingone');
-        $author->setRoles('ROLE_ADMIN');
+        $author->setRoles(['ROLE_ADMIN']);
 
         $tricks = $this->doctrine->getRepository('AppBundle:Tricks')
                                  ->findOneBy(['author' => $author]);

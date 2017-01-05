@@ -1,6 +1,6 @@
 home:
     path:    /
-    methods: 'POST'
+    methods: 'GET'
     defaults: { _controller: AppBundle:Home:index }
 
 tricks:

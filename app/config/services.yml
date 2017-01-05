@@ -8,8 +8,14 @@ services:
         arguments:
            - '%kernel.root_dir%'
            - '@doctrine.orm.entity_manager'
+
+    # Tricks hydrate command
+    app.command.tricks_hydrate:
+        class: AppBundle\Command\LoadTricksCommand
+        arguments:
+            - '%kernel.root_dir%'
         tags:
-            - { name: kernel.event_listener, event: file.updated, method: checkCache }
+           - { name: console.command }
 
     # Main service
     app.back:
@@ -36,20 +42,6 @@ services:
             - { name: doctrine.event_listener, event: postPersist }
             - { name: kernel.event_listener, event: tricks.validated, method: onValidateTricks }
             - { name: kernel.event_listener, event: tricks.refused, method: onRefusetricks }
-
-    # Tricks hydrate command
-    app.command.tricks_hydrate:
-        class: AppBundle\Command\LoadTricksCommand
-        arguments:
-            - '%kernel.root_dir%'
-        tags:
-           - { name: console.command }
-
-    # Tricks update command
-    app.command.tricks_update:
-        class: AppBundle\Command\CheckTricksCommand
-        tags:
-            - { name: console.command }
 
     # User service
     user.security:
