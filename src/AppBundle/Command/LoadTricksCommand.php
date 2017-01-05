@@ -61,13 +61,39 @@ class LoadTricksCommand extends ContainerAwareCommand
                 '',
             ]);
         if ($input->getArgument('version') === 'cache') {
-            $progress = new ProgressBar($output, 200);
+            $progress = new ProgressBar($output, 50);
+            $progress->setFormat('verbose');
             $progress->start();
-            $this->getContainer()->get('app.manager')->loadTricksWithCache($progress);
+            $progress->advance(25);
+            // Cal the FileManager service with the cache.
+            $this->getContainer()->get('app.manager')->loadTricksWithCache();
+            $progress->advance(25);
+            $progress->finish();
+            $output
+                ->writeln([
+                    '',
+                    '',
+                    '<info>Hydratation finished with the cache, let\'s get to work !.</info>',
+                    '=========================================================================================',
+                    '',
+                ]);
         } elseif ($input->getArgument('version') === 'nocache') {
-            $progress = new ProgressBar($output, 100);
+            $progress = new ProgressBar($output, 40);
+            $progress->setFormat('verbose');
             $progress->start();
-            $this->getContainer()->get('app.manager')->loadTricksWithoutCache($progress);
+            $progress->advance(20);
+            // Cal the FileManager service without the cache.
+            $this->getContainer()->get('app.manager')->loadTricksWithoutCache();
+            $progress->advance(20);
+            $progress->finish();
+            $output
+                ->writeln([
+                    '',
+                    '',
+                    '<info>Hydratation finished without the cache, let\'s get to work !.</info>',
+                    '=========================================================================================',
+                    '',
+                ]);
         }
     }
 }

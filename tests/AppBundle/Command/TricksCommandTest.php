@@ -14,7 +14,6 @@ namespace tests\AppBundle\Command;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
-use Doctrine\ORM\EntityManager;
 
 /**
  * Class TricksCommandTest.
@@ -24,46 +23,42 @@ use Doctrine\ORM\EntityManager;
 class TricksCommandTest extends KernelTestCase
 {
     /**
-     * @var EntityManager
+     * Test if the different tricks are hydrated.
      */
-    private $doctrine;
+    public function testTricksAreHydratedWithCache()
+    {
+        $kernel = static::createKernel();
+        $kernel->boot();
+        $application = new Application($kernel);
+
+        $command = $application->find('appbundle:tricks:hydrate');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'version' => 'cache',
+        ]);
+
+        $output = $commandTester->getDisplay();
+        $this->assertContains('cache', $output);
+    }
 
     /**
      * Test if the different tricks are hydrated.
      */
-    public function testTricksIsHydrated()
+    public function testTricksAreHydratedWithoutCache()
     {
-        self::bootKernel();
-        $application = new Application(self::$kernel);
-
-        // Instantiate Doctrine for BDD queries after command.
-        $this->doctrine = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
+        $kernel = static::createKernel();
+        $kernel->boot();
+        $application = new Application($kernel);
 
         $command = $application->find('appbundle:tricks:hydrate');
-        if ($command) {
-            $commandTester = new CommandTester($command);
-            $commandTester->execute([
-                'command' => $command->getName()
-            ]);
-        }
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'version' => 'nocache',
+        ]);
 
-        $commandTester->getDisplay();
-
-        $tricks = $this->doctrine->getRepository('AppBundle:Tricks')->findAll();
-
-        if (is_array($tricks)) {
-            $this->assertArrayHasKey('Flip', $tricks->getGroups());
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        parent::tearDown();
-
-        $this->doctrine->close();
-        $this->doctrine = null;
+        $output = $commandTester->getDisplay();
+        $this->assertContains('nocache', $output);
     }
 }

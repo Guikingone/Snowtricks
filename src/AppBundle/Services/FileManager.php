@@ -11,15 +11,19 @@
 
 namespace AppBundle\Services;
 
-use AppBundle\Entity\Tricks;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMInvalidArgumentException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\ConfigCache;
-use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Yaml\Exception\ParseException;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Yaml;
+
+// Entity
+use AppBundle\Entity\Tricks;
+
+// Exceptions
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMInvalidArgumentException;
+use Symfony\Component\Yaml\Exception\ParseException;
 
 /**
  * Class FileManager.
@@ -59,90 +63,110 @@ class FileManager
      * inside the class, every key is passed into a Entity and store into
      * an array and the BDD.
      *
-     * @param ProgressBar $progressBar      To set the advancement of the task.
-     *
      * @throws \InvalidArgumentException
      * @throws ParseException
      * @throws \LogicException
      * @throws ORMInvalidArgumentException
      * @throws OptimisticLockException
      */
-    public function loadTricksWithCache(ProgressBar $progressBar)
+    public function loadTricksWithCache()
     {
-        // Only used for the progressbar.
-        $i = 0;
-        while ($i < 200) {
-            try {
-                $progressBar->advance(30);
-                // Store the files path into the class.
-                $this->paths = $this->rootDir . '/files';
-                $locator = new FileLocator($this->paths);
+        try {
+            // Store the files path into the class.
+            $this->paths = $this->rootDir.'/files';
+            $locator = new FileLocator($this->paths);
 
-                // Find the file and save him into the cache.
-                $file = $locator->locate('tricks.yml', null, true);
-                $this->cache = new ConfigCache($file, true);
+            // Find the file and save him into the cache.
+            $file = $locator->locate('tricks.yml', null, true);
+            $this->cache = new ConfigCache($file, true);
 
-                $progressBar->advance(70);
-                if ($file && $this->cache->isFresh()) {
-                    // Grab the data's passed through the file.
-                    $values = Yaml::parse(
-                        file_get_contents(
-                        // Return the file using the cache path.
+            if ($file && $this->cache->isFresh()) {
+                // Grab the data's passed through the file.
+                $values = Yaml::parse(
+                    file_get_contents(
+                    // Return the file using the cache path.
                             $this->cache->getPath()
-                        )
-                    );
-                    // Instantiate the entity in order to save memory into the loop.
-                    $trick = new Tricks();
-                    $progressBar->advance(30);
-                    foreach ($values as $value => $item) {
-                        // Clone the entity to respect the loop.
-                        $tricks = clone $trick;
-                        $tricks->setName($value);
-                        $tricks->setCreationDate(new \DateTime());
-                        $tricks->setGroups($item['groups']);
-                        $tricks->setResume($item['resume']);
-                        $tricks->setValidated(true);
-                        $tricks->setPublished(true);
+                    )
+                );
+                // Instantiate the entity in order to save memory into the loop.
+                $trick = new Tricks();
+                foreach ($values as $value => $item) {
+                    // Clone the entity to respect the loop.
+                    $tricks = clone $trick;
+                    $tricks->setName($value);
+                    $tricks->setCreationDate(new \DateTime());
+                    $tricks->setGroups($item['groups']);
+                    $tricks->setResume($item['resume']);
+                    $tricks->setValidated(true);
+                    $tricks->setPublished(true);
 
-                        // Store in array for future check.
-                        $this->tricks[$tricks->getName()] = $tricks;
-                    }
-                    $progressBar->advance(40);
+                    // Store in array for future check.
+                    $this->tricks[$tricks->getName()] = $tricks;
+                }
 
-                    foreach ($this->tricks as $trick) {
-                        $this->doctrine->persist($trick);
-                    }
-                    $progressBar->advance(20);
-
-                    $this->doctrine->flush();
-                    $progressBar->finish();
-                } else {
-                    throw new \LogicException(
+                foreach ($this->tricks as $trick) {
+                    $this->doctrine->persist($trick);
+                }
+            } else {
+                throw new \LogicException(
                         sprintf(
                             'The cache MUST be fresh during the loading phase !'
                         )
                     );
-                }
-            } catch (\InvalidArgumentException $exception) {
-                $exception->getMessage();
+            }
+        } catch (\InvalidArgumentException $exception) {
+            $exception->getMessage();
+        }
+
+        // Flush the entire array of entities.
+        $this->doctrine->flush();
+    }
+
+    /**
+     * Allow to find the files used for hydrating the BDD before production,
+     * the file is parsed with Yaml component and every entity
+     * are stored into the class for future check.
+     *
+     * @throws \InvalidArgumentException
+     * @throws ParseException
+     * @throws ORMInvalidArgumentException
+     * @throws OptimisticLockException
+     */
+    public function loadTricksWithoutCache()
+    {
+        // Store the files path into the class.
+        $this->paths = $this->rootDir.'/files';
+        $finder = new Finder();
+        $finder->files()->in($this->paths);
+
+        // Instantiate the entity in order to save memory into the loop.
+        $trick = new Tricks();
+        foreach ($finder as $file) {
+            $value = Yaml::parse(
+                file_get_contents(
+                    $file
+                )
+            );
+            foreach ($value as $values => $item) {
+                // Clone the entity to respect the loop.
+                $tricks = clone $trick;
+                $tricks->setName($values);
+                $tricks->setCreationDate(new \DateTime());
+                $tricks->setGroups($item['groups']);
+                $tricks->setResume($item['resume']);
+                $tricks->setValidated(true);
+                $tricks->setPublished(true);
+
+                // Store in array for future check.
+                $this->tricks[$tricks->getName()] = $tricks;
+            }
+
+            foreach ($this->tricks as $trick) {
+                $this->doctrine->persist($trick);
             }
         }
-    }
 
-    /**
-     * @param ProgressBar $progressBar
-     */
-    public function loadTricksWithoutCache(ProgressBar $progressBar)
-    {
-
-    }
-
-    /**
-     * Check if the cache is fresh, in other case,
-     * the listener linked to the Event check the file and update the BDD.
-     */
-    public function checkCache()
-    {
-
+        // Flush the entity array outside of the loop.
+        $this->doctrine->flush();
     }
 }

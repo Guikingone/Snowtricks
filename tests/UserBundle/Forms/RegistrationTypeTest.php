@@ -13,7 +13,6 @@ namespace tests\UserBundle\Forms;
 
 use Symfony\Component\Form\Test\TypeTestCase;
 use UserBundle\Form\Type\RegisterType;
-use UserBundle\Form\Type\RegistrationType;
 use UserBundle\Entity\User;
 
 /**
