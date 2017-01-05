@@ -21,12 +21,12 @@ use AppBundle\Form\Type\UpdateTricksType;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMInvalidArgumentException;
+use Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpKernel\Debug\TraceableEventDispatcher;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Workflow;
@@ -54,7 +54,7 @@ class Back
     private $session;
 
     /**
-     * @var TraceableEventDispatcher
+     * @var ContainerAwareEventDispatcher
      */
     private $eventDispatcher;
 
@@ -69,14 +69,14 @@ class Back
      * @param EntityManager            $doctrine
      * @param FormFactory              $form
      * @param Session                  $session
-     * @param TraceableEventDispatcher $eventDispatcher
+     * @param ContainerAwareEventDispatcher $eventDispatcher
      * @param Workflow                 $workflow
      */
     public function __construct(
         EntityManager $doctrine,
         FormFactory $form,
         Session $session,
-        TraceableEventDispatcher $eventDispatcher,
+        ContainerAwareEventDispatcher $eventDispatcher,
         Workflow $workflow
     ) {
         $this->doctrine = $doctrine;

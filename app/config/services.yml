@@ -49,6 +49,7 @@ services:
         arguments:
            - '@doctrine.orm.entity_manager'
            - '@form.factory'
+           - '@session'
            - '@security.authorization_checker'
            - '@security.authentication_utils'
            - '@security.password_encoder'
@@ -56,8 +57,10 @@ services:
            - '@event_dispatcher'
            - '@request_stack'
            - '@workflow.user_process'
+           - '@templating'
+           - '@mailer'
 
-    # user form listeners.
+    # User form listeners.
     app.user_listener:
         class: UserBundle\Listeners\RegisterListeners
         arguments:

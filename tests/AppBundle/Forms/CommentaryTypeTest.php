@@ -27,17 +27,20 @@ class CommentaryTypeTest extends TypeTestCase
      */
     public function testSubmitData()
     {
+        $entity = new Commentary();
+        $entity->setContent('A simple comment !');
+        $entity->setPublicationDate(new \DateTime());
+
         $data = [
-            'content' => 'A simple comment !',
+            'content' => $entity->getContent(),
+            'publicationDate' => $entity->getPublicationDate()
         ];
 
         $form = $this->factory->create(CommentaryType::class);
-
-        $instance = Commentary::fromArray($data);
-        $form->submit($instance);
+        $form->submit($data);
 
         $this->assertTrue($form->isSubmitted());
-        $this->assertEquals($instance, $form->getData());
+        $this->assertEquals($data, $form->getData());
 
         $view = $form->createView();
         $children = $view->children;

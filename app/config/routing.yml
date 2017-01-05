@@ -39,7 +39,7 @@ login:
 forgot_password:
     path:    /password/forgot
     methods: 'POST'
-    defaults: { _controller: UserBundle:Security:password }
+    defaults: { _controller: UserBundle:Security:forgotPassword }
 
 logout:
     path:    /logout

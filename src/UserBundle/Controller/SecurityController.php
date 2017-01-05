@@ -56,4 +56,18 @@ class SecurityController extends Controller
             'lastUsername' => $security['lastUsername'],
         ]);
     }
+
+    /**
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function forgotPasswordAction(Request $request)
+    {
+        $password = $this->get('user.security')->forgotPassword($request);
+
+        return $this->render(':Security:forgot_password.html.twig', [
+            'password' => $password
+        ]);
+    }
 }

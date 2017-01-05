@@ -26,19 +26,19 @@ class TricksFormsTest extends TypeTestCase
      */
     public function testSubmitData()
     {
-        $data = [
-            'name' => 'Backflip',
-            'group' => 'Flip',
-            'content' => 'A simple content',
-        ];
+        $entity = new Tricks();
+        $entity->setName('Backflip');
+        $entity->setResume('A simple resume !');
+        $entity->setGroups('Flip');
+
+        // Transform the entity in a array.
+        $data = (array) $entity;
 
         $form = $this->factory->create(TricksType::class);
-
-        $instance = Tricks::fromArray($data);
-        $form->submit($instance);
+        $form->submit($data);
 
         $this->assertTrue($form->isSubmitted());
-        $this->assertEquals($instance, $form->getData());
+        $this->assertEquals($data, $form->getData());
 
         $view = $form->createView();
         $children = $view->children;
