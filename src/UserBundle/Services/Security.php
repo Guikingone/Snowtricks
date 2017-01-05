@@ -15,7 +15,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use Symfony\Bundle\TwigBundle\TwigEngine;
-use Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher;
+use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -79,7 +79,7 @@ class Security
     private $tokenStorage;
 
     /**
-     * @var ContainerAwareEventDispatcher
+     * @var TraceableEventDispatcher
      */
     private $dispatcher;
 
@@ -113,7 +113,7 @@ class Security
      * @param AuthenticationUtils      $authenticationUtils
      * @param UserPasswordEncoder      $password
      * @param TokenStorage             $tokenStorage
-     * @param ContainerAwareEventDispatcher $dispatcher
+     * @param TraceableEventDispatcher $dispatcher
      * @param RequestStack             $requestStack
      * @param Workflow                 $workflow
      * @param TwigEngine               $templating
@@ -127,7 +127,7 @@ class Security
         AuthenticationUtils $authenticationUtils,
         UserPasswordEncoder $password,
         TokenStorage $tokenStorage,
-        ContainerAwareEventDispatcher $dispatcher,
+        TraceableEventDispatcher $dispatcher,
         RequestStack $requestStack,
         Workflow $workflow,
         TwigEngine $templating,
@@ -253,7 +253,7 @@ class Security
 
             $user = $this->doctrine->getRepository('UserBundle:User')
                                    ->findOneBy([
-                                       'username' => $data['username']
+                                       'username' => $data['username'],
                                    ]);
 
             if (!$user) {

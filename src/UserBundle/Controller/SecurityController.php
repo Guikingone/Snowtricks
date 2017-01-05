@@ -67,7 +67,7 @@ class SecurityController extends Controller
         $password = $this->get('user.security')->forgotPassword($request);
 
         return $this->render(':Security:forgot_password.html.twig', [
-            'password' => $password
+            'password' => $password,
         ]);
     }
 }

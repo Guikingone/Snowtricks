@@ -15,15 +15,24 @@ tricks_details:
 
 community:
     path:     /community
-    methods: 'POST'
+    methods: ['GET', 'POST']
     defaults: { _controller: AppBundle:Home:community }
 
 # Back
 admin:
     path:    /admin
-    methods: 'POST'
+    methods: ['GET', 'POST']
     defaults: { _controller: AppBundle:Admin:home }
 
+admin_tricks:
+    path:    /admin/tricks
+    methods: ['GET', 'POST']
+    defaults: { _controller: AppBundle:Admin:tricks }
+
+admin_users:
+    path:    /admin/users
+    methods: ['GET', 'POST']
+    defaults: { _controller: AppBundle:Admin:users }
 
 # User
 register:

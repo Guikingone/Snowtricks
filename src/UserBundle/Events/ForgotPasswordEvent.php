@@ -14,8 +14,7 @@ namespace UserBundle\Events;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Class ForgotPasswordEvent
- * @package UserBundle\Events
+ * Class ForgotPasswordEvent.
  */
 class ForgotPasswordEvent extends Event
 {
@@ -34,7 +33,7 @@ class ForgotPasswordEvent extends Event
      *
      * @param array $data
      */
-    public function __construct (array $data)
+    public function __construct(array $data)
     {
         $this->data = $data;
     }
@@ -42,7 +41,7 @@ class ForgotPasswordEvent extends Event
     /**
      * @return array
      */
-    public function getData () : array
+    public function getData() : array
     {
         return $this->data;
     }
