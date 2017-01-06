@@ -169,7 +169,9 @@ class Security
         }
 
         $user = $this->doctrine->getRepository('UserBundle:User')
-                               ->findOneBy(['token' => $token]);
+                               ->findOneBy([
+                                   'token' => $token,
+                               ]);
 
         if (!$user) {
             throw new \LogicException(

@@ -20,6 +20,10 @@ security:
             security: false
         # Main firewall used for back usage.
         main:
+            remember_me:
+                secret:    '%secret%'
+                lifetime:    604800
+                path:    /
             anonymous: ~
             provider: user
             form_login:

@@ -11,10 +11,10 @@ UserBundle\Entity\User:
     fields:
         firstname:
             type: string
-            length: 255
+            length: 150
         lastname:
             type: string
-            length: 255
+            length: 150
         birthdate:
             type: datetime
         occupation:
@@ -22,7 +22,7 @@ UserBundle\Entity\User:
             length: 255
         username:
             type: string
-            length: 255
+            length: 100
         password:
             type: string
             length: '100'

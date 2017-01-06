@@ -11,8 +11,6 @@
 
 namespace AppBundle\Services;
 
-use AppBundle\Entity\Commentary;
-use AppBundle\Entity\Tricks;
 use AppBundle\Events\TricksRefusedEvent;
 use AppBundle\Events\TricksValidatedEvent;
 use AppBundle\Form\Type\CommentaryType;
@@ -30,6 +28,10 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Workflow;
+
+// Entities
+use AppBundle\Entity\Commentary;
+use AppBundle\Entity\Tricks;
 
 /**
  * Class Back.
@@ -84,6 +86,16 @@ class Back
         $this->session = $session;
         $this->eventDispatcher = $eventDispatcher;
         $this->workflow = $workflow;
+    }
+
+    /**
+     * Return all the tricks.
+     *
+     * @return Tricks[]|array
+     */
+    public function getAllTricks()
+    {
+        return $this->doctrine->getRepository('AppBundle:Tricks')->findAll();
     }
 
     /**

@@ -60,6 +60,13 @@ class SecurityController extends Controller
     /**
      * @param Request $request
      *
+     * @throws OptimisticLockException
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     * @throws \Twig_Error
+     * @throws \RuntimeException
+     * @throws InvalidOptionsException
+     *
      * @return Response
      */
     public function forgotPasswordAction(Request $request)

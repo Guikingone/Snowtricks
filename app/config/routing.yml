@@ -13,11 +13,6 @@ tricks_details:
     methods: ['GET', 'POST']
     defaults: { _controller: AppBundle:Home:tricksDetails }
 
-community:
-    path:     /community
-    methods: ['GET', 'POST']
-    defaults: { _controller: AppBundle:Home:community }
-
 # Back
 admin:
     path:    /admin
@@ -40,8 +35,8 @@ register:
     methods: ['GET', 'POST']
     defaults: { _controller: UserBundle:Security:register }
 
-login:
-    path:    /login
+community:
+    path:    /community
     methods: ['GET', 'POST']
     defaults: { _controller: UserBundle:Security:login }
 

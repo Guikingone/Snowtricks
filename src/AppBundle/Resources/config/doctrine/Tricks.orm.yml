@@ -11,7 +11,7 @@ AppBundle\Entity\Tricks:
     fields:
         name:
             type: string
-            length: 255
+            length: 100
         creationDate:
             type: datetime
         groups:

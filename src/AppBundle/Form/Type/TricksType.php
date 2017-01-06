@@ -10,6 +10,10 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+// Constraints
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+
 /**
  * Class TricksType.
  *
@@ -24,9 +28,39 @@ class TricksType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name', TextType::class)
-            ->add('groups', ChoiceType::class)
-            ->add('resume', TextareaType::class)
+            ->add('name', TextType::class, [
+                'constraints' => [
+                    new NotBlank(),
+                    new Length([
+                        'min' => 3,
+                        'max' => '100',
+                        'minMessage' => 'Le nom donné est trop court, veuillez réessayer.',
+                        'maxMessage' => 'Le nom donné est trop long, veuillez réessayer.',
+                    ]),
+                ],
+                'required' => true,
+            ])
+            ->add('groups', ChoiceType::class, [
+                'constraints' => [
+                    new NotBlank(),
+                ],
+                'choices' => [
+                    'Grabs' => 'Grabs',
+                    'Flip' => 'Flip',
+                    'Rotations' => 'Rotations',
+                    'Rotations désaxées' => 'Rotations désaxées',
+                    'Slides' => 'Slides',
+                    'One foot tricks' => 'One foot tricks',
+                    'Old school' => 'Old school',
+                ],
+                'required' => true,
+            ])
+            ->add('resume', TextareaType::class, [
+                'constraints' => [
+                    new NotBlank(),
+                ],
+                'required' => true,
+            ])
         ;
     }
 
