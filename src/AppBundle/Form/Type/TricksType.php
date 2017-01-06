@@ -1,9 +1,20 @@
 <?php
 
+/*
+ * This file is part of the Snowtricks project.
+ *
+ * (c) Guillaume Loulier <guillaume.loulier@hotmail.fr>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace AppBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -60,6 +71,20 @@ class TricksType extends AbstractType
                     new NotBlank(),
                 ],
                 'required' => true,
+            ])
+            ->add('images', CollectionType::class, [
+                'entry_type' => FileType::class, [
+                    'label' => 'Images (format png)',
+                ],
+                'allow_add' => true,
+                'allow_delete' => true,
+            ])
+            ->add('videos', CollectionType::class, [
+                'entry_type' => TextType::class, [
+                    'label' => 'Lien youtube ou DailyMotion',
+                ],
+                'allow_add' => true,
+                'allow_delete' => true,
             ])
         ;
     }

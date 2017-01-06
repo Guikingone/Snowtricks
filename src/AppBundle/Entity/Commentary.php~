@@ -5,7 +5,7 @@ namespace AppBundle\Entity;
 use UserBundle\Entity\User;
 
 /**
- * Commentary
+ * Commentary.
  */
 class Commentary
 {
@@ -29,7 +29,7 @@ class Commentary
     private $tricks;
 
     /**
-     * Get id
+     * Get id.
      *
      * @return int
      */
@@ -39,7 +39,7 @@ class Commentary
     }
 
     /**
-     * Set publicationDate
+     * Set publicationDate.
      *
      * @param \DateTime $publicationDate
      *
@@ -53,7 +53,7 @@ class Commentary
     }
 
     /**
-     * Get publicationDate
+     * Get publicationDate.
      *
      * @return \DateTime
      */
@@ -63,7 +63,7 @@ class Commentary
     }
 
     /**
-     * Set content
+     * Set content.
      *
      * @param string $content
      *
@@ -77,7 +77,7 @@ class Commentary
     }
 
     /**
-     * Get content
+     * Get content.
      *
      * @return string
      */
@@ -87,7 +87,7 @@ class Commentary
     }
 
     /**
-     * Set tricks
+     * Set tricks.
      *
      * @param \AppBundle\Entity\Tricks $tricks
      *
@@ -101,7 +101,7 @@ class Commentary
     }
 
     /**
-     * Get tricks
+     * Get tricks.
      *
      * @return \AppBundle\Entity\Tricks
      */
@@ -111,7 +111,7 @@ class Commentary
     }
 
     /**
-     * Set author
+     * Set author.
      *
      * @param \UserBundle\Entity\User $author
      *
@@ -125,7 +125,7 @@ class Commentary
     }
 
     /**
-     * Get author
+     * Get author.
      *
      * @return \UserBundle\Entity\User
      */

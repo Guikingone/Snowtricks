@@ -11,12 +11,16 @@
 
 namespace AppBundle\Listeners;
 
+use AppBundle\Services\Uploader;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Symfony\Bundle\TwigBundle\TwigEngine;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
+use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 use Symfony\Component\Workflow\Exception\InvalidDefinitionException;
 use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Workflow;
@@ -40,6 +44,11 @@ class TricksListeners
      * @var Workflow
      */
     private $workflow;
+
+    /**
+     * @var Uploader
+     */
+    private $uploader;
 
     /**
      * @var AuthorizationChecker
@@ -70,6 +79,7 @@ class TricksListeners
      * TricksListeners constructor.
      *
      * @param Workflow             $workflow
+     * @param Uploader             $uploader
      * @param AuthorizationChecker $security
      * @param TwigEngine           $templating
      * @param Session              $session
@@ -78,6 +88,7 @@ class TricksListeners
      */
     public function __construct(
         Workflow $workflow,
+        Uploader $uploader,
         AuthorizationChecker $security,
         TwigEngine $templating,
         Session $session,
@@ -85,6 +96,7 @@ class TricksListeners
         RequestStack $requestStack
     ) {
         $this->workflow = $workflow;
+        $this->uploader = $uploader;
         $this->security = $security;
         $this->templating = $templating;
         $this->session = $session;
@@ -98,8 +110,10 @@ class TricksListeners
      *
      * @param LifecycleEventArgs $args
      *
+     * @throws AuthenticationCredentialsNotFoundException
      * @throws \LogicException
      * @throws InvalidDefinitionException
+     * @throws FileException
      * @throws LogicException
      * @throws \InvalidArgumentException
      */
@@ -115,8 +129,16 @@ class TricksListeners
             $entity->setCreationDate(new \DateTime());
             $entity->setValidated(true);
             $entity->setPublished(true);
+
             // Set the workflow phase.
             $this->workflow->apply($entity, 'validation_phase');
+
+            // File processing.
+            $images = $entity->getImages();
+            if ($images instanceof UploadedFile) {
+                $filename = $this->uploader->uploadFile($images);
+                $entity->setImages([$filename]);
+            }
         } elseif ($entity->getPublished() === false) {
             // In the case of entity update.
             $entity->setPublished(true);

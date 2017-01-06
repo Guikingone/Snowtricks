@@ -36,6 +36,16 @@ class Tricks
     private $resume;
 
     /**
+     * @var array
+     */
+    private $images;
+
+    /**
+     * @var array
+     */
+    private $videos;
+
+    /**
      * @var bool
      */
     private $published;
@@ -155,6 +165,54 @@ class Tricks
     public function getResume()
     {
         return $this->resume;
+    }
+
+    /**
+     * Set images.
+     *
+     * @param array $images
+     *
+     * @return Tricks
+     */
+    public function setImages($images)
+    {
+        $this->images = $images;
+
+        return $this;
+    }
+
+    /**
+     * Get images.
+     *
+     * @return array
+     */
+    public function getImages()
+    {
+        return $this->images;
+    }
+
+    /**
+     * Set videos.
+     *
+     * @param array $videos
+     *
+     * @return Tricks
+     */
+    public function setVideos($videos)
+    {
+        $this->videos = $videos;
+
+        return $this;
+    }
+
+    /**
+     * Get videos.
+     *
+     * @return array
+     */
+    public function getVideos()
+    {
+        return $this->videos;
     }
 
     /**

@@ -9,6 +9,12 @@ services:
            - '%kernel.root_dir%'
            - '@doctrine.orm.entity_manager'
 
+    # Manage the upload files or assets.
+    app.uploader:
+        class: AppBundle\Services\Uploader
+        arguments:
+            - '%images.uploads.dir%'
+
     # Tricks hydrate command
     app.command.tricks_hydrate:
         class: AppBundle\Command\LoadTricksCommand
@@ -32,6 +38,7 @@ services:
         class: AppBundle\Listeners\TricksListeners
         arguments:
             - '@workflow.tricks_process'
+            - '@app.uploader'
             - '@security.authorization_checker'
             - '@templating'
             - '@session'

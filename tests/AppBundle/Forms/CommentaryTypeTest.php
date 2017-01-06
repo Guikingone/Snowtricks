@@ -36,8 +36,8 @@ class CommentaryTypeTest extends TypeTestCase
             'publicationDate' => $entity->getPublicationDate()
         ];
 
-        $form = $this->factory->create(CommentaryType::class);
-        $form->submit($data);
+        $form = $this->factory->create(CommentaryType::class, $entity);
+        $form->submit($entity);
 
         $this->assertTrue($form->isSubmitted());
         $this->assertEquals($data, $form->getData());

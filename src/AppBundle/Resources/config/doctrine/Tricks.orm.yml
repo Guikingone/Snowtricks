@@ -19,6 +19,10 @@ AppBundle\Entity\Tricks:
             length: 100
         resume:
             type: text
+        images:
+            type: array
+        videos:
+            type: array
         published:
             type: boolean
         validated:
