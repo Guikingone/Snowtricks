@@ -12,7 +12,7 @@
 namespace tests\UserBundle\Forms;
 
 use Symfony\Component\Form\Test\TypeTestCase;
-use UserBundle\Form\type\LoginType;
+use UserBundle\Form\Type\LoginType;
 use UserBundle\Entity\User;
 
 /**

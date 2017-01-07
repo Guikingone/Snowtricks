@@ -14,6 +14,8 @@ namespace tests\UserBundle\Services;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use UserBundle\Services\Security;
+
+// Entity
 use UserBundle\Entity\User;
 
 /**
@@ -39,21 +41,25 @@ class SecurityTest extends KernelTestCase
     public function setUp()
     {
         $user = new User();
-        $user->setFirstName('Arnaud');
-        $user->setLastName('Tricks');
-        $user->setBirthDate('12-05-1978');
+        $user->setFirstname('Arnaud');
+        $user->setLastname('Tricks');
+        $user->setBirthdate(new \DateTime());
         $user->setOccupation('Professional snowboarder');
         $user->setUsername('Nono');
         $user->setPassword('Lk__DTHE');
-        $user->setRoles('ROLE_ADMIN');
+        $user->setRoles(['ROLE_ADMIN']);
+        $user->setEmail('contact@snowtricks.fr');
+        $user->setToken('dd21498e61e26a5a42d3g9r4z2a364f2s3a2');
+        $user->setValidated(true);
         $user->setLocked(false);
+        $user->setIsActive(true);
 
         self::bootKernel();
         $this->doctrine = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
         $this->doctrine->persist($user);
         $this->doctrine->flush();
 
-        $this->security = static::$kernel->getContainer()->get('app.security');
+        $this->security = static::$kernel->getContainer()->get('user.security');
     }
 
     /**
@@ -62,7 +68,10 @@ class SecurityTest extends KernelTestCase
     public function testServiceIsFound()
     {
         if (is_object($this->security)) {
-            $this->assertInstanceOf(Security::class, $this->security);
+            $this->assertInstanceOf(
+                Security::class,
+                $this->security
+            );
         }
     }
 
@@ -72,10 +81,12 @@ class SecurityTest extends KernelTestCase
     public function testUserRecap()
     {
         if (is_object($this->security) && $this->security instanceof Security) {
-            $this->assertArrayHasKey(
-                'Arnaud',
-                $this->security->getUsers()
-            );
+            // Store the result into an array.
+            $users = $this->security->getUsers();
+
+            foreach ($users as $user) {
+                $this->assertInstanceOf(User::class, $user);
+            }
         }
     }
 
@@ -87,7 +98,7 @@ class SecurityTest extends KernelTestCase
         if (is_object($this->security) && $this->security instanceof Security) {
             $this->assertInstanceOf(
                 User::class,
-                $this->security->getUser('Arnaud')
+                $this->security->getUser('Tricks')
             );
         }
     }
@@ -121,10 +132,12 @@ class SecurityTest extends KernelTestCase
             $user = $this->security->getUsersValidated();
             if (is_array($user)) {
                 foreach ($user as $usr) {
-                    $this->assertInstanceOf(
-                        User::class, $usr
-                    );
-                    $this->assertTrue($usr->getValidated());
+                    if ($usr->getValidated()) {
+                        $this->assertInstanceOf(
+                            User::class, $usr
+                        );
+                        $this->assertTrue($usr->getValidated());
+                    }
                 }
             }
         }
@@ -136,7 +149,10 @@ class SecurityTest extends KernelTestCase
     public function testUserLock()
     {
         if (is_object($this->security) && $this->security instanceof Security) {
-            $user = $this->security->lockUser('Tricks');
+            $this->security->lockUser('Tricks');
+
+            $user = $this->security->getUser('tricks');
+
             $this->assertTrue($user->getLocked());
         }
     }
@@ -147,7 +163,10 @@ class SecurityTest extends KernelTestCase
     public function testUserUnlock()
     {
         if (is_object($this->security) && $this->security instanceof Security) {
-            $user = $this->security->unlockUser('Tricks');
+            $this->security->unlockUser('Tricks');
+
+            $user = $this->security->getUser('Tricks');
+
             $this->assertFalse($user->getLocked());
         }
     }
@@ -176,7 +195,7 @@ class SecurityTest extends KernelTestCase
     {
         if (is_object($this->security) && $this->security instanceof Security) {
             // Store the result into an array
-            $users = $this->security->getUnLockedUsers();
+            $users = $this->security->getUnlockedUsers();
             if (is_array($users)) {
                 foreach ($users as $user) {
                     $this->assertInstanceOf(User::class, $user);

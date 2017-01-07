@@ -36,4 +36,5 @@ AppBundle\Entity\Tricks:
         author:
             targetEntity: UserBundle\Entity\User
             inversedBy: tricks
+            cascade: ['persist', 'remove']
     lifecycleCallbacks: {  }

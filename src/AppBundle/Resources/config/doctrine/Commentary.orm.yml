@@ -18,6 +18,7 @@ AppBundle\Entity\Commentary:
         tricks:
             targetEntity: AppBundle\Entity\Tricks
             inversedBy: commentary
+            cascade: ['persist', 'remove']
             joinColumn:
                 name: tricks_id
                 referencedColumnName: id

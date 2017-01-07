@@ -13,8 +13,13 @@ namespace tests\AppBundle\Services;
 
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Doctrine\ORM\EntityManager;
+
+// Service
 use AppBundle\Services\Back;
+
+// Entities
 use AppBundle\Entity\Tricks;
+use Symfony\Component\Workflow\Workflow;
 use UserBundle\Entity\User;
 
 /**
@@ -35,16 +40,37 @@ class BackTest extends KernelTestCase
     private $doctrine;
 
     /**
+     * @var Workflow
+     */
+    private $workflow;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
+        // Instantiate all the services.
+        self::bootKernel();
+        $this->doctrine = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
+
+        $this->back = static::$kernel->getContainer()->get('app.back');
+
+        $this->workflow = static::$kernel->getContainer()->get('workflow.tricks_process');
+
         // Create a user in order to simulate the authentication process.
         $author = new User();
         $author->setFirstname('Arnaud');
         $author->setLastname('Duchemin');
         $author->setLastname('Duduche');
+        $author->setUsername('Nono');
         $author->setRoles(['ROLE_ADMIN']);
+        $author->setBirthdate(new \DateTime());
+        $author->setOccupation('Rally Driver');
+        $author->setEmail('guik@guillaumeloulier.fr');
+        $author->setToken('dd21498e61e26a5a42d3g9r4z2a364f2s3a2');
+        $author->setValidated(true);
+        $author->setLocked(false);
+        $author->setIsActive(true);
 
         $tricks = new Tricks();
         $tricks->setName('Backflip');
@@ -52,13 +78,14 @@ class BackTest extends KernelTestCase
         $tricks->setCreationDate(new \DateTime());
         $tricks->setGroups('Flip');
         $tricks->setResume('A simple backflip content ...');
+        $tricks->setPublished(true);
+        $tricks->setValidated(true);
+        $this->workflow->apply($tricks, 'start_phase');
+        $this->workflow->apply($tricks, 'validation_phase');
 
-        self::bootKernel();
-        $this->doctrine = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
+        // Persist after relations.
         $this->doctrine->persist($tricks);
         $this->doctrine->flush();
-
-        $this->back = static::$kernel->getContainer()->get('app.back');
     }
 
     /**

@@ -13,6 +13,8 @@ namespace tests\UserBundle\Repository;
 
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+
+// Entity
 use UserBundle\Entity\User;
 
 /**
@@ -37,6 +39,7 @@ class UserRepositoryTest extends KernelTestCase
         $user->setLastname('Tricks');
         $user->setBirthdate(new \DateTime());
         $user->setOccupation('Professional snowboarder');
+        $user->setEmail('non@snowtricks.fr');
         $user->setUsername('Nono');
         $user->setPassword('Lk__DTHE');
         $user->setRoles(['ROLE_ADMIN']);
@@ -44,6 +47,7 @@ class UserRepositoryTest extends KernelTestCase
         $user->setToken('654a6d4dzd19de4yhqdf4af4a1fa66fa4');
         $user->setValidated(true);
         $user->setLocked(false);
+        $user->setIsActive(true);
 
         self::bootKernel();
         $this->doctrine = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
@@ -57,10 +61,10 @@ class UserRepositoryTest extends KernelTestCase
     public function testUserIsFoundByName()
     {
         $user = $this->doctrine->getRepository('UserBundle:User')
-                               ->findOneBy(['firstname' => 'Arnaud']);
+                               ->findOneBy(['lastname' => 'Tricks']);
 
         if (is_object($user)) {
-            $this->assertInstanceof(
+            $this->assertInstanceOf(
                 User::class,
                 $user
             );
@@ -69,15 +73,15 @@ class UserRepositoryTest extends KernelTestCase
         if (is_object($user) && $user instanceof User) {
             $this->assertEquals('Arnaud', $user->getFirstname());
             $this->assertEquals('Tricks', $user->getLastname());
-            $this->assertEquals(new \DateTime(), $user->getBirthdate());
             $this->assertEquals('Professional snowboarder', $user->getOccupation());
             $this->assertEquals('Nono', $user->getUsername());
-            $this->assertEquals('Lk__DTHE', $user->getPassword());
+            $this->assertEquals('non@snowtricks.fr', $user->getEmail());
             $this->assertContains('ROLE_ADMIN', $user->getRoles());
             $this->assertTrue($user->getValidated());
             $this->assertEquals('654a6d4dzd19de4yhqdf4af4a1fa66fa4', $user->getToken());
             $this->assertTrue($user->getValidated());
             $this->assertFalse($user->getLocked());
+            $this->assertTrue($user->getIsActive());
         }
     }
 
@@ -88,6 +92,7 @@ class UserRepositoryTest extends KernelTestCase
     {
         parent::tearDown();
 
+        $this->doctrine->clear(User::class);
         $this->doctrine->close();
         $this->doctrine = null;
     }

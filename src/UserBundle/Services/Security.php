@@ -148,6 +148,68 @@ class Security
     }
 
     /**
+     * Allow to return all the users.
+     *
+     * @return array|User[]
+     */
+    public function getUsers()
+    {
+        return $this->doctrine->getRepository('UserBundle:User')->findAll();
+    }
+
+    /**
+     * Return a single user using his firstname.
+     *
+     * @param string $name
+     *
+     * @return null|object|User
+     */
+    public function getUser(string $name)
+    {
+        return $this->doctrine->getRepository('UserBundle:User')->findOneBy(['lastname' => $name]);
+    }
+
+    /**
+     * Return every users not validated.
+     *
+     * @return array|User[]
+     */
+    public function getUsersNotValidated()
+    {
+        return $this->doctrine->getRepository('UserBundle:User')->findBy(['validated' => false]);
+    }
+
+    /**
+     * Return every users validated.
+     *
+     * @return array|User[]
+     */
+    public function getUsersValidated()
+    {
+        return $this->doctrine->getRepository('UserBundle:User')->findBy(['validated' => true]);
+    }
+
+    /**
+     * Return all the users locked.
+     *
+     * @return array|User[]
+     */
+    public function getLockedUsers()
+    {
+        return $this->doctrine->getRepository('UserBundle:User')->findBy(['locked' => true]);
+    }
+
+    /**
+     * Return all the users unlocked.
+     *
+     * @return array|User[]
+     */
+    public function getUnlockedUsers()
+    {
+        return $this->doctrine->getRepository('UserBundle:User')->findBy(['locked' => false]);
+    }
+
+    /**
      * Allow to validate a user using the generated token.
      *
      * @throws \InvalidArgumentException
@@ -187,6 +249,84 @@ class Security
         }
 
         return new RedirectResponse('login');
+    }
+
+    /**
+     * Allow to lock a user using his lastname.
+     *
+     * @param string $name
+     *
+     * @throws \InvalidArgumentException
+     * @throws OptimisticLockException
+     *
+     * @return RedirectResponse
+     */
+    public function lockUser(string $name)
+    {
+        $user = $this->doctrine->getRepository('UserBundle:User')
+                               ->findOneBy([
+                                   'lastname' => $name
+                               ]);
+
+        if (!$user instanceof User) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'The entity received MUST be a instance of User !,
+                     given "%s"', get_class($user)
+                )
+            );
+        }
+
+        $user->setLocked(true);
+        $user->setIsActive(false);
+
+        $this->doctrine->flush();
+        $this->session->getFlashBag()->add(
+            'success',
+            'L\'utilisateur a bien été bloqué.'
+        );
+
+        return new RedirectResponse('admin');
+    }
+
+    /**
+     * Allow to unlock a user using his lastname and the boolean
+     * of his lock phase.
+     *
+     * @param string $name
+     *
+     * @throws \InvalidArgumentException
+     * @throws OptimisticLockException
+     *
+     * @return RedirectResponse
+     */
+    public function unlockUser(string $name)
+    {
+        $user = $this->doctrine->getRepository('UserBundle:User')
+                               ->findOneBy([
+                                   'lastname' => $name,
+                                   'locked' => true,
+                               ]);
+
+        if (!$user instanceof User) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'The entity received MUST be a instance of User !,
+                     given "%s"', get_class($user)
+                )
+            );
+        }
+
+        $user->setLocked(false);
+        $user->setIsActive(true);
+
+        $this->doctrine->flush();
+        $this->session->getFlashBag()->add(
+            'success',
+            'L\'utilisateur a bien été débloqué.'
+        );
+
+        return new RedirectResponse('admin');
     }
 
     /**

@@ -40,7 +40,14 @@ class TricksRepositoryTest extends KernelTestCase
         $author->setLastname('Loulier');
         $author->setFirstname('Guillaume');
         $author->setUsername('Guikingone');
+        $author->setBirthdate(new \DateTime());
         $author->setRoles(['ROLE_ADMIN']);
+        $author->setOccupation('Rally Driver');
+        $author->setEmail('guik@guillaumeloulier.fr');
+        $author->setToken('dd21498e61e26a5a42d3g9r4z2a364f2s3a2');
+        $author->setValidated(true);
+        $author->setLocked(false);
+        $author->setIsActive(true);
 
         $tricks = new Tricks();
         $tricks->setName('Backflip');

@@ -77,6 +77,11 @@ class TricksListeners
      */
     private $requestStack;
 
+    /**
+     * @var \Swift_Mailer
+     */
+    private $mailer;
+
     // Store the images.upload.dir
     private $imagesDir;
 
@@ -90,6 +95,7 @@ class TricksListeners
      * @param Session              $session
      * @param TokenStorage         $storage
      * @param RequestStack         $requestStack
+     * @param \Swift_Mailer        $mailer
      * @param                      $imagesDir
      */
     public function __construct(
@@ -100,6 +106,7 @@ class TricksListeners
         Session $session,
         TokenStorage $storage,
         RequestStack $requestStack,
+        \Swift_Mailer $mailer,
         $imagesDir
     ) {
         $this->workflow = $workflow;
@@ -109,6 +116,7 @@ class TricksListeners
         $this->session = $session;
         $this->storage = $storage;
         $this->requestStack = $requestStack;
+        $this->mailer = $mailer;
         $this->imagesDir = $imagesDir;
     }
 

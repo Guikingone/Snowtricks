@@ -18,7 +18,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
-class IndexControllerTest extends WebTestCase
+class HomeControllerTest extends WebTestCase
 {
     /**
      * Test the indexAction.
@@ -40,6 +40,18 @@ class IndexControllerTest extends WebTestCase
         $client = static::createClient();
 
         $client->request('GET', '/tricks');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * Test the tricksDetailsAction.
+     */
+    public function testTricksDetails()
+    {
+        $client = static::createClient();
+
+        $client->request('GET', '/tricks/Backflip');
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }

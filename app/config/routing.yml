@@ -1,3 +1,4 @@
+# Main
 home:
     path:    /
     methods: 'GET'
@@ -5,7 +6,7 @@ home:
 
 tricks:
     path:     /tricks
-    methods: 'POST'
+    methods: 'GET'
     defaults: { _controller: AppBundle:Home:tricks }
 
 tricks_details:
@@ -17,7 +18,7 @@ tricks_details:
 admin:
     path:    /admin
     methods: ['GET', 'POST']
-    defaults: { _controller: AppBundle:Admin:home }
+    defaults: { _controller: AppBundle:Admin:admin }
 
 admin_tricks:
     path:    /admin/tricks
@@ -31,19 +32,24 @@ admin_users:
 
 # User
 register:
-    path:    /register
+    path:    /community/register
     methods: ['GET', 'POST']
     defaults: { _controller: UserBundle:Security:register }
 
-community:
-    path:    /community
+login:
+    path:    /community/login
     methods: ['GET', 'POST']
     defaults: { _controller: UserBundle:Security:login }
 
 forgot_password:
-    path:    /password/forgot
+    path:    /community/password/forgot
     methods: 'POST'
     defaults: { _controller: UserBundle:Security:forgotPassword }
+
+profile:
+    path:    /community/profile/{username}
+    methods: ['GET', 'POST']
+    defaults: { _controller: UserBundle:User:profile }
 
 logout:
     path:    /logout

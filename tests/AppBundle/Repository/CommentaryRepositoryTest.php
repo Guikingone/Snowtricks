@@ -13,7 +13,9 @@ namespace tests\AppBundle\Repository;
 
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Doctrine\ORM\EntityManager;
-use AppBundle\Entity\tricks;
+
+// Entities
+use AppBundle\Entity\Tricks;
 use AppBundle\Entity\Commentary;
 use UserBundle\Entity\User;
 
@@ -39,7 +41,14 @@ class CommentaryRepositoryTest extends KernelTestCase
         $author->setLastname('Loulier');
         $author->setFirstname('Guillaume');
         $author->setUsername('Guikingone');
+        $author->setBirthdate(new \DateTime());
         $author->setRoles(['ROLE_ADMIN']);
+        $author->setOccupation('Rally Driver');
+        $author->setEmail('guik@guillaumeloulier.fr');
+        $author->setToken('dd21498e61e26a5a42d3g9r4z2a364f2s3a2');
+        $author->setValidated(true);
+        $author->setLocked(false);
+        $author->setIsActive(true);
 
         // Create a tricks to link the commentary to this specific tricks.
         $tricks = new Tricks();
@@ -48,6 +57,8 @@ class CommentaryRepositoryTest extends KernelTestCase
         $tricks->setAuthor($author);
         $tricks->setGroups('Flip');
         $tricks->setResume('A simple test.');
+        $tricks->setPublished(true);
+        $tricks->setValidated(true);
 
         $commentary = new Commentary();
         $commentary->setPublicationDate(new \DateTime());

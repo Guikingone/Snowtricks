@@ -48,17 +48,20 @@ class SecurityControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/community');
+        $client->request('GET', '/community/login');
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }
 
+    /**
+     * Test the profileAction
+     */
     public function testProfile()
     {
         $client = static::createClient();
 
-        $client->request('GET', '/community/profile/');
+        $client->request('GET', '/community/profile/Guik');
 
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(500, $client->getResponse()->getStatusCode());
     }
 }

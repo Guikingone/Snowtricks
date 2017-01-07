@@ -41,20 +41,28 @@ class RegisterListeners
     private $templating;
 
     /**
+     * @var \Swift_Mailer
+     */
+    private $mailer;
+
+    /**
      * RegisterListeners constructor.
      *
      * @param UserPasswordEncoder $encoder
      * @param Session             $session
      * @param TwigEngine          $templating
+     * @param \Swift_Mailer       $mailer
      */
     public function __construct(
         UserPasswordEncoder $encoder,
         Session $session,
-        TwigEngine $templating
+        TwigEngine $templating,
+        \Swift_Mailer $mailer
     ) {
         $this->encoder = $encoder;
         $this->session = $session;
         $this->templating = $templating;
+        $this->mailer = $mailer;
     }
 
     /**
@@ -102,9 +110,9 @@ class RegisterListeners
         $mail = \Swift_Message::newInstance()
             ->setSubject('Snowtricks - Notification system')
             ->setFrom('contact@snowtricks.fr')
-            ->setTo($entity->getAuthor()->getEmail())
+            ->setTo($entity->getEmail())
             ->setBody($this->templating->render(
-                ':Mails:Users:notif_profil_creation.html.twig', [
+                ':Mails/Users:notif_profil_creation.html.twig', [
                     'user' => $entity,
                 ]
             ), 'text/html');

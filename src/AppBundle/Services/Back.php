@@ -11,27 +11,35 @@
 
 namespace AppBundle\Services;
 
-use AppBundle\Events\TricksRefusedEvent;
-use AppBundle\Events\TricksValidatedEvent;
-use AppBundle\Form\Type\CommentaryType;
-use AppBundle\Form\Type\TricksType;
-use AppBundle\Form\Type\UpdateTricksType;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMInvalidArgumentException;
 use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;
-use Symfony\Component\Form\FormFactory;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
-use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Workflow;
 
 // Entities
 use AppBundle\Entity\Commentary;
 use AppBundle\Entity\Tricks;
+
+// Forms
+use AppBundle\Form\Type\CommentaryType;
+use AppBundle\Form\Type\TricksType;
+use AppBundle\Form\Type\UpdateTricksType;
+
+// FormFactory
+use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Form\FormView;
+
+// Events
+use AppBundle\Events\TricksRefusedEvent;
+use AppBundle\Events\TricksValidatedEvent;
+
+// Exceptions
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMInvalidArgumentException;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
+use Symfony\Component\Workflow\Exception\LogicException;
 
 /**
  * Class Back.
