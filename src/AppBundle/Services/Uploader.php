@@ -14,6 +14,11 @@ namespace AppBundle\Services;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+/**
+ * Class Uploader
+ *
+ * @author Guillaume Loulier <contact@guillaumeloulier.fr>
+ */
 class Uploader
 {
     // Store the image.uploads.dir

@@ -38,6 +38,8 @@ UserBundle\Entity\User:
             type: boolean
         locked:
             type: boolean
+        isActive:
+            type: boolean
     oneToMany:
         tricks:
             targetEntity: AppBundle\Entity\Tricks

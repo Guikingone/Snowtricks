@@ -1,6 +1,7 @@
 security:
     encoders:
-        UserBundle\Entity\User: bcrypt
+        UserBundle\Entity\User:
+            algorithm: bcrypt
     providers:
         user:
             entity:
@@ -18,6 +19,7 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+
         # Main firewall used for back usage.
         main:
             remember_me:
@@ -29,6 +31,9 @@ security:
             form_login:
                login_path: login
                check_path: login
+               csrf_token_generator: security.csrf.token_manager
+               default_target_path: home
+               failure_path: community
             logout:
                path:    /logout
                target:  /

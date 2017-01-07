@@ -15,6 +15,8 @@ use AppBundle\Services\Uploader;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -75,6 +77,9 @@ class TricksListeners
      */
     private $requestStack;
 
+    // Store the images.upload.dir
+    private $imagesDir;
+
     /**
      * TricksListeners constructor.
      *
@@ -85,6 +90,7 @@ class TricksListeners
      * @param Session              $session
      * @param TokenStorage         $storage
      * @param RequestStack         $requestStack
+     * @param                      $imagesDir
      */
     public function __construct(
         Workflow $workflow,
@@ -93,7 +99,8 @@ class TricksListeners
         TwigEngine $templating,
         Session $session,
         TokenStorage $storage,
-        RequestStack $requestStack
+        RequestStack $requestStack,
+        $imagesDir
     ) {
         $this->workflow = $workflow;
         $this->uploader = $uploader;
@@ -102,6 +109,7 @@ class TricksListeners
         $this->session = $session;
         $this->storage = $storage;
         $this->requestStack = $requestStack;
+        $this->imagesDir = $imagesDir;
     }
 
     /**
@@ -221,6 +229,26 @@ class TricksListeners
                 'Le trick a été envoyé en validation.'
             );
         }
+    }
+
+    /**
+     * Allow to retrieve the file linked to a tricks.
+     *
+     * @param LifecycleEventArgs $args
+     *
+     * @throws FileNotFoundException
+     */
+    public function postLoad(LifecycleEventArgs $args)
+    {
+        $entity = $args->getObject();
+
+        if (!$entity instanceof Tricks) {
+            return;
+        }
+
+        $images = $entity->getImages();
+
+        $entity->setImages([new File($this->imagesDir . '/' . $images)]);
     }
 
     /**

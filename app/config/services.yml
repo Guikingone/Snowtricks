@@ -44,9 +44,11 @@ services:
             - '@session'
             - '@security.token_storage'
             - '@request_stack'
+            - '%images.uploads.dir%'
         tags:
             - { name: doctrine.event_listener, event: prePersist }
             - { name: doctrine.event_listener, event: postPersist }
+            - { name: doctrine.event_listener, event: postLoad }
             - { name: kernel.event_listener, event: tricks.validated, method: onValidateTricks }
             - { name: kernel.event_listener, event: tricks.refused, method: onRefusetricks }
 

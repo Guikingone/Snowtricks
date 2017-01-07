@@ -1,14 +1,29 @@
 <?php
 
+/*
+ * This file is part of the Snowtricks project.
+ *
+ * (c) Guillaume Loulier <guillaume.loulier@hotmail.fr>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace UserBundle\Entity;
 
+use AppBundle\Entity\Commentary;
 use Doctrine\Common\Collections\ArrayCollection;
 use AppBundle\Entity\Tricks;
+use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 /**
  * User.
+ *
+ * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
-class User
+class User implements
+    AdvancedUserInterface,
+    \Serializable
 {
     /**
      * @var int
@@ -70,9 +85,16 @@ class User
      */
     private $locked;
 
+    /**
+     * @var bool
+     */
+    private $isActive;
+
     private $commentary;
 
     private $tricks;
+
+    public $currentStatus;
 
     /**
      * Get id.
@@ -229,6 +251,30 @@ class User
     }
 
     /**
+     * Set email.
+     *
+     * @param string $email
+     *
+     * @return User
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * Get email.
+     *
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
      * Set roles.
      *
      * @param array $roles
@@ -373,7 +419,7 @@ class User
      *
      * @return User
      */
-    public function addCommentary(\AppBundle\Entity\Commentary $commentary)
+    public function addCommentary(Commentary $commentary)
     {
         $this->commentary[] = $commentary;
 
@@ -385,7 +431,7 @@ class User
      *
      * @param \AppBundle\Entity\Commentary $commentary
      */
-    public function removeCommentary(\AppBundle\Entity\Commentary $commentary)
+    public function removeCommentary(Commentary $commentary)
     {
         $this->commentary->removeElement($commentary);
     }
@@ -398,5 +444,55 @@ class User
     public function getCommentary()
     {
         return $this->commentary;
+    }
+
+    public function isAccountNonExpired()
+    {
+        return true;
+    }
+
+    public function isAccountNonLocked()
+    {
+        return true;
+    }
+
+    public function isCredentialsNonExpired()
+    {
+        return true;
+    }
+
+    public function isEnabled()
+    {
+        return $this->isActive;
+    }
+
+    public function getSalt()
+    {
+        return null;
+    }
+
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
+    }
+
+    /** @see \Serializable::serialize() */
+    public function serialize ()
+    {
+        return serialize([
+            $this->id,
+            $this->username,
+            $this->password,
+        ]);
+    }
+
+    /** @see \Serializable::unserialize() */
+    public function unserialize ($serialized)
+    {
+        list(
+            $this->id,
+            $this->username,
+            $this->password,
+        ) = unserialize($serialized);
     }
 }

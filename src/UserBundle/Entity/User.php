@@ -1,16 +1,31 @@
 <?php
 
+/*
+ * This file is part of the Snowtricks project.
+ *
+ * (c) Guillaume Loulier <guillaume.loulier@hotmail.fr>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace UserBundle\Entity;
 
-use AppBundle\Entity\Commentary;
-use Doctrine\Common\Collections\ArrayCollection;
+// Entities
 use AppBundle\Entity\Tricks;
+use AppBundle\Entity\Commentary;
+
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 /**
  * User.
+ *
+ * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
-class User implements AdvancedUserInterface
+class User implements
+    AdvancedUserInterface,
+    \Serializable
 {
     /**
      * @var int
@@ -72,9 +87,16 @@ class User implements AdvancedUserInterface
      */
     private $locked;
 
+    /**
+     * @var bool
+     */
+    private $isActive;
+
     private $commentary;
 
     private $tricks;
+
+    public $currentStatus;
 
     /**
      * Get id.
@@ -351,6 +373,30 @@ class User implements AdvancedUserInterface
     }
 
     /**
+     * Set isActive
+     *
+     * @param boolean $isActive
+     *
+     * @return User
+     */
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    /**
+     * Get isActive
+     *
+     * @return boolean
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
+    }
+
+    /**
      * Constructor.
      */
     public function __construct()
@@ -428,22 +474,22 @@ class User implements AdvancedUserInterface
 
     public function isAccountNonExpired()
     {
-        // TODO: Implement isAccountNonExpired() method.
+        return true;
     }
 
     public function isAccountNonLocked()
     {
-        // TODO: Implement isAccountNonLocked() method.
+        return true;
     }
 
     public function isCredentialsNonExpired()
     {
-        // TODO: Implement isCredentialsNonExpired() method.
+        return true;
     }
 
     public function isEnabled()
     {
-        // TODO: Implement isEnabled() method.
+        return $this->isActive;
     }
 
     public function getSalt()
@@ -454,5 +500,27 @@ class User implements AdvancedUserInterface
     public function eraseCredentials()
     {
         // TODO: Implement eraseCredentials() method.
+    }
+
+    /** @see \Serializable::serialize() */
+    public function serialize ()
+    {
+        return serialize([
+            $this->id,
+            $this->username,
+            $this->password,
+            $this->isActive,
+        ]);
+    }
+
+    /** @see \Serializable::unserialize() */
+    public function unserialize ($serialized)
+    {
+        list(
+            $this->id,
+            $this->username,
+            $this->password,
+            $this->isActive,
+        ) = unserialize($serialized);
     }
 }
