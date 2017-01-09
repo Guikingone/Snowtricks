@@ -106,6 +106,7 @@ class BackTest extends KernelTestCase
         if (is_object($this->back) && $this->back instanceof Back) {
             // Store the result to test the class.
             $trick = $this->back->getTricksByName('Backflip');
+
             $this->assertInstanceOf(
                 Tricks::class,
                 $trick
@@ -113,6 +114,7 @@ class BackTest extends KernelTestCase
 
             // Store the return to test the value passed through an array.
             $commentaries = $this->back->getCommentariesByTricks('Backflip');
+
             $this->assertContains(
                 'Backflip',
                 $commentaries->getTricks()
@@ -122,7 +124,7 @@ class BackTest extends KernelTestCase
             $tricks = $this->back->getTricksByName('Backflip');
             $this->assertEquals(
                 'BackFlip',
-                $tricks->getName('BackFlip')
+                $tricks->getName()
             );
         }
     }
@@ -217,6 +219,8 @@ class BackTest extends KernelTestCase
     {
         parent::tearDown();
 
+        $this->doctrine->clear(User::class);
+        $this->doctrine->clear(Tricks::class);
         $this->doctrine->close();
         $this->doctrine = null;
     }

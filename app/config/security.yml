@@ -33,7 +33,7 @@ security:
                check_path: login
                csrf_token_generator: security.csrf.token_manager
                default_target_path: home
-               failure_path: community
+               failure_path: login
             logout:
                path:    /logout
                target:  /

@@ -240,26 +240,6 @@ class TricksListeners
     }
 
     /**
-     * Allow to retrieve the file linked to a tricks.
-     *
-     * @param LifecycleEventArgs $args
-     *
-     * @throws FileNotFoundException
-     */
-    public function postLoad(LifecycleEventArgs $args)
-    {
-        $entity = $args->getObject();
-
-        if (!$entity instanceof Tricks) {
-            return;
-        }
-
-        $images = $entity->getImages();
-
-        $entity->setImages([new File($this->imagesDir . '/' . $images)]);
-    }
-
-    /**
      * @param TricksValidatedEvent $validatedEvent
      *
      * @throws \LogicException

@@ -16,6 +16,7 @@ use Doctrine\ORM\EntityManager;
 
 // Entity
 use AppBundle\Entity\Tricks;
+use Symfony\Component\Workflow\Workflow;
 use UserBundle\Entity\User;
 
 /**
@@ -31,10 +32,19 @@ class TricksRepositoryTest extends KernelTestCase
     private $doctrine;
 
     /**
+     * @var Workflow
+     */
+    private $workflow;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
+        self::bootKernel();
+        $this->doctrine = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
+        $this->workflow = static::$kernel->getContainer()->get('workflow.tricks_process');
+
         // Create a user in order to simulate the authentication process.
         $author = new User();
         $author->setLastname('Loulier');
@@ -58,8 +68,10 @@ class TricksRepositoryTest extends KernelTestCase
         $tricks->setPublished(true);
         $tricks->setValidated(true);
 
-        self::bootKernel();
-        $this->doctrine = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
+        // Apply workflow for entity state.
+        $this->workflow->apply($tricks, 'start_phase');
+        $this->workflow->apply($tricks, 'validation_phase');
+
         $this->doctrine->persist($tricks);
         $this->doctrine->flush();
     }
@@ -74,8 +86,7 @@ class TricksRepositoryTest extends KernelTestCase
 
         if (is_object($tricks)) {
             $this->assertEquals('Backflip', $tricks->getName());
-            $this->assertEquals('26/12/2016', $tricks->getCreationDate());
-            $this->assertEquals('Guillaume', $tricks->getAuthor()->getFirstname());
+            $this->assertInstanceOf(User::class, $tricks->getAuthor());
             $this->assertContains('Flip', $tricks->getGroups());
             $this->assertEquals('A simple backflip content ...', $tricks->getResume());
             $this->assertEquals(true, $tricks->getPublished());
@@ -89,11 +100,11 @@ class TricksRepositoryTest extends KernelTestCase
     public function testTricksFindByGroup()
     {
         $tricks = $this->doctrine->getRepository('AppBundle:Tricks')
-                                 ->findBy(array('group' => 'Flip'));
+                                 ->findBy(array('groups' => 'Flip'));
 
         if (is_array($tricks)) {
             foreach ($tricks as $trick) {
-                $this->assertArrayHasKey('Flip', $trick->getGroup());
+                $this->assertContains('Flip', $trick->getGroups());
             }
         }
     }
@@ -144,7 +155,11 @@ class TricksRepositoryTest extends KernelTestCase
             $this->doctrine->remove($tricks);
         }
 
-        $this->assertEmpty($this->doctrine->getRepository('AppBundle:Tricks')->findAll());
+        // Check if the tricks is in the array of result.
+        $this->assertNotContains(
+            $tricks->getName(),
+            $this->doctrine->getRepository('AppBundle:Tricks')->findAll()
+        );
     }
 
     /**
@@ -154,6 +169,8 @@ class TricksRepositoryTest extends KernelTestCase
     {
         parent::tearDown();
 
+        $this->doctrine->clear(Tricks::class);
+        $this->doctrine->clear(User::class);
         $this->doctrine->close();
         $this->doctrine = null;
     }

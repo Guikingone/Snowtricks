@@ -14,7 +14,6 @@ namespace UserBundle\Entity;
 // Entities
 use AppBundle\Entity\Tricks;
 use AppBundle\Entity\Commentary;
-
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
@@ -373,9 +372,9 @@ class User implements
     }
 
     /**
-     * Set isActive
+     * Set isActive.
      *
-     * @param boolean $isActive
+     * @param bool $isActive
      *
      * @return User
      */
@@ -387,9 +386,9 @@ class User implements
     }
 
     /**
-     * Get isActive
+     * Get isActive.
      *
-     * @return boolean
+     * @return bool
      */
     public function getIsActive()
     {
@@ -503,7 +502,7 @@ class User implements
     }
 
     /** @see \Serializable::serialize() */
-    public function serialize ()
+    public function serialize()
     {
         return serialize([
             $this->id,
@@ -514,13 +513,12 @@ class User implements
     }
 
     /** @see \Serializable::unserialize() */
-    public function unserialize ($serialized)
+    public function unserialize($serialized)
     {
         list(
             $this->id,
             $this->username,
             $this->password,
-            $this->isActive,
-        ) = unserialize($serialized);
+            $this->isActive) = unserialize($serialized);
     }
 }

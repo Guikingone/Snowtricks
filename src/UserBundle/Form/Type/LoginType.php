@@ -19,7 +19,7 @@ use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class LoginType
+ * Class LoginType.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
@@ -29,7 +29,7 @@ class LoginType extends AbstractType
      * @param FormBuilderInterface $builder
      * @param array                $options
      */
-    public function buildForm (FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('email', EmailType::class)
@@ -42,10 +42,10 @@ class LoginType extends AbstractType
      *
      * @throws AccessException
      */
-    public function configureOptions (OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-           'data_class' => 'UserBundle\Entity\User'
+           'data_class' => 'UserBundle\Entity\User',
         ]);
     }
 }

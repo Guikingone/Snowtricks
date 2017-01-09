@@ -62,6 +62,6 @@ class SecurityControllerTest extends WebTestCase
 
         $client->request('GET', '/community/profile/Guik');
 
-        $this->assertEquals(500, $client->getResponse()->getStatusCode());
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }
 }

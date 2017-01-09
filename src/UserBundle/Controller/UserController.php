@@ -14,14 +14,17 @@ namespace UserBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 /**
- * Class UserController
+ * Class UserController.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
 class UserController extends Controller
 {
+    /**
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function profileAction()
     {
-
+        return $this->render(':Security/Users:profile.html.twig');
     }
 }

@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\HttpFoundation\File\File;
 use UserBundle\Entity\User;
 
 /**
@@ -168,6 +169,20 @@ class Tricks
     }
 
     /**
+     * Add image.
+     *
+     * @param File $image
+     *
+     * @return $this
+     */
+    public function addImage(File $image)
+    {
+        $this->images[] = $image;
+
+        return $this;
+    }
+
+    /**
      * Set images.
      *
      * @param array $images
@@ -179,6 +194,18 @@ class Tricks
         $this->images = $images;
 
         return $this;
+    }
+
+    /**
+     * Return a single image.
+     *
+     * @param string $image
+     *
+     * @return mixed
+     */
+    public function getImage($image)
+    {
+        return $this->images[] = $image;
     }
 
     /**

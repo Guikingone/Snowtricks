@@ -14,7 +14,7 @@ namespace AppBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 /**
- * Class AdminController
+ * Class AdminController.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
@@ -22,16 +22,13 @@ class AdminController extends Controller
 {
     public function adminAction()
     {
-
     }
 
     public function tricksAction()
     {
-
     }
 
     public function usersAction()
     {
-
     }
 }

@@ -21,6 +21,7 @@ AppBundle\Entity\Tricks:
             type: text
         images:
             type: array
+            nullable: true
         videos:
             type: array
         published:

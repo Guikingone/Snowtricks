@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
- * Class Uploader
+ * Class Uploader.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */

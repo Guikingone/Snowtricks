@@ -162,7 +162,7 @@ class Security
      *
      * @param string $name
      *
-     * @return null|object|User
+     * @return null|User
      */
     public function getUser(string $name)
     {
@@ -265,7 +265,7 @@ class Security
     {
         $user = $this->doctrine->getRepository('UserBundle:User')
                                ->findOneBy([
-                                   'lastname' => $name
+                                   'lastname' => $name,
                                ]);
 
         if (!$user instanceof User) {

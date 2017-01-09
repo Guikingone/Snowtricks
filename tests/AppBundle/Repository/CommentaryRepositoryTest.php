@@ -17,6 +17,7 @@ use Doctrine\ORM\EntityManager;
 // Entities
 use AppBundle\Entity\Tricks;
 use AppBundle\Entity\Commentary;
+use Symfony\Component\Workflow\Workflow;
 use UserBundle\Entity\User;
 
 /**
@@ -32,10 +33,19 @@ class CommentaryRepositoryTest extends KernelTestCase
     private $doctrine;
 
     /**
+     * @var Workflow
+     */
+    private $workflow;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
+        self::bootKernel();
+        $this->doctrine = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
+        $this->workflow = static::$kernel->getContainer()->get('workflow.tricks_process');
+
         // Create a user in order to simulate the authentication process.
         $author = new User();
         $author->setLastname('Loulier');
@@ -60,14 +70,16 @@ class CommentaryRepositoryTest extends KernelTestCase
         $tricks->setPublished(true);
         $tricks->setValidated(true);
 
+        // Apply workflow for entity state.
+        $this->workflow->apply($tricks, 'start_phase');
+        $this->workflow->apply($tricks, 'validation_phase');
+
         $commentary = new Commentary();
         $commentary->setPublicationDate(new \DateTime());
         $commentary->setAuthor($author);
         $commentary->setTricks($tricks);
         $commentary->setContent('A simple commentary');
 
-        self::bootKernel();
-        $this->doctrine = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
         $this->doctrine->persist($commentary);
         $this->doctrine->flush();
     }
@@ -152,7 +164,7 @@ class CommentaryRepositoryTest extends KernelTestCase
         // try to find the entities after remove.
         $commentaries = $this->doctrine->getRepository('AppBundle:Commentary')->findAll();
 
-        $this->assertEmpty($commentaries);
+        $this->assertNotContains(Commentary::class, $commentaries);
     }
 
     /**
@@ -162,6 +174,9 @@ class CommentaryRepositoryTest extends KernelTestCase
     {
         parent::tearDown();
 
+        $this->doctrine->clear(User::class);
+        $this->doctrine->clear(Tricks::class);
+        $this->doctrine->clear(Commentary::class);
         $this->doctrine->close();
         $this->doctrine = null;
     }
