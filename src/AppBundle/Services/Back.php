@@ -326,7 +326,7 @@ class Back
                 $trick->setValidated(false);
                 // Dispatch a new Event.
                 $event = new TricksRefusedEvent($trick);
-                $this->eventDispatcher->dispatch(TricksValidatedEvent::NAME, $event);
+                $this->eventDispatcher->dispatch(TricksRefusedEvent::NAME, $event);
             }
         }
 

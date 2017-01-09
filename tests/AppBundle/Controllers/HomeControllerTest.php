@@ -14,7 +14,7 @@ namespace tests\AppBundle\Controllers;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
- * Class IndexControllerTest
+ * Class IndexControllerTest.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
@@ -28,8 +28,6 @@ class HomeControllerTest extends WebTestCase
         $client = static::createClient();
 
         $client->request('GET', '/');
-
-        dump($client->getResponse()->getStatusCode());
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }

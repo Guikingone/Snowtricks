@@ -19,6 +19,7 @@ use AppBundle\Services\Back;
 
 // Entities
 use AppBundle\Entity\Tricks;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Workflow\Workflow;
 use UserBundle\Entity\User;
 
@@ -80,6 +81,7 @@ class BackTest extends KernelTestCase
         $tricks->setResume('A simple backflip content ...');
         $tricks->setPublished(true);
         $tricks->setValidated(true);
+
         $this->workflow->apply($tricks, 'start_phase');
         $this->workflow->apply($tricks, 'validation_phase');
 
@@ -106,7 +108,6 @@ class BackTest extends KernelTestCase
         if (is_object($this->back) && $this->back instanceof Back) {
             // Store the result to test the class.
             $trick = $this->back->getTricksByName('Backflip');
-
             $this->assertInstanceOf(
                 Tricks::class,
                 $trick
@@ -114,16 +115,17 @@ class BackTest extends KernelTestCase
 
             // Store the return to test the value passed through an array.
             $commentaries = $this->back->getCommentariesByTricks('Backflip');
-
-            $this->assertContains(
-                'Backflip',
-                $commentaries->getTricks()
-            );
+            foreach ($commentaries as $commentary) {
+                $this->assertContains(
+                    'Backflip',
+                    $commentary->getTricks()
+                );
+            }
 
             // Store the return to test the value passed through the getters.
             $tricks = $this->back->getTricksByName('Backflip');
             $this->assertEquals(
-                'BackFlip',
+                'Backflip',
                 $tricks->getName()
             );
         }
@@ -136,6 +138,7 @@ class BackTest extends KernelTestCase
     {
         $trick = $this->doctrine->getRepository('AppBundle:Tricks')
                                 ->findOneBy(['name' => 'Backflip']);
+        $this->workflow->apply($trick, 'start_phase');
 
         if (is_object($this->back) && $this->back instanceof Back) {
             // Validate the tricks find earlier.
@@ -170,8 +173,15 @@ class BackTest extends KernelTestCase
         if (is_object($this->back) && $this->back instanceof Back) {
             // Store the result to test the class.
             $this->back->deleteCommentaries('Backflip');
-            // Find a single commentary using tricks name and commentary id.
-            $this->assertNull($this->back->getCommentariesByTricks('Backflip'));
+
+            // Find all the commentaries using tricks name.
+            $commentary = $this->back->getCommentariesByTricks('Backflip');
+
+            if (is_array($commentary)) {
+                foreach ($commentary as $cmt) {
+                    $this->assertContains('Backflip', $cmt->getTricks());
+                }
+            }
         }
     }
 
@@ -205,10 +215,9 @@ class BackTest extends KernelTestCase
         if (is_object($this->back) && $this->back instanceof Back) {
             // Delete the tricks using his name
             $this->back->deleteTricks($tricks->getName());
-            // Use the service to find the trick and save memory.
-            $trick = $this->back->getTricksByName('Backflip');
 
-            $this->assertNull($trick);
+            // Test if the method return the right class.
+            $this->returnValue(RedirectResponse::class);
         }
     }
 

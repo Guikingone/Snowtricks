@@ -14,7 +14,7 @@ namespace tests\AppBundle\Controllers;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
- * Class AdminControllerTest
+ * Class AdminControllerTest.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
@@ -45,7 +45,6 @@ class AdminControllerTest extends WebTestCase
         // Test the redirection because of the security process.
         $this->assertEquals(302, $client->getResponse()->getStatusCode());
     }
-
 
     /**
      * Test the adminUsersAction.

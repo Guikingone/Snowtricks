@@ -8,6 +8,7 @@ services:
         arguments:
            - '%kernel.root_dir%'
            - '@doctrine.orm.entity_manager'
+           - '@workflow.tricks_process'
 
     # Manage the upload files or assets.
     app.uploader:

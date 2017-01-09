@@ -14,7 +14,7 @@ namespace tests\UserBundle\Controllers;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
- * Class SecurityControllerTest
+ * Class SecurityControllerTest.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
@@ -42,7 +42,7 @@ class SecurityControllerTest extends WebTestCase
     }
 
     /**
-     * Test the loginAction
+     * Test the loginAction.
      */
     public function testLogin()
     {
@@ -54,7 +54,7 @@ class SecurityControllerTest extends WebTestCase
     }
 
     /**
-     * Test the profileAction
+     * Test the profileAction.
      */
     public function testProfile()
     {

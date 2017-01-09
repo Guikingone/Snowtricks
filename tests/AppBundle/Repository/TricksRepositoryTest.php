@@ -88,7 +88,7 @@ class TricksRepositoryTest extends KernelTestCase
             $this->assertEquals('Backflip', $tricks->getName());
             $this->assertInstanceOf(User::class, $tricks->getAuthor());
             $this->assertContains('Flip', $tricks->getGroups());
-            $this->assertEquals('A simple backflip content ...', $tricks->getResume());
+            $this->assertEquals('A simple test.', $tricks->getResume());
             $this->assertEquals(true, $tricks->getPublished());
             $this->assertEquals(true, $tricks->getValidated());
         }

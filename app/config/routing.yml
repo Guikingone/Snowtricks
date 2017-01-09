@@ -2,7 +2,7 @@
 home:
     path:    /
     methods: 'GET'
-    defaults: { _controller: AppBundle:Home:index }
+    defaults: { _controller: AppBundle:Web/Home:index }
 
 tricks:
     path:     /tricks
@@ -53,3 +53,12 @@ profile:
 
 logout:
     path:    /logout
+
+#################################################################################
+# API                                                                           #
+#################################################################################
+
+api_tricks:
+     path:    /api/tricks/all
+     methods: 'GET'
+     defaults: { _controller: AppBundle:Api/ApiMain:getTricks }

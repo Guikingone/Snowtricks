@@ -11,14 +11,17 @@
 
 namespace AppBundle\Command;
 
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMInvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+
+// Exceptions
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMInvalidArgumentException;
+use Symfony\Component\Console\Exception\InvalidArgumentException;
+use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Yaml\Exception\ParseException;
 
 /**
@@ -48,6 +51,7 @@ class LoadTricksCommand extends ContainerAwareCommand
      * @throws \LogicException
      * @throws ParseException
      * @throws ORMInvalidArgumentException
+     * @throws LogicException
      * @throws \InvalidArgumentException
      * @throws OptimisticLockException
      */

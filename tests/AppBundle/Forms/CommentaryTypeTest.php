@@ -33,7 +33,7 @@ class CommentaryTypeTest extends TypeTestCase
 
         $data = [
             'content' => $entity->getContent(),
-            'publicationDate' => $entity->getPublicationDate()
+            'publicationDate' => $entity->getPublicationDate(),
         ];
 
         $form = $this->factory->create(CommentaryType::class, $entity);

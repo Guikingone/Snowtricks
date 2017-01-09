@@ -15,6 +15,8 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Workflow\Exception\LogicException;
+use Symfony\Component\Workflow\Workflow;
 use Symfony\Component\Yaml\Yaml;
 
 // Entity
@@ -32,6 +34,16 @@ use Symfony\Component\Yaml\Exception\ParseException;
  */
 class FileManager
 {
+    /**
+     * @var EntityManager
+     */
+    private $doctrine;
+
+    /**
+     * @var Workflow
+     */
+    private $workflow;
+
     // Store the kernel.root.dir
     private $rootDir;
 
@@ -51,11 +63,16 @@ class FileManager
      *
      * @param               $rootDir
      * @param EntityManager $doctrine
+     * @param Workflow      $workflow
      */
-    public function __construct($rootDir, EntityManager $doctrine)
-    {
+    public function __construct(
+        $rootDir,
+        EntityManager $doctrine,
+        Workflow $workflow
+    ) {
         $this->rootDir = $rootDir;
         $this->doctrine = $doctrine;
+        $this->workflow = $workflow;
     }
 
     /**
@@ -66,6 +83,7 @@ class FileManager
      * @throws \InvalidArgumentException
      * @throws ParseException
      * @throws \LogicException
+     * @throws LogicException
      * @throws ORMInvalidArgumentException
      * @throws OptimisticLockException
      */
@@ -88,6 +106,10 @@ class FileManager
                             $this->cache->getPath()
                     )
                 );
+                $author = $this->doctrine->getRepository('UserBundle:User')
+                                         ->findOneBy([
+                                             'roles' => 'ROLE_ADMIN'
+                                         ]);
                 // Instantiate the entity in order to save memory into the loop.
                 $trick = new Tricks();
                 foreach ($values as $value => $item) {
@@ -97,8 +119,12 @@ class FileManager
                     $tricks->setCreationDate(new \DateTime());
                     $tricks->setGroups($item['groups']);
                     $tricks->setResume($item['resume']);
+                    $tricks->setAuthor($author);
                     $tricks->setValidated(true);
                     $tricks->setPublished(true);
+
+                    $this->workflow->apply($tricks, 'start_phase');
+                    $this->workflow->apply($tricks, 'validation_phase');
 
                     // Store in array for future check.
                     $this->tricks[$tricks->getName()] = $tricks;
@@ -129,6 +155,7 @@ class FileManager
      *
      * @throws \InvalidArgumentException
      * @throws ParseException
+     * @throws LogicException
      * @throws ORMInvalidArgumentException
      * @throws OptimisticLockException
      */
@@ -147,6 +174,10 @@ class FileManager
                     $file
                 )
             );
+            $author = $this->doctrine->getRepository('UserBundle:User')
+                                     ->findOneBy([
+                                         'roles' => 'ROLE_ADMIN'
+                                     ]);
             foreach ($value as $values => $item) {
                 // Clone the entity to respect the loop.
                 $tricks = clone $trick;
@@ -154,8 +185,12 @@ class FileManager
                 $tricks->setCreationDate(new \DateTime());
                 $tricks->setGroups($item['groups']);
                 $tricks->setResume($item['resume']);
+                $tricks->setAuthor($author);
                 $tricks->setValidated(true);
                 $tricks->setPublished(true);
+
+                $this->workflow->apply($tricks, 'start_phase');
+                $this->workflow->apply($tricks, 'validation_phase');
 
                 // Store in array for future check.
                 $this->tricks[$tricks->getName()] = $tricks;
