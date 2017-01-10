@@ -3,7 +3,7 @@
     <button type="button" @click="fetchData">Get Data</button>
     <ul>
       <li v-for="u in users">
-          {{ u }}
+          {{ u.name }}
       </li>
     </ul>
   </div>

@@ -7,28 +7,28 @@ home:
 tricks:
     path:     /tricks
     methods: 'GET'
-    defaults: { _controller: AppBundle:Home:tricks }
+    defaults: { _controller: AppBundle:Web/Home:tricks }
 
 tricks_details:
     path:     /tricks/{name}
     methods: ['GET', 'POST']
-    defaults: { _controller: AppBundle:Home:tricksDetails }
+    defaults: { _controller: AppBundle:Web/Home:tricksDetails }
 
 # Back
 admin:
     path:    /admin
     methods: ['GET', 'POST']
-    defaults: { _controller: AppBundle:Admin:admin }
+    defaults: { _controller: AppBundle:Web/Admin:admin }
 
 admin_tricks:
     path:    /admin/tricks
     methods: ['GET', 'POST']
-    defaults: { _controller: AppBundle:Admin:tricks }
+    defaults: { _controller: AppBundle:Web/Admin:tricks }
 
 admin_users:
     path:    /admin/users
     methods: ['GET', 'POST']
-    defaults: { _controller: AppBundle:Admin:users }
+    defaults: { _controller: AppBundle:Web/Admin:users }
 
 # User
 register:
@@ -53,12 +53,3 @@ profile:
 
 logout:
     path:    /logout
-
-#################################################################################
-# API                                                                           #
-#################################################################################
-
-api_tricks:
-     path:    /api/tricks/all
-     methods: 'GET'
-     defaults: { _controller: AppBundle:Api/ApiMain:getTricks }

@@ -43,11 +43,10 @@ class UserRepositoryTest extends KernelTestCase
         $user->setUsername('Nono');
         $user->setPassword('Lk__DTHE');
         $user->setRoles(['ROLE_ADMIN']);
-        $user->setValidated(true);
         $user->setToken('654a6d4dzd19de4yhqdf4af4a1fa66fa4');
         $user->setValidated(true);
         $user->setLocked(false);
-        $user->setIsActive(true);
+        $user->setActive(true);
 
         self::bootKernel();
         $this->doctrine = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
@@ -79,9 +78,8 @@ class UserRepositoryTest extends KernelTestCase
             $this->assertContains('ROLE_ADMIN', $user->getRoles());
             $this->assertTrue($user->getValidated());
             $this->assertEquals('654a6d4dzd19de4yhqdf4af4a1fa66fa4', $user->getToken());
-            $this->assertTrue($user->getValidated());
             $this->assertFalse($user->getLocked());
-            $this->assertTrue($user->getIsActive());
+            $this->assertTrue($user->getActive());
         }
     }
 

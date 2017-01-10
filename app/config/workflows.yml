@@ -25,7 +25,7 @@ framework:
                publication_phase:
                    from: publication
                    to: online
-        # User process
+       # User process
        user_process:
            type: 'workflow'
            marking_store:

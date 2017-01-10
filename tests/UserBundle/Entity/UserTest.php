@@ -38,6 +38,7 @@ class UserTest extends TestCase
         $user->setToken('dd21498e61e26a5a42d3g9r4z2a364f2s3a2');
         $user->setValidated(true);
         $user->setLocked(false);
+        $user->setActive(true);
 
         $this->assertEquals('Arnaud', $user->getFirstname());
         $this->assertEquals('Tricks', $user->getLastname());
@@ -50,5 +51,6 @@ class UserTest extends TestCase
         $this->assertEquals('dd21498e61e26a5a42d3g9r4z2a364f2s3a2', $user->getToken());
         $this->assertTrue($user->getValidated());
         $this->assertFalse($user->getLocked());
+        $this->assertTrue($user->getActive());
     }
 }

@@ -57,7 +57,7 @@ class TricksRepositoryTest extends KernelTestCase
         $author->setToken('dd21498e61e26a5a42d3g9r4z2a364f2s3a2');
         $author->setValidated(true);
         $author->setLocked(false);
-        $author->setIsActive(true);
+        $author->setActive(true);
 
         $tricks = new Tricks();
         $tricks->setName('Backflip');

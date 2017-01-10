@@ -82,4 +82,3 @@ services:
             - { name: doctrine.event_listener, event: prePersist }
             - { name: doctrine.event_listener, event: postPersist }
             - { name: kernel.event_listener, event: user.validated, method: onValidatedUser }
-

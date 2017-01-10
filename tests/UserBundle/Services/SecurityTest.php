@@ -52,7 +52,7 @@ class SecurityTest extends KernelTestCase
         $user->setToken('dd21498e61e26a5a42d3g9r4z2a364f2s3a2');
         $user->setValidated(true);
         $user->setLocked(false);
-        $user->setIsActive(true);
+        $user->setActive(true);
 
         self::bootKernel();
         $this->doctrine = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');

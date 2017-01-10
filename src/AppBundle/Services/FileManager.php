@@ -174,10 +174,13 @@ class FileManager
                     $file
                 )
             );
+
+            // Find a user who's admin to link the tricks.
             $author = $this->doctrine->getRepository('UserBundle:User')
                                      ->findOneBy([
                                          'roles' => 'ROLE_ADMIN'
                                      ]);
+
             foreach ($value as $values => $item) {
                 // Clone the entity to respect the loop.
                 $tricks = clone $trick;

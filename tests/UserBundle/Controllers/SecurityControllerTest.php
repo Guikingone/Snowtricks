@@ -27,18 +27,9 @@ class SecurityControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $crawler = $client->request('GET', '/community/register');
+        $client->request('GET', '/community/register');
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-
-        $form = $crawler->selectButton('submit')->form();
-
-        $form['email'] = 'contact@guillaumeloulier.fr';
-        $form['username'] = 'Guik';
-        $form['password'] = 'Ie1FDLSQL';
-        $form['password_repeat'] = 'Ie1FDLSQL';
-
-        $crawler = $client->submit($form);
     }
 
     /**
