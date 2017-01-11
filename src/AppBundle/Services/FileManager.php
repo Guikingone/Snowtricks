@@ -108,7 +108,7 @@ class FileManager
                 );
                 $author = $this->doctrine->getRepository('UserBundle:User')
                                          ->findOneBy([
-                                             'roles' => 'ROLE_ADMIN'
+                                             'roles' => 'ROLE_ADMIN',
                                          ]);
                 // Instantiate the entity in order to save memory into the loop.
                 $trick = new Tricks();
@@ -178,7 +178,7 @@ class FileManager
             // Find a user who's admin to link the tricks.
             $author = $this->doctrine->getRepository('UserBundle:User')
                                      ->findOneBy([
-                                         'roles' => 'ROLE_ADMIN'
+                                         'roles' => 'ROLE_ADMIN',
                                      ]);
 
             foreach ($value as $values => $item) {

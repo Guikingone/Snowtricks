@@ -1,6 +1,6 @@
 AppBundle\Entity\Commentary:
     type: entity
-    table: null
+    table: _commentary
     repositoryClass: AppBundle\Repository\CommentaryRepository
     id:
         id:

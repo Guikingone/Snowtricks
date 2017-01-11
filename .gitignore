@@ -26,3 +26,6 @@ npm-debug.log
 # Compiled files
 /web/prod/*
 
+# Coverage
+/Coverage/
+

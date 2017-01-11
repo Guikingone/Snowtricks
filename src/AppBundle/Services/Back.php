@@ -12,6 +12,8 @@
 namespace AppBundle\Services;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -124,11 +126,14 @@ class Back
      * @param string $name
      * @param int    $id
      *
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     *
      * @return Commentary|null
      */
     public function getCommentaryByTricks(string $name, int $id)
     {
-        return $this->doctrine->getRepository('AppBundle:Commentary')->findOneBy(['tricks' => $name, 'id' => $id]);
+        return $this->doctrine->getRepository('AppBundle:Commentary')->getCommentaryByTricks($name, $id);
     }
 
     /**
@@ -140,7 +145,7 @@ class Back
      */
     public function getCommentariesByTricks(string $tricks)
     {
-        return $this->doctrine->getRepository('AppBundle:Commentary')->findBy(['tricks' => $tricks]);
+        return $this->doctrine->getRepository('AppBundle:Commentary')->getCommentariesByTricks($tricks);
     }
 
     /**

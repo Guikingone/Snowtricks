@@ -1,6 +1,6 @@
 AppBundle\Entity\Tricks:
     type: entity
-    table: null
+    table: _tricks
     repositoryClass: AppBundle\Repository\TricksRepository
     id:
         id:

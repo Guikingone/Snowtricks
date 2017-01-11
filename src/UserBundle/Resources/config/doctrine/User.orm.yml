@@ -1,6 +1,6 @@
 UserBundle\Entity\User:
     type: entity
-    table: null
+    table: _user
     repositoryClass: UserBundle\Repository\UserRepository
     id:
         id:

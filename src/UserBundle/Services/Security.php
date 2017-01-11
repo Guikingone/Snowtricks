@@ -278,7 +278,7 @@ class Security
         }
 
         $user->setLocked(true);
-        $user->setIsActive(false);
+        $user->setActive(false);
 
         $this->doctrine->flush();
         $this->session->getFlashBag()->add(
@@ -318,7 +318,7 @@ class Security
         }
 
         $user->setLocked(false);
-        $user->setIsActive(true);
+        $user->setActive(true);
 
         $this->doctrine->flush();
         $this->session->getFlashBag()->add(

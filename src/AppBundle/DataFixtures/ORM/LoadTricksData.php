@@ -15,13 +15,13 @@ use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 /**
- * Class LoadTricksData
+ * Class LoadTricksData.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
 class LoadTricksData implements FixtureInterface
 {
-    public function load (ObjectManager $manager)
+    public function load(ObjectManager $manager)
     {
         // TODO: Implement load() method.
     }

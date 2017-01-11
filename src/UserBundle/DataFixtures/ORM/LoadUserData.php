@@ -18,7 +18,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use UserBundle\Entity\User;
 
 /**
- * Class LoadUserData
+ * Class LoadUserData.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
@@ -27,7 +27,7 @@ class LoadUserData implements FixtureInterface
     /**
      * @param ObjectManager $manager
      */
-    public function load (ObjectManager $manager)
+    public function load(ObjectManager $manager)
     {
         $user = new User();
         $user->setFirstname('Guillaume');
