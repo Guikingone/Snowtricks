@@ -70,5 +70,7 @@ class TricksFormsTest extends TypeTestCase
         foreach (array_keys($data) as $key) {
             $this->assertArrayHasKey($key, $children);
         }
+
+        $this->assertEquals('app_bundle_tricks_type', $form->getName());
     }
 }

@@ -20,15 +20,27 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
  */
 class AdminController extends Controller
 {
+    /**
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function adminAction()
     {
+        return $this->render(':Back:admin_index.html.twig');
     }
 
+    /**
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function tricksAction()
     {
+        return $this->render(':Back:admin_tricks.html.twig');
     }
 
+    /**
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function usersAction()
     {
+        return $this->render(':Back:admin_users.html.twig');
     }
 }

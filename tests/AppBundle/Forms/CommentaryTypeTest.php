@@ -48,5 +48,7 @@ class CommentaryTypeTest extends TypeTestCase
         foreach (array_keys($data) as $key) {
             $this->assertArrayHasKey($key, $children);
         }
+
+        $this->assertEquals('app_bundle_commentary_type', $form->getName());
     }
 }

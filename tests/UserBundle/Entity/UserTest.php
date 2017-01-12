@@ -12,6 +12,8 @@
 namespace tests\UserBundle\Entity;
 
 use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
+
+// Entity
 use UserBundle\Entity\User;
 
 /**
@@ -40,6 +42,7 @@ class UserTest extends TestCase
         $user->setLocked(false);
         $user->setActive(true);
 
+        $this->assertNull($user->getId());
         $this->assertEquals('Arnaud', $user->getFirstname());
         $this->assertEquals('Tricks', $user->getLastname());
         $this->assertEquals(new \DateTime(), $user->getBirthdate());
@@ -52,5 +55,9 @@ class UserTest extends TestCase
         $this->assertTrue($user->getValidated());
         $this->assertFalse($user->getLocked());
         $this->assertTrue($user->getActive());
+        $this->assertTrue($user->isEnabled());
+        $this->assertTrue($user->isAccountNonExpired());
+        $this->assertTrue($user->isAccountNonLocked());
+        $this->assertTrue($user->isCredentialsNonExpired());
     }
 }

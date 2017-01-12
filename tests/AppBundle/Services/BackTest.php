@@ -149,6 +149,23 @@ class BackTest extends KernelTestCase
     }
 
     /**
+     * Test if the app.back service can validate a trick using his name.
+     */
+    public function testTricksValidationMethodFail()
+    {
+        $trick = $this->doctrine->getRepository('AppBundle:Tricks')
+                                ->findOneBy(['name' => 'Backflip']);
+        $this->workflow->apply($trick, 'start_phase');
+
+        if (is_object($this->back) && $this->back instanceof Back) {
+            // Validate the tricks find earlier.
+            $this->back->validateTricks($trick);
+            // Test if the exception is thrown using only class.
+            $this->expectException(\LogicException::class);
+        }
+    }
+
+    /**
      * Test if the app.back service can refuse a validation using the Trick name.
      */
     public function testTricksNoValidationMethod()

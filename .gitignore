@@ -27,5 +27,7 @@ npm-debug.log
 /web/prod/*
 
 # Coverage
-/Coverage/
+/_coverage/
 
+# Quality
+/_quality/

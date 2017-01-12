@@ -12,6 +12,8 @@
 namespace tests\AppBundle\Entity;
 
 use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
+
+// Entity
 use AppBundle\Entity\Tricks;
 use AppBundle\Entity\Commentary;
 use UserBundle\Entity\User;
@@ -33,6 +35,7 @@ class CommentaryTest extends TestCase
         $commentary->setContent('A simple test');
 
         $this->assertEquals('A simple test', $commentary->getContent());
+        $this->assertNull($commentary->getId());
     }
 
     /**
@@ -61,10 +64,17 @@ class CommentaryTest extends TestCase
         $commentary->setTricks($tricks);
         $commentary->setContent('A simple commentary');
 
-        $this->assertEquals('A simple commentary', $commentary->getContent());
+        $author->addCommentary($commentary);
 
         // Test the relation between entity in order to validate the typehint.
+        $this->assertEquals('A simple commentary', $commentary->getContent());
         $this->assertEquals($author, $commentary->getAuthor());
         $this->assertEquals($tricks, $commentary->getTricks());
+        $this->assertContains($commentary, $author->getCommentary());
+
+        // Remove the entities.
+        $author->removeCommentary($commentary);
+
+        $this->assertNotContains($commentary, $author->getCommentary());
     }
 }

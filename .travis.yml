@@ -10,3 +10,4 @@ services:
 
 install:
   - composer install
+  - php _bin/exec.php

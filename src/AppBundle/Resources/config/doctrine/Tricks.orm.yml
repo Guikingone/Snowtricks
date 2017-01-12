@@ -12,6 +12,7 @@ AppBundle\Entity\Tricks:
         name:
             type: string
             length: 100
+            nullable: false
         creationDate:
             type: datetime
         groups:
@@ -19,11 +20,13 @@ AppBundle\Entity\Tricks:
             length: 100
         resume:
             type: text
+            nullable: false
         images:
             type: array
             nullable: true
         videos:
             type: array
+            nullable: true
         published:
             type: boolean
         validated:

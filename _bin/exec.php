@@ -12,6 +12,6 @@
 $datetime = new DateTime();
 $path = $datetime->format('d-m-Y').'_'.($datetime->format('H') + 1).'h'.$datetime->format('i').'min';
 
-exec('phpunit --coverage-html ./Coverage/'.$path);
-exec('phpmetrics --report-html ./src ./_coverage/_metrics.html');
+exec('phpunit --coverage-html ./_coverage/'.$path);
+exec('phpmetrics --report-html ./_quality/_metrics.html ./src');
 exec('phploc ./src');
