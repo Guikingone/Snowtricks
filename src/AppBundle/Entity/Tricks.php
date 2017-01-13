@@ -182,27 +182,13 @@ class Tricks
     /**
      * Add image.
      *
-     * @param File $image
+     * @param string $image
      *
      * @return $this
      */
-    public function addImage(File $image)
+    public function addImage(string $image)
     {
         $this->images[] = $image;
-
-        return $this;
-    }
-
-    /**
-     * Set images.
-     *
-     * @param array $images
-     *
-     * @return Tricks
-     */
-    public function setImages($images)
-    {
-        $this->images = $images;
 
         return $this;
     }

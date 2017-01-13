@@ -12,8 +12,6 @@
 namespace UserBundle\Services;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMInvalidArgumentException;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;
 use Symfony\Component\Form\FormFactory;
@@ -21,13 +19,11 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 // Entity
+use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Workflow;
 use UserBundle\Entity\User;
 
@@ -35,6 +31,12 @@ use UserBundle\Entity\User;
 use UserBundle\Events\ConfirmedUserEvent;
 use UserBundle\Form\ForgotPasswordType;
 use UserBundle\Form\Type\RegisterType;
+
+// Exceptions
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMInvalidArgumentException;
 
 /**
  * Class Security.
@@ -69,16 +71,6 @@ class Security
     private $authenticationUtils;
 
     /**
-     * @var UserPasswordEncoder
-     */
-    private $password;
-
-    /**
-     * @var TokenStorage
-     */
-    private $tokenStorage;
-
-    /**
      * @var TraceableEventDispatcher
      */
     private $dispatcher;
@@ -111,8 +103,6 @@ class Security
      * @param Session                  $session
      * @param AuthorizationChecker     $security
      * @param AuthenticationUtils      $authenticationUtils
-     * @param UserPasswordEncoder      $password
-     * @param TokenStorage             $tokenStorage
      * @param TraceableEventDispatcher $dispatcher
      * @param RequestStack             $requestStack
      * @param Workflow                 $workflow
@@ -125,8 +115,6 @@ class Security
         Session $session,
         AuthorizationChecker $security,
         AuthenticationUtils $authenticationUtils,
-        UserPasswordEncoder $password,
-        TokenStorage $tokenStorage,
         TraceableEventDispatcher $dispatcher,
         RequestStack $requestStack,
         Workflow $workflow,
@@ -138,8 +126,6 @@ class Security
         $this->session = $session;
         $this->security = $security;
         $this->authenticationUtils = $authenticationUtils;
-        $this->password = $password;
-        $this->tokenStorage = $tokenStorage;
         $this->dispatcher = $dispatcher;
         $this->requestStack = $requestStack;
         $this->workflow = $workflow;
@@ -256,6 +242,7 @@ class Security
      *
      * @param string $name
      *
+     * @throws AccessDeniedException
      * @throws \InvalidArgumentException
      * @throws OptimisticLockException
      *
@@ -263,6 +250,15 @@ class Security
      */
     public function lockUser(string $name)
     {
+        if (!$this->security->isGranted('ROLE_ADMIN')) {
+            throw new AccessDeniedException(
+                sprintf(
+                    'L\'accès à cette ressource est bloqué 
+                    aux administrateurs !'
+                )
+            );
+        }
+
         $user = $this->doctrine->getRepository('UserBundle:User')
                                ->findOneBy([
                                    'lastname' => $name,
@@ -295,6 +291,7 @@ class Security
      *
      * @param string $name
      *
+     * @throws AccessDeniedException
      * @throws \InvalidArgumentException
      * @throws OptimisticLockException
      *
@@ -302,6 +299,15 @@ class Security
      */
     public function unlockUser(string $name)
     {
+        if (!$this->security->isGranted('ROLE_ADMIN')) {
+            throw new AccessDeniedException(
+                sprintf(
+                    'L\'accès à cette ressource est bloqué 
+                    aux administrateurs !'
+                )
+            );
+        }
+
         $user = $this->doctrine->getRepository('UserBundle:User')
                                ->findOneBy([
                                    'lastname' => $name,
@@ -334,6 +340,7 @@ class Security
      *
      * @param Request $request
      *
+     * @throws LogicException
      * @throws InvalidOptionsException
      * @throws ORMInvalidArgumentException
      * @throws OptimisticLockException
@@ -344,6 +351,9 @@ class Security
     public function registerUser(Request $request)
     {
         $user = new User();
+
+        // Init the workflow
+        $this->workflow->apply($user, 'register_phase');
 
         $form = $this->form->create(RegisterType::class, $user);
         $form->handleRequest($request);
@@ -376,6 +386,7 @@ class Security
      *
      * @param Request $request
      *
+     * @throws AccessDeniedException
      * @throws InvalidOptionsException
      * @throws \InvalidArgumentException
      * @throws \LogicException
@@ -387,6 +398,15 @@ class Security
      */
     public function forgotPassword(Request $request)
     {
+        if (!$this->security->isGranted('ROLE_USER')) {
+            throw new AccessDeniedException(
+                sprintf(
+                    'L\'accès à cette ressource est bloqué 
+                    aux utilisateurs de la plateforme !'
+                )
+            );
+        }
+
         $form = $this->form->create(ForgotPasswordType::class);
         $form->handleRequest($request);
 

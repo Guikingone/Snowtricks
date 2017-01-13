@@ -34,11 +34,17 @@ class TricksTest extends TestCase
         $tricks->setGroups('Flip');
         $tricks->setResume('A simple backflip content ...');
         $tricks->addVideos('nzT8sZE98Js');
+        $tricks->setVideos([
+            'nzT8sZE98Js',
+            'nzT8sZdj87s',
+            'nzT8sZE98Js'
+        ]);
 
         $this->assertEquals('Backflip', $tricks->getName());
         $this->assertEquals(new \DateTime(), $tricks->getCreationDate());
         $this->assertEquals('Flip', $tricks->getGroups());
         $this->assertEquals('A simple backflip content ...', $tricks->getResume());
+        $this->assertContains('nzT8sZE98Js', $tricks->getVideos());
         $this->assertContains('nzT8sZE98Js', $tricks->getVideos());
     }
 

@@ -12,8 +12,6 @@
 namespace AppBundle\Services;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
 use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -42,6 +40,8 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\Workflow\Exception\LogicException;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 
 /**
  * Class Back.
@@ -426,6 +426,9 @@ class Back
      *
      * @throws \LogicException
      * @throws \InvalidArgumentException
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     * @throws ORMInvalidArgumentException
      *
      * @return RedirectResponse
      */
@@ -444,16 +447,17 @@ class Back
             $exception->getMessage();
         }
 
-        if (is_string($name)) {
-            $trick = $this->doctrine->getRepository('AppBundle:Tricks')
-                                    ->findOneBy(['name' => $name]);
-
+        if (is_string($name) && is_int($id)) {
             $commentary = $this->doctrine->getRepository('AppBundle:Commentary')
-                                         ->findOneBy(['id' => $id]);
+                                         ->getCommentaryByTricks($name, $id);
 
-            if ($trick instanceof Tricks && $commentary instanceof Commentary) {
-                $this->doctrine->remove($commentary);
-            }
+            $this->doctrine->remove($commentary);
+            $this->session->getFlashBag()->add(
+                'success',
+                'Le commentaire a bien été supprimé.'
+            );
+
+            return new RedirectResponse('tricks');
         }
 
         return new RedirectResponse('tricks');

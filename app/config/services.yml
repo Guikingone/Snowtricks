@@ -50,6 +50,7 @@ services:
         tags:
             - { name: doctrine.event_listener, event: prePersist }
             - { name: doctrine.event_listener, event: postPersist }
+            - { name: doctrine.event_listener, event: postLoad }
             - { name: kernel.event_listener, event: tricks.validated, method: onValidateTricks }
             - { name: kernel.event_listener, event: tricks.refused, method: onRefusetricks }
 
@@ -62,8 +63,6 @@ services:
            - '@session'
            - '@security.authorization_checker'
            - '@security.authentication_utils'
-           - '@security.password_encoder'
-           - '@security.token_storage'
            - '@event_dispatcher'
            - '@request_stack'
            - '@workflow.user_process'
@@ -76,6 +75,7 @@ services:
         arguments:
             - '@security.password_encoder'
             - '@session'
+            - '@workflow.user_process'
             - '@templating'
             - '@mailer'
         tags:

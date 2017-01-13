@@ -82,11 +82,24 @@ class BackTest extends KernelTestCase
         $tricks->setPublished(true);
         $tricks->setValidated(true);
 
+        $tricksII = new Tricks();
+        $tricksII->setName('Frontflip');
+        $tricksII->setAuthor($author);
+        $tricksII->setCreationDate(new \DateTime());
+        $tricksII->setGroups('Flip');
+        $tricksII->setResume('A simple backflip content ...');
+        $tricksII->setPublished(false);
+        $tricksII->setValidated(false);
+
         $this->workflow->apply($tricks, 'start_phase');
         $this->workflow->apply($tricks, 'validation_phase');
 
+        $this->workflow->apply($tricksII, 'start_phase');
+        $this->workflow->apply($tricksII, 'validation_phase');
+
         // Persist after relations.
         $this->doctrine->persist($tricks);
+        $this->doctrine->persist($tricksII);
         $this->doctrine->flush();
     }
 
@@ -137,7 +150,8 @@ class BackTest extends KernelTestCase
     public function testTricksValidationMethod()
     {
         $trick = $this->doctrine->getRepository('AppBundle:Tricks')
-                                ->findOneBy(['name' => 'Backflip']);
+                                ->findOneBy(['name' => 'Frontflip']);
+
         $this->workflow->apply($trick, 'start_phase');
 
         if (is_object($this->back) && $this->back instanceof Back) {
@@ -145,23 +159,6 @@ class BackTest extends KernelTestCase
             $this->back->validateTricks($trick->getName());
 
             $this->assertTrue($trick->getValidated());
-        }
-    }
-
-    /**
-     * Test if the app.back service can validate a trick using his name.
-     */
-    public function testTricksValidationMethodFail()
-    {
-        $trick = $this->doctrine->getRepository('AppBundle:Tricks')
-                                ->findOneBy(['name' => 'Backflip']);
-        $this->workflow->apply($trick, 'start_phase');
-
-        if (is_object($this->back) && $this->back instanceof Back) {
-            // Validate the tricks find earlier.
-            $this->back->validateTricks($trick);
-            // Test if the exception is thrown using only class.
-            $this->expectException(\LogicException::class);
         }
     }
 
@@ -215,12 +212,7 @@ class BackTest extends KernelTestCase
             // Store the result to test the class.
             $this->back->deleteCommentary('Backflip', 2);
             // Find a single commentary using tricks name and commentary id.
-            // $this->assertNull(
-            //    $this->back->getCommentaryByTricks(
-            //        'Backflip',
-            //        2
-            //   )
-            //);
+            $this->returnValue(RedirectResponse::class);
         }
     }
 

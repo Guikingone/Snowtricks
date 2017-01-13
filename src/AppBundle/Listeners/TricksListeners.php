@@ -11,19 +11,14 @@
 
 namespace AppBundle\Listeners;
 
-use AppBundle\Services\Uploader;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Symfony\Bundle\TwigBundle\TwigEngine;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
-use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
-use Symfony\Component\Workflow\Exception\InvalidDefinitionException;
-use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Workflow;
 
 // Entity
@@ -33,6 +28,16 @@ use AppBundle\Entity\Tricks;
 // Event
 use AppBundle\Events\TricksRefusedEvent;
 use AppBundle\Events\TricksValidatedEvent;
+
+// App services
+use AppBundle\Services\Uploader;
+
+// Exceptions
+use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
+use Symfony\Component\Workflow\Exception\InvalidDefinitionException;
+use Symfony\Component\Workflow\Exception\LogicException;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
 /**
  * Class TricksListeners.
@@ -140,6 +145,7 @@ class TricksListeners
             return;
         }
 
+        // Normal case.
         if ($entity instanceof Tricks && $this->security->isGranted('ROLE_ADMIN')) {
             $entity->setCreationDate(new \DateTime());
             $entity->setValidated(true);
@@ -152,7 +158,7 @@ class TricksListeners
             $images = $entity->getImages();
             if ($images instanceof UploadedFile) {
                 $filename = $this->uploader->uploadFile($images);
-                $entity->setImages([$filename]);
+                $entity->addImage($filename);
             }
         } elseif ($entity->getPublished() === false) {
             // In the case of entity update.
@@ -235,6 +241,29 @@ class TricksListeners
                 'success',
                 'Le trick a été envoyé en validation.'
             );
+        }
+    }
+
+    /**
+     * @param LifecycleEventArgs $args
+     *
+     * @throws FileNotFoundException
+     */
+    public function postLoad(LifecycleEventArgs $args)
+    {
+        $entity = $args->getObject();
+
+        if (!$entity instanceof Tricks) {
+            return;
+        }
+
+        // Only if the entity has store files.
+        if ($entity->getImages()) {
+            $filename = $entity->getImages();
+
+            foreach ($filename as $file) {
+                $entity->addImage(new File($this->imagesDir.'/'.$file));
+            }
         }
     }
 

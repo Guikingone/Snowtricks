@@ -6,8 +6,14 @@ php:
   - '7.1'
 
 services:
-    - postgre
+    - postgresql
 
 install:
   - composer install
+
+before_script:
+  - php bin/console d:d:c
+  - php bin/console d:s:u --force
+
+script:
   - php _bin/exec.php

@@ -38,22 +38,10 @@ framework:
               - inscription
               - validation
               - connexion
-              - informations
-              - full_profile
-              - regular_user
            transitions:
                register_phase:
                    from: inscription
                    to: validation
-               first_connexion_phase:
+               validation_phase:
                    from: validation
                    to: connexion
-               informations_phase:
-                   from: connexion
-                   to: informations
-               full_phase:
-                   from: informations
-                   to: full_profile
-               regular_phase:
-                   from: full_profile
-                   to: regular_user

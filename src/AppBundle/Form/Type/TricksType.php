@@ -81,7 +81,7 @@ class TricksType extends AbstractType
             ])
             ->add('videos', CollectionType::class, [
                 'entry_type' => TextType::class, [
-                    'label' => 'Lien youtube ou DailyMotion',
+                    'label' => 'Identifiant unique de la vidéo.',
                 ],
                 'allow_add' => true,
                 'allow_delete' => true,

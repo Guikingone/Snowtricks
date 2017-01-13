@@ -73,7 +73,9 @@ class CommentaryTest extends TestCase
         $this->assertContains($commentary, $author->getCommentary());
 
         // Remove the entities.
-        $author->removeCommentary($commentary);
+        foreach ($author->getCommentary() as $commentary) {
+            $author->removeCommentary($commentary);
+        }
 
         $this->assertNotContains($commentary, $author->getCommentary());
     }
