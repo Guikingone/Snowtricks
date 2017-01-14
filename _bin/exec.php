@@ -12,6 +12,8 @@
 $datetime = new DateTime();
 $path = $datetime->format('d-m-Y').'_'.($datetime->format('H') + 1).'h'.$datetime->format('i').'min';
 
+exec('php-cs-fixer fix ./src --level=symfony');
+exec('php-cs-fixer fix ./tests --level=symfony');
 exec('phpunit --coverage-html ./_coverage/'.$path);
 exec('phpmetrics --report-html ./_quality/_metrics.html ./src');
 exec('phploc ./src');

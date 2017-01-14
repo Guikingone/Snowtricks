@@ -24,15 +24,22 @@ services:
         tags:
            - { name: console.command }
 
-    # Main service
-    app.back:
-        class: AppBundle\Services\Back
+    # AppBundle Managers
+    app.tricks_manager:
+        class: AppBundle\Managers\TricksManager
         arguments:
             - '@doctrine.orm.entity_manager'
             - '@form.factory'
             - '@session'
             - '@event_dispatcher'
             - '@workflow.tricks_process'
+
+    app.commentary_manager:
+        class: AppBundle\Managers\CommentaryManager
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@form.factory'
+            - '@session'
 
     # Tricks listeners.
     app.trick_listener:
@@ -54,7 +61,17 @@ services:
             - { name: kernel.event_listener, event: tricks.validated, method: onValidateTricks }
             - { name: kernel.event_listener, event: tricks.refused, method: onRefusetricks }
 
-    # User service
+    # UserBundle manager
+    user.user_manager:
+        class: UserBundle\Managers\UserManager
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@session'
+            - '@security.authorization_checker'
+            - '@request_stack'
+            - '@event_dispatcher'
+
+    # User security
     user.security:
         class: UserBundle\Services\Security
         arguments:
@@ -63,8 +80,6 @@ services:
            - '@session'
            - '@security.authorization_checker'
            - '@security.authentication_utils'
-           - '@event_dispatcher'
-           - '@request_stack'
            - '@workflow.user_process'
            - '@templating'
            - '@mailer'

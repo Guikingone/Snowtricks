@@ -12,7 +12,6 @@
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\HttpFoundation\File\File;
 use UserBundle\Entity\User;
 
 /**
@@ -194,6 +193,20 @@ class Tricks
     }
 
     /**
+     * Set multiples images.
+     *
+     * @param array $images
+     *
+     * @return $this
+     */
+    public function setImages(array $images)
+    {
+        $this->images = $images;
+
+        return $this;
+    }
+
+    /**
      * Return a single image.
      *
      * @param string $image
@@ -216,7 +229,7 @@ class Tricks
     }
 
     /**
-     * Add image.
+     * Add videos.
      *
      * @param string $video
      *
@@ -236,7 +249,7 @@ class Tricks
      *
      * @return Tricks
      */
-    public function setVideos($videos)
+    public function setVideos(array $videos)
     {
         $this->videos = $videos;
 

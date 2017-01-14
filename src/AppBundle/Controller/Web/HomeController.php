@@ -31,7 +31,7 @@ class HomeController extends Controller
      */
     public function indexAction()
     {
-        $tricks = $this->get('app.back')->getAllTricks();
+        $tricks = $this->get('app.tricks_manager')->getAllTricks();
 
         return $this->render('Home/index.html.twig', [
             'tricks' => $tricks,
@@ -43,7 +43,7 @@ class HomeController extends Controller
      */
     public function tricksAction()
     {
-        $tricks = $this->get('app.back')->getAllTricks();
+        $tricks = $this->get('app.tricks_manager')->getAllTricks();
 
         return $this->render(':Home:tricks.html.twig', [
             'tricks' => $tricks,
@@ -62,9 +62,9 @@ class HomeController extends Controller
      */
     public function tricksDetailsAction(Request $request, string $name)
     {
-        $trick = $this->get('app.back')->getTricksByName($name);
+        $trick = $this->get('app.tricks_manager')->getTricksByName($name);
 
-        $commentaryForm = $this->get('app.back')->addCommentary($request);
+        $commentaryForm = $this->get('app.commentary_manager')->addCommentary($request);
 
         return $this->render(':Home:tricks_details.html.twig', [
             'trick' => $trick,

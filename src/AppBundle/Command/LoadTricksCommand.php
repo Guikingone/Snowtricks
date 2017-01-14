@@ -94,7 +94,7 @@ class LoadTricksCommand extends ContainerAwareCommand
                 ->writeln([
                     '',
                     '',
-                    '<info>Hydratation finished without the cache, let\'s get to work !.</info>',
+                    '<info>Hydratation finished with the nocache version, let\'s get to work !.</info>',
                     '=========================================================================================',
                     '',
                 ]);

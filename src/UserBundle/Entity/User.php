@@ -401,6 +401,7 @@ class User implements
     public function __construct()
     {
         $this->tricks = new ArrayCollection();
+        $this->commentary = new ArrayCollection();
     }
 
     /**

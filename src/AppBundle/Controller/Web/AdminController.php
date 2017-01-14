@@ -33,7 +33,11 @@ class AdminController extends Controller
      */
     public function tricksAction()
     {
-        return $this->render(':Back:admin_tricks.html.twig');
+        $tricks = $this->get('app.tricks_manager')->getAllTricks();
+
+        return $this->render(':Back:admin_tricks.html.twig', [
+            'tricks' => $tricks,
+        ]);
     }
 
     /**
@@ -41,6 +45,10 @@ class AdminController extends Controller
      */
     public function usersAction()
     {
-        return $this->render(':Back:admin_users.html.twig');
+        $users = $this->get('user.user_manager')->getUsers();
+
+        return $this->render(':Back:admin_users.html.twig', [
+            'users' => $users,
+        ]);
     }
 }

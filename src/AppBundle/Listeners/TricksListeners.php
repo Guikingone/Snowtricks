@@ -14,7 +14,6 @@ namespace AppBundle\Listeners;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
@@ -156,9 +155,11 @@ class TricksListeners
 
             // File processing.
             $images = $entity->getImages();
-            if ($images instanceof UploadedFile) {
-                $filename = $this->uploader->uploadFile($images);
-                $entity->addImage($filename);
+            if (is_array($images)) {
+                foreach ($images as $img) {
+                    $filename = $this->uploader->uploadFile($img);
+                    $entity->addImage($filename);
+                }
             }
         } elseif ($entity->getPublished() === false) {
             // In the case of entity update.
@@ -172,9 +173,10 @@ class TricksListeners
         if ($entity instanceof Commentary) {
             $request = $this->requestStack->getCurrentRequest()->get('name');
             // Find the tricks linked by the request.
-            $name = $args->getObjectManager()
-                         ->getRepository('AppBundle:Tricks')
-                         ->findOneBy(['name' => $request]);
+            $name = $args->getObjectManager()->getRepository('AppBundle:Tricks')
+                                             ->findOneBy([
+                                                 'name' => $request,
+                                             ]);
 
             if (is_object($name) && $name instanceof Tricks) {
                 $entity->setAuthor($this->storage->getToken()->getUser());
@@ -218,6 +220,12 @@ class TricksListeners
         }
 
         if ($entity->getPublished() && $entity->getValidated() === true) {
+
+            // Find the admins stored to send emails.
+            $author = $args->getObjectManager()->getRepository('UserBundle:User')->findBy([
+                'roles' => 'ROLE_ADMIN',
+            ]);
+
             // Finalize the workflow.
             $this->workflow->apply($entity, 'publication_phase');
 
@@ -228,7 +236,7 @@ class TricksListeners
             $mail = \Swift_Message::newInstance()
                 ->setSubject('Snowtricks - Notification system')
                 ->setFrom('contact@snowtricks.fr')
-                ->setTo($entity->getAuthor()->getEmail())
+                ->setTo($author)
                 ->setBody($this->templating->render(
                     ':Mails:notif_email.html.twig', [
                         'tricks' => $entity,
