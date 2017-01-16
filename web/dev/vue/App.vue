@@ -1,11 +1,7 @@
 <template>
   <div>
-    <button type="button" @click="fetchData">Get Data</button>
-    <ul>
-      <li v-for="u in users">
-          {{ u.name }}
-      </li>
-    </ul>
+    <p><router-link to="/user">User</router-link></p>
+    <router-view></router-view>
   </div>
 </template>
 
