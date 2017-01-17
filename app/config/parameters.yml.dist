@@ -17,4 +17,4 @@ parameters:
 
     # A secret key that's used to generate certain security-related tokens
     secret:            5562ezc5620e22d2894jh21g895a10f568h2a2fd8g12
-    jwt_key_pass_phrase ~
+    jwt_key_pass_phrase: ~

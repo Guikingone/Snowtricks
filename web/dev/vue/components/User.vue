@@ -3,18 +3,20 @@
         <p>Hey !</p>
         <p>{{ msg }}</p>
         <label>
-            <input type="text" name="username" v-model="username" />
-            <input type="email" name="email" v-model="email" />
-            <input type="password" name="password" v-model="password" />
-            <input type="password" name="password-repeat" v-model="password_repeat" />
+            <input type="text" name="username" v-model="users.username" />
+            <input type="email" name="email" v-model="users.email" />
+            <input type="password" name="password" v-model="users.password" />
+            <input type="hidden" name="password-repeat" v-model="users.password_second" />
         </label>
-        <button @click="onSubmit">
+        <button @click.prevent="onSubmit">
             Envoyer !
         </button>
-        <p>You just type : {{ email }}</p>
-        <p>You just type : {{ username }}</p>
-        <p>You just type : {{ password }}</p>
-        <p>You just type : {{ password_repeat }}</p>
+        <div v-if="isSubmitted">
+            <p>You just type : {{ email }}</p>
+            <p>You just type : {{ username }}</p>
+            <p>You just type : {{ password }}</p>
+            <p>You just type : {{ password_repeat }}</p>
+        </div>
     </div>
 </template>
 <style>
@@ -26,16 +28,18 @@
     export default{
         data(){
             return{
+                users: {
+                    username: '',
+                    email: '',
+                    password: ''
+                },
                 msg:'hello vue',
-                username: '',
-                email: '',
-                password: '',
-                password_repeat: ''
             }
         },
         methods: {
             onSubmit() {
-                this.$http.get('http://127.0.0.1:8000/api/user/register')
+                this.isSubmitted = true,
+                this.$http.post('http://127.0.0.1:8000/api/user/register', this.users)
                   .then(response => {
                     return response.json();
                   })

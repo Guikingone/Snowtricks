@@ -92,6 +92,9 @@ class RegisterListeners
 
         $password = $this->encoder->encodePassword($entity, $entity->getPassword());
         $entity->setPassword($password);
+        $entity->setValidated(false);
+        $entity->setLocked(false);
+        $entity->setActive(false);
     }
 
     /**

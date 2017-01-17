@@ -12,28 +12,37 @@ UserBundle\Entity\User:
         firstname:
             type: string
             length: 150
+            nullable: true
         lastname:
             type: string
             length: 150
+            nullable: true
         birthdate:
             type: datetime
+            nullable: true
         occupation:
             type: string
             length: 255
+            nullable: true
         username:
             type: string
             length: 100
+            nullable: false
         password:
             type: string
             length: '100'
+            nullable: false
         email:
             type: string
             length: 100
+            nullable: true
         roles:
             type: array
+            nullable: true
         token:
             type: string
             length: '36'
+            nullable: true
         validated:
             type: boolean
         locked:

@@ -53,8 +53,3 @@ profile:
 
 logout:
     path:    /logout
-
-# API
-api_home:
-    path:    /api/
-    defaults: { _controller: AppBundle:Api/Main:home }
