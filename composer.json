@@ -24,7 +24,6 @@
         "incenteev/composer-parameter-handler": "^2.0",
         "phpunit/phpunit": "^4.8",
         "doctrine/doctrine-fixtures-bundle": "^2.3",
-        "lexik/jwt-authentication-bundle": "^2.1",
         "guzzlehttp/guzzle": "^6.2"
     },
     "require-dev": {

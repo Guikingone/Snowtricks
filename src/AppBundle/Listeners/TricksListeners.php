@@ -145,7 +145,7 @@ class TricksListeners
         }
 
         // Normal case.
-        if ($entity instanceof Tricks && $this->security->isGranted('ROLE_ADMIN')) {
+        if ($entity instanceof Tricks) {
             $entity->setCreationDate(new \DateTime());
             $entity->setValidated(true);
             $entity->setPublished(true);
@@ -161,7 +161,7 @@ class TricksListeners
                     $entity->addImage($filename);
                 }
             }
-        } elseif ($entity->getPublished() === false) {
+        } elseif ($entity->getPublished() === false && $entity->getValidated()) {
             // In the case of entity update.
             $entity->setPublished(true);
         } else {

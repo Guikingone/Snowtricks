@@ -57,3 +57,9 @@ L’ensemble des figures de snowboard doivent être présentes à l’initialisa
 Usage 
 -------
 
+_**Commande :**_ 
+
+La commande permettant d'hydrater la base de données avec les tricks par défaut fonctionne ainsi : 
+
+- Une version avec mise en cache des données
+- Une version sans mise en cache des données

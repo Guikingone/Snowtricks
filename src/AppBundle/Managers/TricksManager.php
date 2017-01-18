@@ -158,7 +158,9 @@ class TricksManager
     public function updateTricks(Request $request, string $name)
     {
         $tricks = $this->doctrine->getRepository('AppBundle:Tricks')
-                                 ->findOneBy(['name' => $name]);
+                                 ->findOneBy([
+                                     'name' => $name,
+                                 ]);
 
         if (is_object($tricks) && !$tricks instanceof Tricks) {
             throw new \LogicException(

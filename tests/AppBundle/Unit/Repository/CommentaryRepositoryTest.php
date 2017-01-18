@@ -15,10 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Doctrine\ORM\EntityManager;
 
 // Entities
-use AppBundle\Entity\Tricks;
 use AppBundle\Entity\Commentary;
-use Symfony\Component\Workflow\Workflow;
-use UserBundle\Entity\User;
 
 /**
  * Class CommentaryRepositoryTest.
@@ -33,55 +30,12 @@ class CommentaryRepositoryTest extends KernelTestCase
     private $doctrine;
 
     /**
-     * @var Workflow
-     */
-    private $workflow;
-
-    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
         self::bootKernel();
         $this->doctrine = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
-        $this->workflow = static::$kernel->getContainer()->get('workflow.tricks_process');
-
-        // Create a user in order to simulate the authentication process.
-        $author = new User();
-        $author->setLastname('Loulier');
-        $author->setFirstname('Guillaume');
-        $author->setUsername('Guikingone');
-        $author->setBirthdate(new \DateTime());
-        $author->setRoles(['ROLE_ADMIN']);
-        $author->setOccupation('Rally Driver');
-        $author->setEmail('guik@guillaumeloulier.fr');
-        $author->setToken('dd21498e61e26a5a42d3g9r4z2a364f2s3a2');
-        $author->setValidated(true);
-        $author->setLocked(false);
-        $author->setActive(true);
-
-        // Create a tricks to link the commentary to this specific tricks.
-        $tricks = new Tricks();
-        $tricks->setName('Backflip');
-        $tricks->setCreationDate(new \DateTime());
-        $tricks->setAuthor($author);
-        $tricks->setGroups('Flip');
-        $tricks->setResume('A simple test.');
-        $tricks->setPublished(true);
-        $tricks->setValidated(true);
-
-        // Apply workflow for entity state.
-        $this->workflow->apply($tricks, 'start_phase');
-        $this->workflow->apply($tricks, 'validation_phase');
-
-        $commentary = new Commentary();
-        $commentary->setPublicationDate(new \DateTime());
-        $commentary->setAuthor($author);
-        $commentary->setTricks($tricks);
-        $commentary->setContent('A simple commentary');
-
-        $this->doctrine->persist($commentary);
-        $this->doctrine->flush();
     }
 
     /**
@@ -215,19 +169,5 @@ class CommentaryRepositoryTest extends KernelTestCase
                                        ->findAll();
 
         $this->assertNotContains(Commentary::class, $commentaries);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        parent::tearDown();
-
-        $this->doctrine->clear(User::class);
-        $this->doctrine->clear(Tricks::class);
-        $this->doctrine->clear(Commentary::class);
-        $this->doctrine->close();
-        $this->doctrine = null;
     }
 }

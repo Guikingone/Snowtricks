@@ -12,6 +12,8 @@
 namespace tests\UserBundle\Functionnal\Managers;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\BrowserKit\Cookie;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use UserBundle\Managers\UserManager;
 use UserBundle\Services\Security;
 
@@ -47,8 +49,33 @@ class UserManagerWebTest extends WebTestCase
         $this->security = $this->client->getContainer()->get('user.security');
     }
 
-    public function testUserCanBeValidated()
+    private function logIn()
     {
+        $session = $this->client->getContainer()->get('session');
+
+        $firewall = 'main';
+
+        $token = new UsernamePasswordToken('admin', null, $firewall, array('ROLE_ADMIN'));
+        $session->set('_security_'.$firewall, serialize($token));
+        $session->save();
+
+        $cookie = new Cookie($session->getName(), $session->getId());
+        $this->client->getCookieJar()->set($cookie);
+    }
+
+    public function testUserCanBeUnlocked()
+    {
+        $this->logIn();
+
+        $crawler = $this->client->request('GET', '/admin');
+
+        $this->assertTrue($this->client->getResponse()->isSuccessful());
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+
+        if ($this->client->getResponse()->getStatusCode() === 200) {
+            $request = $this->client->request('GET', '/admin/users/unlock/Tricks');
+            $this->assertEquals(302, $request->getResponse()->getStatusCode());
+        }
     }
 
     /**

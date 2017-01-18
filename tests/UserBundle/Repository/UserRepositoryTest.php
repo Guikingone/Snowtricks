@@ -34,24 +34,8 @@ class UserRepositoryTest extends KernelTestCase
      */
     protected function setUp()
     {
-        $user = new User();
-        $user->setFirstname('Arnaud');
-        $user->setLastname('Tricks');
-        $user->setBirthdate(new \DateTime());
-        $user->setOccupation('Professional snowboarder');
-        $user->setEmail('non@snowtricks.fr');
-        $user->setUsername('Nono');
-        $user->setPassword('Lk__DTHE');
-        $user->setRoles(['ROLE_ADMIN']);
-        $user->setToken('654a6d4dzd19de4yhqdf4af4a1fa66fa4');
-        $user->setValidated(true);
-        $user->setLocked(false);
-        $user->setActive(true);
-
         self::bootKernel();
         $this->doctrine = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
-        $this->doctrine->persist($user);
-        $this->doctrine->flush();
     }
 
     /**
@@ -60,7 +44,9 @@ class UserRepositoryTest extends KernelTestCase
     public function testUserIsFoundByName()
     {
         $user = $this->doctrine->getRepository('UserBundle:User')
-                               ->findOneBy(['lastname' => 'Tricks']);
+                               ->findOneBy([
+                                   'lastname' => 'Tricks',
+                               ]);
 
         if (is_object($user)) {
             $this->assertInstanceOf(
@@ -81,17 +67,5 @@ class UserRepositoryTest extends KernelTestCase
             $this->assertFalse($user->getLocked());
             $this->assertTrue($user->getActive());
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        parent::tearDown();
-
-        $this->doctrine->clear(User::class);
-        $this->doctrine->close();
-        $this->doctrine = null;
     }
 }

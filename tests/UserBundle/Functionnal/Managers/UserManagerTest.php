@@ -11,7 +11,6 @@
 
 namespace tests\UserBundle\Functionnal\Managers;
 
-use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use UserBundle\Entity\User;
 use UserBundle\Managers\UserManager;
@@ -24,11 +23,6 @@ use UserBundle\Managers\UserManager;
 class UserManagerTest extends KernelTestCase
 {
     /**
-     * @var EntityManager
-     */
-    private $doctrine;
-
-    /**
      * @var UserManager
      */
     private $manager;
@@ -37,26 +31,6 @@ class UserManagerTest extends KernelTestCase
     public function setUp()
     {
         self::bootKernel();
-
-        $user = new User();
-        $user->setFirstname('Arnaud');
-        $user->setLastname('Tricks');
-        $user->setBirthdate(new \DateTime());
-        $user->setOccupation('Professional snowboarder');
-        $user->setUsername('Nono');
-        $user->setPassword('Lk__DTHE');
-        $user->setRoles(['ROLE_ADMIN']);
-        $user->setEmail('contact@snowtricks.fr');
-        $user->setToken('dd21498e61e26a5a42d3g9r4z2a364f2s3a2');
-        $user->setValidated(true);
-        $user->setLocked(false);
-        $user->setActive(true);
-
-        self::bootKernel();
-        $this->doctrine = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
-        $this->doctrine->persist($user);
-        $this->doctrine->flush();
-
         $this->manager = static::$kernel->getContainer()->get('user.user_manager');
     }
 
@@ -102,7 +76,7 @@ class UserManagerTest extends KernelTestCase
         if (is_object($this->manager) && $this->manager instanceof UserManager) {
             $this->assertInstanceOf(
                 User::class,
-                $this->manager->getUser('Tricks')
+                $this->manager->getUser('Duchemin')
             );
         }
     }

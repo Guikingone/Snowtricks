@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMInvalidArgumentException;
+use Symfony\Component\Workflow\Exception\LogicException;
 
 /**
  * Class HomeController.
@@ -69,6 +70,26 @@ class HomeController extends Controller
         return $this->render(':Home:tricks_details.html.twig', [
             'trick' => $trick,
             'commentaryForm' => $commentaryForm,
+        ]);
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @throws ORMInvalidArgumentException
+     * @throws OptimisticLockException
+     * @throws \InvalidArgumentException
+     * @throws InvalidOptionsException
+     * @throws LogicException
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function tricksAdd(Request $request)
+    {
+        $tricks = $this->get('app.tricks_manager')->addTrick($request);
+
+        return $this->render(':Home:tricks_add.html.twig', [
+            'tricks' => $tricks,
         ]);
     }
 }

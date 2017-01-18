@@ -11,7 +11,6 @@
 
 namespace tests\AppBundle\Functionnal\Managers;
 
-use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Workflow\Workflow;
@@ -21,7 +20,6 @@ use AppBundle\Managers\TricksManager;
 
 // Entity
 use AppBundle\Entity\Tricks;
-use UserBundle\Entity\User;
 
 /**
  * Class TricksManagerTest.
@@ -30,11 +28,6 @@ use UserBundle\Entity\User;
  */
 class TricksManagerTest extends KernelTestCase
 {
-    /**
-     * @var EntityManager
-     */
-    private $doctrine;
-
     /**
      * @var TricksManager
      */
@@ -50,55 +43,9 @@ class TricksManagerTest extends KernelTestCase
     {
         // Instantiate all the services.
         self::bootKernel();
-        $this->doctrine = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
 
         $this->manager = static::$kernel->getContainer()->get('app.tricks_manager');
-
         $this->workflow = static::$kernel->getContainer()->get('workflow.tricks_process');
-
-        // Create a user in order to simulate the authentication process.
-        $author = new User();
-        $author->setFirstname('Arnaud');
-        $author->setLastname('Duchemin');
-        $author->setLastname('Duduche');
-        $author->setUsername('Nono');
-        $author->setRoles(['ROLE_ADMIN']);
-        $author->setBirthdate(new \DateTime());
-        $author->setOccupation('Rally Driver');
-        $author->setEmail('guik@guillaumeloulier.fr');
-        $author->setToken('dd21498e61e26a5a42d3g9r4z2a364f2s3a2');
-        $author->setValidated(true);
-        $author->setLocked(false);
-        $author->setActive(true);
-
-        $tricks = new Tricks();
-        $tricks->setName('Backflip');
-        $tricks->setAuthor($author);
-        $tricks->setCreationDate(new \DateTime());
-        $tricks->setGroups('Flip');
-        $tricks->setResume('A simple backflip content ...');
-        $tricks->setPublished(true);
-        $tricks->setValidated(true);
-
-        $tricksII = new Tricks();
-        $tricksII->setName('Frontflip');
-        $tricksII->setAuthor($author);
-        $tricksII->setCreationDate(new \DateTime());
-        $tricksII->setGroups('Flip');
-        $tricksII->setResume('A simple backflip content ...');
-        $tricksII->setPublished(false);
-        $tricksII->setValidated(false);
-
-        $this->workflow->apply($tricks, 'start_phase');
-        $this->workflow->apply($tricks, 'validation_phase');
-
-        $this->workflow->apply($tricksII, 'start_phase');
-        $this->workflow->apply($tricksII, 'validation_phase');
-
-        // Persist after relations.
-        $this->doctrine->persist($tricks);
-        $this->doctrine->persist($tricksII);
-        $this->doctrine->flush();
     }
 
     /**
@@ -176,16 +123,5 @@ class TricksManagerTest extends KernelTestCase
             // Test if the method return the right class.
             $this->returnValue(RedirectResponse::class);
         }
-    }
-
-    /** {@inheritdoc} */
-    protected function tearDown()
-    {
-        parent::tearDown();
-
-        $this->doctrine->clear(User::class);
-        $this->doctrine->clear(Tricks::class);
-        $this->doctrine->close();
-        $this->doctrine = null;
     }
 }

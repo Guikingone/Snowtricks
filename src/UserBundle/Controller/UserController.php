@@ -11,7 +11,9 @@
 
 namespace UserBundle\Controller;
 
+use Doctrine\ORM\OptimisticLockException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Class UserController.
@@ -26,5 +28,40 @@ class UserController extends Controller
     public function profileAction()
     {
         return $this->render(':Security/Users:profile.html.twig');
+    }
+
+    /**
+     * @param string $name
+     *
+     * @throws OptimisticLockException
+     * @throws \InvalidArgumentException
+     * @throws AccessDeniedException
+     */
+    public function userUnlockedAction(string $name)
+    {
+        $this->get('user.user_manager')->unlockUser($name);
+    }
+
+    /**
+     * @param string $name
+     *
+     * @throws OptimisticLockException
+     * @throws \InvalidArgumentException
+     * @throws AccessDeniedException
+     */
+    public function userLockedAction($name)
+    {
+        $this->get('user.user_manager')->lockUser($name);
+    }
+
+    /**
+     * @param int $token
+     *
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     */
+    public function validateUserAction(int $token)
+    {
+        $this->get('user.user_manager')->validateUser($token);
     }
 }

@@ -14,10 +14,10 @@ namespace UserBundle\Controller;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\Exception\AlreadySubmittedException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Workflow\Exception\LogicException;
 
 /**
@@ -34,6 +34,7 @@ class SecurityController extends Controller
      * @throws OptimisticLockException
      * @throws \InvalidArgumentException
      * @throws InvalidOptionsException
+     * @throws LogicException
      *
      * @return Response
      */
@@ -68,6 +69,7 @@ class SecurityController extends Controller
      * @throws \Twig_Error
      * @throws \RuntimeException
      * @throws InvalidOptionsException
+     * @throws AccessDeniedException
      *
      * @return Response
      */

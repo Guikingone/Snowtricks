@@ -14,7 +14,6 @@ namespace UserBundle\Managers;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 
@@ -46,16 +45,6 @@ class UserManager
     private $session;
 
     /**
-     * @var AuthorizationChecker
-     */
-    private $security;
-
-    /**
-     * @var RequestStack
-     */
-    private $requestStack;
-
-    /**
      * @var TraceableEventDispatcher
      */
     private $dispatcher;
@@ -66,20 +55,17 @@ class UserManager
      * @param EntityManager            $doctrine
      * @param Session                  $session
      * @param AuthorizationChecker     $security
-     * @param RequestStack             $requestStack
      * @param TraceableEventDispatcher $dispatcher
      */
     public function __construct(
         EntityManager $doctrine,
         Session $session,
         AuthorizationChecker $security,
-        RequestStack $requestStack,
         TraceableEventDispatcher $dispatcher
     ) {
         $this->doctrine = $doctrine;
         $this->session = $session;
         $this->security = $security;
-        $this->requestStack = $requestStack;
         $this->dispatcher = $dispatcher;
     }
 
@@ -148,15 +134,15 @@ class UserManager
     /**
      * Allow to validate a user using the generated token.
      *
+     * @param int $token
+     *
      * @throws \InvalidArgumentException
      * @throws \LogicException
      *
      * @return RedirectResponse
      */
-    public function validateUser()
+    public function validateUser($token)
     {
-        $token = $this->requestStack->getCurrentRequest()->get('token');
-
         if (!is_int($token)) {
             throw new \InvalidArgumentException(
                 sprintf(
@@ -166,22 +152,24 @@ class UserManager
             );
         }
 
-        $user = $this->doctrine->getRepository('UserBundle:User')
-                               ->findOneBy([
-                                   'token' => $token,
-                               ]);
+        if ($token) {
+            $user = $this->doctrine->getRepository('UserBundle:User')
+                                    ->findOneBy([
+                                        'token' => $token,
+                                    ]);
 
-        if (!$user) {
-            throw new \LogicException(
-                sprintf(
-                    'The token isn\'t valid !'
-                )
-            );
-        }
+            if (!$user) {
+                throw new \LogicException(
+                    sprintf(
+                        'The token isn\'t valid !'
+                    )
+                );
+            }
 
-        if ($user->getToken() === $token) {
-            $event = new ConfirmedUserEvent($user);
-            $this->dispatcher->dispatch(ConfirmedUserEvent::NAME, $event);
+            if ($user->getToken() === $token) {
+                $event = new ConfirmedUserEvent($user);
+                $this->dispatcher->dispatch(ConfirmedUserEvent::NAME, $event);
+            }
         }
 
         return new RedirectResponse('login');
@@ -259,10 +247,10 @@ class UserManager
         }
 
         $user = $this->doctrine->getRepository('UserBundle:User')
-            ->findOneBy([
-                'lastname' => $name,
-                'locked' => true,
-            ]);
+                               ->findOneBy([
+                                   'lastname' => $name,
+                                   'locked' => true,
+                               ]);
 
         if (!$user instanceof User) {
             throw new \InvalidArgumentException(

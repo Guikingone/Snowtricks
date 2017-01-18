@@ -16,7 +16,6 @@ use Doctrine\ORM\EntityManager;
 
 // Entity
 use AppBundle\Entity\Tricks;
-use Symfony\Component\Workflow\Workflow;
 use UserBundle\Entity\User;
 
 /**
@@ -32,48 +31,12 @@ class TricksRepositoryTest extends KernelTestCase
     private $doctrine;
 
     /**
-     * @var Workflow
-     */
-    private $workflow;
-
-    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
         self::bootKernel();
         $this->doctrine = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
-        $this->workflow = static::$kernel->getContainer()->get('workflow.tricks_process');
-
-        // Create a user in order to simulate the authentication process.
-        $author = new User();
-        $author->setLastname('Loulier');
-        $author->setFirstname('Guillaume');
-        $author->setUsername('Guikingone');
-        $author->setBirthdate(new \DateTime());
-        $author->setRoles(['ROLE_ADMIN']);
-        $author->setOccupation('Rally Driver');
-        $author->setEmail('guik@guillaumeloulier.fr');
-        $author->setToken('dd21498e61e26a5a42d3g9r4z2a364f2s3a2');
-        $author->setValidated(true);
-        $author->setLocked(false);
-        $author->setActive(true);
-
-        $tricks = new Tricks();
-        $tricks->setName('Backflip');
-        $tricks->setCreationDate(new \DateTime());
-        $tricks->setAuthor($author);
-        $tricks->setGroups('Flip');
-        $tricks->setResume('A simple backflip content ...');
-        $tricks->setPublished(true);
-        $tricks->setValidated(true);
-
-        // Apply workflow for entity state.
-        $this->workflow->apply($tricks, 'start_phase');
-        $this->workflow->apply($tricks, 'validation_phase');
-
-        $this->doctrine->persist($tricks);
-        $this->doctrine->flush();
     }
 
     /**
@@ -90,7 +53,7 @@ class TricksRepositoryTest extends KernelTestCase
             $this->assertEquals('Backflip', $tricks->getName());
             $this->assertInstanceOf(User::class, $tricks->getAuthor());
             $this->assertContains('Flip', $tricks->getGroups());
-            $this->assertEquals('A simple test.', $tricks->getResume());
+            $this->assertEquals('A simple backflip content ...', $tricks->getResume());
             $this->assertEquals(true, $tricks->getPublished());
             $this->assertEquals(true, $tricks->getValidated());
         }
@@ -171,18 +134,5 @@ class TricksRepositoryTest extends KernelTestCase
             $tricks->getName(),
             $this->doctrine->getRepository('AppBundle:Tricks')->findAll()
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        parent::tearDown();
-
-        $this->doctrine->clear(Tricks::class);
-        $this->doctrine->clear(User::class);
-        $this->doctrine->close();
-        $this->doctrine = null;
     }
 }

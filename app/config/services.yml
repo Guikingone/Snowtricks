@@ -68,7 +68,6 @@ services:
             - '@doctrine.orm.entity_manager'
             - '@session'
             - '@security.authorization_checker'
-            - '@request_stack'
             - '@event_dispatcher'
 
     # User security
