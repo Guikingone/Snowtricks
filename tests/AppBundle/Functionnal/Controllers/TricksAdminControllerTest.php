@@ -16,11 +16,11 @@ use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
- * Class AdminControllerTest.
+ * Class TricksAdminControllerTest.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
-class AdminControllerTest extends WebTestCase
+class TricksAdminControllerTest extends WebTestCase
 {
     /** @var null */
     private $client = null;
@@ -47,61 +47,61 @@ class AdminControllerTest extends WebTestCase
     }
 
     /**
-     * Test the adminAction.
+     * Test the validation of a tricks using his name.
      */
-    public function testAdminShow()
+    public function testTricksValidation()
     {
         $this->logIn();
 
-        $this->client->request('GET', '/admin');
-
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
-    }
-
-    /**
-     * Test the adminTricksAction.
-     */
-    public function testAdminTricksShow()
-    {
-        $this->logIn();
-
-        $this->client->request('GET', '/admin/tricks');
-
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
-    }
-
-    /**
-     * Test the adminUsersAction.
-     */
-    public function testAdminUsersShow()
-    {
-        $this->logIn();
-
-        $this->client->request('GET', '/admin/users');
-
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
-    }
-
-    /**
-     * Test if a user can be locked using his name.
-     */
-    public function testAdminUserLockByName()
-    {
-        $this->logIn();
-
-        $this->client->request('GET', '/admin/user/lock/Loulier');
+        $this->client->request('GET', '/admin/tricks/validate/Frontflip');
 
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
     }
 
     /**
-     * Test if a user can be unlocked using his name.
+     * Test the refuse process of a tricks using his name.
      */
-    public function testAdminUserUnlockByName()
+    public function testTricksRefused()
     {
         $this->logIn();
 
-        $this->client->request('GET', '/admin/user/unlock/Loulier');
+        $this->client->request('GET', '/admin/tricks/refuse/Frontflip');
+
+        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * Test if a tricks can be updated.
+     */
+    public function testTricksUpdated()
+    {
+        $this->logIn();
+
+        $crawler = $this->client->request('GET', '/admin/tricks/update/Frontflip');
+
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+
+        if ($this->client->getResponse()->getStatusCode() === 200) {
+            $form = $crawler->selectButton('submit')->form();
+
+            $form['app_bundle_update_tricks_type[name]'] = 'Airflip';
+            $form['app_bundle_update_tricks_type[groups]'] = 'Flip';
+            $form['app_bundle_update_tricks_type[resume'] = 'A new content about this tricks !';
+
+            $crawler = $this->client->submit($form);
+
+            $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+        }
+    }
+
+    /**
+     * Test the refuse process of a tricks using his name.
+     */
+    public function testTricksDeleted()
+    {
+        $this->logIn();
+
+        $this->client->request('GET', '/admin/tricks/delete/Frontflip');
 
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
     }

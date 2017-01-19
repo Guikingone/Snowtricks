@@ -49,6 +49,7 @@ class UserManagerWebTest extends WebTestCase
         $this->security = $this->client->getContainer()->get('user.security');
     }
 
+    /** Only for authentication purpose */
     private function logIn()
     {
         $session = $this->client->getContainer()->get('session');
@@ -63,47 +64,28 @@ class UserManagerWebTest extends WebTestCase
         $this->client->getCookieJar()->set($cookie);
     }
 
-    public function testUserCanBeUnlocked()
-    {
-        $this->logIn();
-
-        $crawler = $this->client->request('GET', '/admin');
-
-        $this->assertTrue($this->client->getResponse()->isSuccessful());
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
-
-        if ($this->client->getResponse()->getStatusCode() === 200) {
-            $request = $this->client->request('GET', '/admin/users/unlock/Tricks');
-            $this->assertEquals(302, $request->getResponse()->getStatusCode());
-        }
-    }
-
     /**
      * Test if the user can be locked using his lastname.
      */
-    public function testUserLock()
+    public function testUserCanBeLocked()
     {
-        if (is_object($this->manager) && $this->manager instanceof UserManager) {
-            $this->manager->lockUser('Tricks');
+        $this->logIn();
 
-            $user = $this->manager->getUser('tricks');
+        $this->client->request('GET', '/admin/user/lock/Loulier');
 
-            $this->assertTrue($user->getLocked());
-        }
+        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
     }
 
     /**
      * Test if the user can be unlocked using his lastname.
      */
-    public function testUserUnlock()
+    public function testUserCanBeUnlocked()
     {
-        if (is_object($this->manager) && $this->manager instanceof UserManager) {
-            $this->manager->unlockUser('Tricks');
+        $this->logIn();
 
-            $user = $this->manager->getUser('Tricks');
+        $this->client->request('GET', '/admin/user/unlock/Loulier');
 
-            $this->assertFalse($user->getLocked());
-        }
+        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
     }
 
     /**

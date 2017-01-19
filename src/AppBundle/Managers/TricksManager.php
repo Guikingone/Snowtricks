@@ -11,6 +11,7 @@
 
 namespace AppBundle\Managers;
 
+use AppBundle\Events\TricksDeletedEvent;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -152,6 +153,9 @@ class TricksManager
      * @param string  $name
      *
      * @throws \LogicException
+     * @throws InvalidOptionsException
+     * @throws OptimisticLockException
+     * @throws \InvalidArgumentException
      *
      * @return FormView|RedirectResponse
      */
@@ -178,7 +182,7 @@ class TricksManager
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->doctrine->persist($tricks);
+            $this->doctrine->flush();
             $this->session->getFlashBag()->add(
                 'success',
                 'Le trick a bien été modifié.'
@@ -218,9 +222,11 @@ class TricksManager
 
         if (is_string($name)) {
             $trick = $this->doctrine->getRepository('AppBundle:Tricks')
-                          ->findOneBy(['name' => $name]);
+                                    ->findOneBy([
+                                        'name' => $name,
+                                    ]);
 
-            if ($trick instanceof Tricks) {
+            if ($trick instanceof Tricks && $trick->currentState === 'start_phase') {
                 // Set the workflow phase.
                 $this->workflow->apply($trick, 'validation_phase');
 
@@ -315,6 +321,9 @@ class TricksManager
 
             if ($trick instanceof Tricks) {
                 $this->doctrine->remove($trick);
+                // Dispatch a new Event.
+                $event = new TricksDeletedEvent($trick);
+                $this->eventDispatcher->dispatch(TricksDeletedEvent::NAME, $event);
             }
         }
 

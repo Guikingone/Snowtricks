@@ -36,10 +36,12 @@ class UserController extends Controller
      * @throws OptimisticLockException
      * @throws \InvalidArgumentException
      * @throws AccessDeniedException
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function userUnlockedAction(string $name)
     {
-        $this->get('user.user_manager')->unlockUser($name);
+        return $this->get('user.user_manager')->unlockUser($name);
     }
 
     /**
@@ -48,10 +50,12 @@ class UserController extends Controller
      * @throws OptimisticLockException
      * @throws \InvalidArgumentException
      * @throws AccessDeniedException
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function userLockedAction($name)
     {
-        $this->get('user.user_manager')->lockUser($name);
+        return $this->get('user.user_manager')->lockUser($name);
     }
 
     /**
@@ -59,9 +63,11 @@ class UserController extends Controller
      *
      * @throws \InvalidArgumentException
      * @throws \LogicException
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function validateUserAction(int $token)
     {
-        $this->get('user.user_manager')->validateUser($token);
+        return $this->get('user.user_manager')->validateUser($token);
     }
 }

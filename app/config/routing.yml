@@ -37,12 +37,12 @@ admin_users:
     defaults: { _controller: AppBundle:Web/Admin:users }
 
 admin_unlock_users:
-    path:    /admin/users/unlock/{name}
+    path:    /admin/user/unlock/{name}
     methods: 'GET'
     defaults: { _controller: UserBundle:User:userUnlocked }
 
 admin_lock_users:
-    path:    /admin/users/lock/{name}
+    path:    /admin/user/lock/{name}
     methods: 'GET'
     defaults: { _controller: UserBundle:User:userLocked }
 

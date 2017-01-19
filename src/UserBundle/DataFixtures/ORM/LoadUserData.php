@@ -34,6 +34,7 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
         $author->setLastname('Duchemin');
         $author->setUsername('Duduche');
         $author->setRoles(['ROLE_ADMIN']);
+        $author->setPassword('Lk__DTHE');
         $author->setBirthdate(new \DateTime());
         $author->setOccupation('Rally Driver');
         $author->setEmail('guik@guillaumeloulier.fr');
@@ -49,6 +50,7 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
         $author_II->setUsername('Guikingone');
         $author_II->setBirthdate(new \DateTime());
         $author_II->setRoles(['ROLE_ADMIN']);
+        $author_II->setPassword('Lk__DTHE');
         $author_II->setOccupation('Rally Driver');
         $author_II->setEmail('guik@guillaumeloulier.fr');
         $author_II->setToken('dd21498e61e26a5a42d3g9r4z2a364f2s3a2');

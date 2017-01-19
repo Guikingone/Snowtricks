@@ -20,16 +20,23 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  */
 class HomeControllerTest extends WebTestCase
 {
+    /** @var null */
+    private $client = null;
+
+    /** {@inheritdoc} */
+    public function setUp()
+    {
+        $this->client = static::createClient();
+    }
+
     /**
      * Test the indexAction.
      */
     public function testIndex()
     {
-        $client = static::createClient();
+        $this->client->request('GET', '/');
 
-        $client->request('GET', '/');
-
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 
     /**
@@ -37,11 +44,9 @@ class HomeControllerTest extends WebTestCase
      */
     public function testTricks()
     {
-        $client = static::createClient();
+        $this->client->request('GET', '/tricks');
 
-        $client->request('GET', '/tricks');
-
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 
     /**
@@ -49,10 +54,30 @@ class HomeControllerTest extends WebTestCase
      */
     public function testTricksDetails()
     {
-        $client = static::createClient();
+        $this->client->request('GET', '/tricks/Backflip');
 
-        $client->request('GET', '/tricks/Backflip');
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+    }
 
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+    /**
+     * Test if a new Tricks can be added.
+     */
+    public function testsTricksAdd()
+    {
+        $crawler = $this->client->request('GET', '/admin/tricks/validate/Frontflip');
+
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+
+        if ($this->client->getResponse()->getStatusCode() === 200) {
+            $form = $crawler->selectButton('submit')->form();
+
+            $form['app_bundle_tricks_type[name]'] = 'Sideflip';
+            $form['app_bundle_tricks_type[groups]'] = 'Flip';
+            $form['app_bundle_tricks_type[resume'] = 'A new content about this tricks !';
+
+            $crawler = $this->client->submit($form);
+
+            $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+        }
     }
 }

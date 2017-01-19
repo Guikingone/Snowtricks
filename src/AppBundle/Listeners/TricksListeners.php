@@ -11,17 +11,14 @@
 
 namespace AppBundle\Listeners;
 
+use AppBundle\Events\TricksDeletedEvent;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
-use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 use Symfony\Component\Workflow\Workflow;
 
 // Entity
-use AppBundle\Entity\Commentary;
 use AppBundle\Entity\Tricks;
 
 // Event
@@ -32,7 +29,6 @@ use AppBundle\Events\TricksValidatedEvent;
 use AppBundle\Services\Uploader;
 
 // Exceptions
-use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 use Symfony\Component\Workflow\Exception\InvalidDefinitionException;
 use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -56,11 +52,6 @@ class TricksListeners
     private $uploader;
 
     /**
-     * @var AuthorizationChecker
-     */
-    private $security;
-
-    /**
      * @var TwigEngine
      */
     private $templating;
@@ -69,16 +60,6 @@ class TricksListeners
      * @var Session
      */
     private $session;
-
-    /**
-     * @var TokenStorage
-     */
-    private $storage;
-
-    /**
-     * @var RequestStack
-     */
-    private $requestStack;
 
     /**
      * @var \Swift_Mailer
@@ -91,34 +72,25 @@ class TricksListeners
     /**
      * TricksListeners constructor.
      *
-     * @param Workflow             $workflow
-     * @param Uploader             $uploader
-     * @param AuthorizationChecker $security
-     * @param TwigEngine           $templating
-     * @param Session              $session
-     * @param TokenStorage         $storage
-     * @param RequestStack         $requestStack
-     * @param \Swift_Mailer        $mailer
-     * @param                      $imagesDir
+     * @param Workflow      $workflow
+     * @param Uploader      $uploader
+     * @param TwigEngine    $templating
+     * @param Session       $session
+     * @param \Swift_Mailer $mailer
+     * @param               $imagesDir
      */
     public function __construct(
         Workflow $workflow,
         Uploader $uploader,
-        AuthorizationChecker $security,
         TwigEngine $templating,
         Session $session,
-        TokenStorage $storage,
-        RequestStack $requestStack,
         \Swift_Mailer $mailer,
         $imagesDir
     ) {
         $this->workflow = $workflow;
         $this->uploader = $uploader;
-        $this->security = $security;
         $this->templating = $templating;
         $this->session = $session;
-        $this->storage = $storage;
-        $this->requestStack = $requestStack;
         $this->mailer = $mailer;
         $this->imagesDir = $imagesDir;
     }
@@ -129,7 +101,8 @@ class TricksListeners
      *
      * @param LifecycleEventArgs $args
      *
-     * @throws AuthenticationCredentialsNotFoundException
+     * @throws \RuntimeException
+     * @throws \Twig_Error
      * @throws \LogicException
      * @throws InvalidDefinitionException
      * @throws FileException
@@ -140,12 +113,36 @@ class TricksListeners
     {
         $entity = $args->getObject();
 
-        if (!$entity instanceof Tricks || !$entity instanceof Commentary) {
+        if (!$entity instanceof Tricks) {
             return;
         }
 
-        // Normal case.
-        if ($entity instanceof Tricks) {
+        // Update case.
+        if ($entity->getValidated() && !$entity->getPublished()) {
+            $admins = $args->getObjectManager()->getRepository('UserBundle:User')
+                                               ->findBy([
+                                                   'roles' => 'ROLE_ADMIN',
+                                               ]);
+            $entity->setPublished(true);
+
+            foreach ($admins as $admin) {
+                // Send the update to every admins for future validations.
+                $mail = \Swift_Message::newInstance()
+                    ->setSubject('Snowtricks - Notification system')
+                    ->setFrom('contact@snowtricks.fr')
+                    ->setTo($admin->getEmail())
+                    ->setBody($this->templating->render(
+                        ':Mails:notif_update_tricks.html.twig', [
+                            'tricks' => $entity,
+                        ]
+                    ), 'text/html');
+
+                $this->mailer->send($mail);
+            }
+        }
+
+        if ($entity->currentState === 'start_phase') {
+            // Normal case.
             $entity->setCreationDate(new \DateTime());
             $entity->setValidated(true);
             $entity->setPublished(true);
@@ -161,42 +158,6 @@ class TricksListeners
                     $entity->addImage($filename);
                 }
             }
-        } elseif ($entity->getPublished() === false && $entity->getValidated()) {
-            // In the case of entity update.
-            $entity->setPublished(true);
-        } else {
-            // In the case of user submission.
-            $entity->setValidated(false);
-            $entity->setPublished(false);
-        }
-
-        if ($entity instanceof Commentary) {
-            $request = $this->requestStack->getCurrentRequest()->get('name');
-            // Find the tricks linked by the request.
-            $name = $args->getObjectManager()->getRepository('AppBundle:Tricks')
-                                             ->findOneBy([
-                                                 'name' => $request,
-                                             ]);
-
-            if (is_object($name) && $name instanceof Tricks) {
-                $entity->setAuthor($this->storage->getToken()->getUser());
-                $entity->setTricks($name);
-                $name->addCommentary($entity);
-            } else {
-                throw new \InvalidArgumentException(
-                    sprintf(
-                        'The entity MUST be a instance of Tricks !,
-                         given "%s"', get_class($name)
-                    )
-                );
-            }
-        } else {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'The entity MUST be a instance of Commentary !,
-                         given "%s"', get_class($entity)
-                )
-            );
         }
     }
 
@@ -313,6 +274,27 @@ class TricksListeners
             ->setBody($this->templating->render(
                 ':Mails:refuse_tricks.html.twig', [
                     'tricks' => $refusedEvent->getTricks(),
+                ]
+            ), 'text/html');
+
+        $this->mailer->send($mail);
+    }
+
+    /**
+     * @param TricksDeletedEvent $deletedEvent
+     *
+     * @throws \RuntimeException
+     * @throws \Twig_Error
+     */
+    public function onDeleteTricks(TricksDeletedEvent $deletedEvent)
+    {
+        $mail = \Swift_Message::newInstance()
+            ->setSubject('Snowtricks - Notification system')
+            ->setFrom('contact@snowtricks.fr')
+            ->setTo($deletedEvent->getTricks()->getAuthor()->getEmail())
+            ->setBody($this->templating->render(
+                ':Mails:delete_tricks.html.twig', [
+                    'tricks' => $deletedEvent->getTricks(),
                 ]
             ), 'text/html');
 

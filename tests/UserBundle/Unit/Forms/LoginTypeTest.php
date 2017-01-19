@@ -12,8 +12,8 @@
 namespace tests\UserBundle\Unit\Forms;
 
 use Symfony\Component\Form\Test\TypeTestCase;
-use UserBundle\Form\Type\LoginType;
 use UserBundle\Entity\User;
+use UserBundle\Form\Type\LoginType;
 
 /**
  * Class LoginTypeTest.
@@ -27,27 +27,16 @@ class LoginTypeTest extends TypeTestCase
      */
     public function testSubmitData()
     {
-        $user = new User();
-        $user->setFirstname('Arnaud');
-        $user->setLastname('Tricks');
-        $user->setBirthdate(new \DateTime());
-        $user->setOccupation('Professional snowboarder');
-        $user->setUsername('Nono');
-        $user->setPassword('Lk__DTHE');
-        $user->setEmail('contact@snowtricks.fr');
-        $user->setRoles(['ROLE_ADMIN']);
-        $user->setToken('dd21498e61e26a5a42d3g9r4z2a364f2s3a2');
-        $user->setValidated(true);
-        $user->setLocked(false);
-        $user->setActive(true);
-
-        $data = (array) $user;
+        $data = [
+            'email' => 'guik@guillaumeloulier.fr',
+            'password' => 'Lk__DTHE',
+        ];
 
         $form = $this->factory->create(LoginType::class);
         $form->submit($data);
 
         $this->assertTrue($form->isSubmitted());
-        $this->assertEquals($data, $form->getData());
+        $this->assertInstanceOf(User::class, $form->getData());
 
         $view = $form->createView();
         $children = $view->children;

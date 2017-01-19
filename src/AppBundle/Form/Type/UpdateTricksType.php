@@ -47,6 +47,16 @@ class UpdateTricksType extends AbstractType
                         'maxMessage' => 'Votre entrée est top longue, veuillez réessayer.',
                     ]),
                 ],
+                'choices' => [
+                    'Grabs' => 'Grabs',
+                    'Flip' => 'Flip',
+                    'Rotations' => 'Rotations',
+                    'Rotations désaxées' => 'Rotations désaxées',
+                    'Slides' => 'Slides',
+                    'One foot tricks' => 'One foot tricks',
+                    'Old school' => 'Old school',
+                ],
+                'required' => true,
             ])
             ->add('resume', TextareaType::class, [
                 'constraints' => [
@@ -56,6 +66,7 @@ class UpdateTricksType extends AbstractType
                         'minMessage' => 'Votre entrée est trop courte, veuillez réessayer.',
                     ]),
                 ],
+                'required' => true,
             ])
         ;
     }

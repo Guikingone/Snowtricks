@@ -71,7 +71,6 @@ OrderedFixtureInterface,
         $workflow->apply($tricks, 'start_phase');
         $workflow->apply($tricks, 'validation_phase');
         $workflow->apply($tricksII, 'start_phase');
-        $workflow->apply($tricksII, 'validation_phase');
 
         $manager->persist($tricks);
         $manager->persist($tricksII);

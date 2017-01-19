@@ -11,8 +11,10 @@
 
 namespace AppBundle\Controller\Web;
 
+use Doctrine\ORM\OptimisticLockException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\Workflow\Exception\LogicException;
 
 /**
@@ -28,10 +30,12 @@ class TricksAdminController extends Controller
      * @throws \InvalidArgumentException
      * @throws \LogicException
      * @throws LogicException
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function tricksValidationAction($name)
     {
-        $this->get('app.tricks_manager')->validateTricks($name);
+        return $this->get('app.tricks_manager')->validateTricks($name);
     }
 
     /**
@@ -39,10 +43,12 @@ class TricksAdminController extends Controller
      *
      * @throws \InvalidArgumentException
      * @throws \LogicException
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function tricksRefusedAction($name)
     {
-        $this->get('app.tricks_manager')->refuseTricks($name);
+        return $this->get('app.tricks_manager')->refuseTricks($name);
     }
 
     /**
@@ -50,6 +56,9 @@ class TricksAdminController extends Controller
      * @param string  $name
      *
      * @throws \LogicException
+     * @throws OptimisticLockException
+     * @throws \InvalidArgumentException
+     * @throws InvalidOptionsException
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
@@ -67,9 +76,11 @@ class TricksAdminController extends Controller
      *
      * @throws \InvalidArgumentException
      * @throws \LogicException
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function tricksDeleteAction(string $name)
     {
-        $this->get('app.tricks_manager')->deleteTricks($name);
+        return $this->get('app.tricks_manager')->deleteTricks($name);
     }
 }
