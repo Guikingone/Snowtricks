@@ -15,6 +15,7 @@ use AppBundle\Entity\Tricks;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Workflow\Exception\LogicException;
@@ -25,18 +26,13 @@ use Symfony\Component\Workflow\Exception\LogicException;
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
 class LoadTricksData extends AbstractFixture implements
-OrderedFixtureInterface,
+      OrderedFixtureInterface,
       ContainerAwareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
+    /** @var ContainerInterface */
     private $container;
 
-    /**
-     * @param ContainerInterface|null $container
-     */
-    public function setContainer(ContainerInterface $container = null)
+    public function setContainer (ContainerInterface $container = null)
     {
         $this->container = $container;
     }
@@ -70,7 +66,9 @@ OrderedFixtureInterface,
 
         $workflow->apply($tricks, 'start_phase');
         $workflow->apply($tricks, 'validation_phase');
+
         $workflow->apply($tricksII, 'start_phase');
+        $workflow->apply($tricksII, 'validation_phase');
 
         $manager->persist($tricks);
         $manager->persist($tricksII);

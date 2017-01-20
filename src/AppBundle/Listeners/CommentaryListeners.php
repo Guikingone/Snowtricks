@@ -83,25 +83,26 @@ class CommentaryListeners
             return;
         }
 
-        $tricks = $this->requestStack->getCurrentRequest()->get('name');
-        // Find the tricks linked by the request.
-        $object = $args->getObjectManager()->getRepository('AppBundle:Tricks')
-                                         ->findOneBy([
-                                             'name' => $tricks,
-                                         ]);
+        if ($tricks = $this->requestStack->getCurrentRequest()->get('name')) {
+            // Find the tricks linked by the request.
+            $object = $args->getObjectManager()->getRepository('AppBundle:Tricks')
+                                               ->findOneBy([
+                                                   'name' => $tricks,
+                                               ]);
 
-        if (is_object($object) && $object instanceof Tricks) {
-            $entity->setPublicationDate(new \DateTime());
-            $entity->setAuthor($this->storage->getToken()->getUser());
-            $entity->setTricks($object);
-            $object->addCommentary($entity);
-        } else {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'The entity MUST be a instance of Tricks !,
+            if (is_object($object) && $object instanceof Tricks) {
+                $entity->setPublicationDate(new \DateTime());
+                $entity->setAuthor($this->storage->getToken()->getUser());
+                $entity->setTricks($object);
+                $object->addCommentary($entity);
+            } else {
+                throw new \InvalidArgumentException(
+                    sprintf(
+                        'The entity MUST be a instance of Tricks !,
                          given "%s"', get_class($object)
-                )
-            );
+                    )
+                );
+            }
         }
     }
 

@@ -54,6 +54,7 @@ class TricksAdminControllerTest extends WebTestCase
         $this->logIn();
 
         $this->client->request('GET', '/admin/tricks/validate/Frontflip');
+        dump($this->client->getResponse());
 
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
     }
