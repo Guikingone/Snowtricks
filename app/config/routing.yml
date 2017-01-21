@@ -9,15 +9,15 @@ tricks:
     methods: 'GET'
     defaults: { _controller: AppBundle:Web/Home:tricks }
 
-tricks_details:
-    path:     /tricks/{name}
-    methods: ['GET', 'POST']
-    defaults: { _controller: AppBundle:Web/Home:tricksDetails }
-
 tricks_add:
     path:     /tricks/add
     methods: ['GET', 'POST']
     defaults: { _controller: AppBundle:Web/Home:tricksAdd }
+
+tricks_details:
+    path:     /tricks/{name}
+    methods: ['GET', 'POST']
+    defaults: { _controller: AppBundle:Web/Home:tricksDetails }
 
 # Back
 admin:

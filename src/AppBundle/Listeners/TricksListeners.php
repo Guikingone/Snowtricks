@@ -141,8 +141,8 @@ class TricksListeners
             }
         }
 
-        if ($entity->currentState === 'start_phase') {
-            // Normal case.
+        // Normal case.
+        if (array_key_exists('validation', $entity->currentState)) {
             $entity->setCreationDate(new \DateTime());
             $entity->setValidated(true);
             $entity->setPublished(true);
@@ -183,9 +183,10 @@ class TricksListeners
         if ($entity->getPublished() && $entity->getValidated() === true) {
 
             // Find the admins stored to send emails.
-            $author = $args->getObjectManager()->getRepository('UserBundle:User')->findBy([
-                'roles' => 'ROLE_ADMIN',
-            ]);
+            $author = $args->getObjectManager()->getRepository('UserBundle:User')
+                                               ->findBy([
+                                                   'roles' => 'ROLE_ADMIN',
+                                               ]);
 
             // Finalize the workflow.
             $this->workflow->apply($entity, 'publication_phase');

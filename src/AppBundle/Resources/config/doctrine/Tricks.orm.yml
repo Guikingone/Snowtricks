@@ -31,6 +31,9 @@ AppBundle\Entity\Tricks:
             type: boolean
         validated:
             type: boolean
+        currentState:
+            type: array
+            nullable: false
     oneToMany:
         commentary:
             targetEntity: AppBundle\Entity\Commentary

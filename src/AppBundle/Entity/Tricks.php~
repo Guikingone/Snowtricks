@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the Snowtricks project.
+ *
+ * (c) Guillaume Loulier <guillaume.loulier@hotmail.fr>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -7,6 +16,8 @@ use UserBundle\Entity\User;
 
 /**
  * Tricks.
+ *
+ * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
 class Tricks
 {
@@ -36,6 +47,16 @@ class Tricks
     private $resume;
 
     /**
+     * @var array
+     */
+    private $images;
+
+    /**
+     * @var array
+     */
+    private $videos;
+
+    /**
      * @var bool
      */
     private $published;
@@ -49,6 +70,7 @@ class Tricks
 
     private $commentary;
 
+    /** @var array */
     public $currentState;
 
     /**
@@ -155,6 +177,94 @@ class Tricks
     public function getResume()
     {
         return $this->resume;
+    }
+
+    /**
+     * Add image.
+     *
+     * @param string $image
+     *
+     * @return $this
+     */
+    public function addImage(string $image)
+    {
+        $this->images[] = $image;
+
+        return $this;
+    }
+
+    /**
+     * Set multiples images.
+     *
+     * @param array $images
+     *
+     * @return $this
+     */
+    public function setImages(array $images)
+    {
+        $this->images = $images;
+
+        return $this;
+    }
+
+    /**
+     * Return a single image.
+     *
+     * @param string $image
+     *
+     * @return mixed
+     */
+    public function getImage($image)
+    {
+        return $this->images[] = $image;
+    }
+
+    /**
+     * Get images.
+     *
+     * @return array
+     */
+    public function getImages()
+    {
+        return $this->images;
+    }
+
+    /**
+     * Add videos.
+     *
+     * @param string $video
+     *
+     * @return $this
+     */
+    public function addVideos(string $video)
+    {
+        $this->videos[] = $video;
+
+        return $this;
+    }
+
+    /**
+     * Set videos.
+     *
+     * @param array $videos
+     *
+     * @return Tricks
+     */
+    public function setVideos(array $videos)
+    {
+        $this->videos = $videos;
+
+        return $this;
+    }
+
+    /**
+     * Get videos.
+     *
+     * @return array
+     */
+    public function getVideos()
+    {
+        return $this->videos;
     }
 
     /**

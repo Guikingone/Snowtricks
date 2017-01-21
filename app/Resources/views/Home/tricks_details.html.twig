@@ -1,0 +1,8 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {{ form_start(commentaryForm) }}
+        {{ form_row(commentaryForm) }}
+    <button type="submit" name="submit">Commenter</button>
+    {{ form_end(commentaryForm) }}
+{% endblock %}

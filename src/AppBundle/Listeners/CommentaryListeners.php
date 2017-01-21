@@ -11,7 +11,8 @@
 
 namespace AppBundle\Listeners;
 
-use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
+use AppBundle\Events\CommentaryAddedEvent;
+use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
@@ -30,40 +31,38 @@ use AppBundle\Events\TricksDeletedEvent;
  */
 class CommentaryListeners
 {
-    /**
-     * @var TokenStorage
-     */
+    /** @var EntityManager */
+    private $doctrine;
+
+    /** @var TokenStorage */
     private $storage;
 
-    /**
-     * @var RequestStack
-     */
+    /** @var RequestStack */
     private $requestStack;
 
-    /**
-     * @var TwigEngine
-     */
+    /** @var TwigEngine */
     private $templating;
 
-    /**
-     * @var \Swift_Mailer
-     */
+    /** @var \Swift_Mailer */
     private $mailer;
 
     /**
      * CommentaryListeners constructor.
      *
+     * @param EntityManager $doctrine
      * @param TokenStorage  $storage
      * @param RequestStack  $requestStack
      * @param TwigEngine    $templating
      * @param \Swift_Mailer $mailer
      */
     public function __construct(
+        EntityManager $doctrine,
         TokenStorage $storage,
         RequestStack $requestStack,
         TwigEngine $templating,
         \Swift_Mailer $mailer
     ) {
+        $this->doctrine = $doctrine;
         $this->storage = $storage;
         $this->requestStack = $requestStack;
         $this->templating = $templating;
@@ -71,13 +70,13 @@ class CommentaryListeners
     }
 
     /**
-     * @param LifecycleEventArgs $args
+     * @param CommentaryAddedEvent $addedEvent
      *
      * @throws \InvalidArgumentException
      */
-    public function prePersist(LifecycleEventArgs $args)
+    public function onCommentaryAdded(CommentaryAddedEvent $addedEvent)
     {
-        $entity = $args->getObject();
+        $entity = $addedEvent->getCommentary();
 
         if (!$entity instanceof Commentary) {
             return;
@@ -85,14 +84,21 @@ class CommentaryListeners
 
         if ($tricks = $this->requestStack->getCurrentRequest()->get('name')) {
             // Find the tricks linked by the request.
-            $object = $args->getObjectManager()->getRepository('AppBundle:Tricks')
-                                               ->findOneBy([
-                                                   'name' => $tricks,
-                                               ]);
+            $object = $this->doctrine->getRepository('AppBundle:Tricks')
+                                     ->findOneBy([
+                                         'name' => $tricks,
+                                     ]);
+
+            $user = $this->storage->getToken()->getUser();
+
+            $author = $this->doctrine->getRepository('UserBundle:User')
+                                     ->findOneBy([
+                                         'username' => $user,
+                                     ]);
 
             if (is_object($object) && $object instanceof Tricks) {
                 $entity->setPublicationDate(new \DateTime());
-                $entity->setAuthor($this->storage->getToken()->getUser());
+                $entity->setAuthor($author);
                 $entity->setTricks($object);
                 $object->addCommentary($entity);
             } else {

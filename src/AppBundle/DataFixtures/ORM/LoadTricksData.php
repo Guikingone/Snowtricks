@@ -32,7 +32,7 @@ class LoadTricksData extends AbstractFixture implements
     /** @var ContainerInterface */
     private $container;
 
-    public function setContainer (ContainerInterface $container = null)
+    public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
     }
@@ -68,11 +68,12 @@ class LoadTricksData extends AbstractFixture implements
         $workflow->apply($tricks, 'validation_phase');
 
         $workflow->apply($tricksII, 'start_phase');
-        $workflow->apply($tricksII, 'validation_phase');
 
         $manager->persist($tricks);
         $manager->persist($tricksII);
+        dump($tricks);
         $manager->flush();
+        dump($tricks);
 
         $this->addReference('tricks', $tricks);
     }

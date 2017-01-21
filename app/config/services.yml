@@ -40,6 +40,7 @@ services:
             - '@doctrine.orm.entity_manager'
             - '@form.factory'
             - '@session'
+            - '@event_dispatcher'
 
     # Tricks listeners.
     app.trick_listener:
@@ -63,12 +64,13 @@ services:
     app.commentary_listener:
         class: AppBundle\Listeners\CommentaryListeners
         arguments:
+           - '@doctrine.orm.entity_manager'
            - '@security.token_storage'
            - '@request_stack'
            - '@templating'
            - '@mailer'
         tags:
-            - { name: doctrine.event_listener, event: prePersist }
+            - { name: kernel.event_listener, event: commentary.added, method: onCommentaryAdded }
             - { name: kernel.event_listener, event: tricks.deleted, method: onDeleteTricks }
 
 

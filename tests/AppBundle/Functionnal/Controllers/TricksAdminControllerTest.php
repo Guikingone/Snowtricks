@@ -54,7 +54,6 @@ class TricksAdminControllerTest extends WebTestCase
         $this->logIn();
 
         $this->client->request('GET', '/admin/tricks/validate/Frontflip');
-        dump($this->client->getResponse());
 
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
     }
@@ -85,9 +84,9 @@ class TricksAdminControllerTest extends WebTestCase
         if ($this->client->getResponse()->getStatusCode() === 200) {
             $form = $crawler->selectButton('submit')->form();
 
-            $form['app_bundle_update_tricks_type[name]'] = 'Airflip';
-            $form['app_bundle_update_tricks_type[groups]'] = 'Flip';
-            $form['app_bundle_update_tricks_type[resume'] = 'A new content about this tricks !';
+            $form['update_tricks[name]'] = 'Airflip';
+            $form['update_tricks[groups]']->select('Flip');
+            $form['update_tricks[resume]'] = 'A new content about this tricks !';
 
             $crawler = $this->client->submit($form);
 

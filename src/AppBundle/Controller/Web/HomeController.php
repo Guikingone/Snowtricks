@@ -84,7 +84,7 @@ class HomeController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function tricksAdd(Request $request)
+    public function tricksAddAction(Request $request)
     {
         $tricks = $this->get('app.tricks_manager')->addTrick($request);
 

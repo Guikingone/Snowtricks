@@ -70,6 +70,7 @@ class Tricks
 
     private $commentary;
 
+    /** @var array */
     public $currentState;
 
     /**
@@ -378,5 +379,29 @@ class Tricks
     public function getAuthor()
     {
         return $this->author;
+    }
+
+    /**
+     * Set currentState.
+     *
+     * @param array $currentState
+     *
+     * @return Tricks
+     */
+    public function setCurrentState($currentState)
+    {
+        $this->currentState = $currentState;
+
+        return $this;
+    }
+
+    /**
+     * Get currentState.
+     *
+     * @return array
+     */
+    public function getCurrentState()
+    {
+        return $this->currentState;
     }
 }

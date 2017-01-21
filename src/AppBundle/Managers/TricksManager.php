@@ -126,7 +126,7 @@ class TricksManager
      * @throws OptimisticLockException
      * @throws \InvalidArgumentException
      *
-     * @return \Symfony\Component\Form\FormView|RedirectResponse
+     * @return RedirectResponse|\Symfony\Component\Form\FormView
      */
     public function addTrick(Request $request)
     {
@@ -141,8 +141,6 @@ class TricksManager
         if ($form->isSubmitted() && $form->isValid()) {
             $this->doctrine->persist($trick);
             $this->doctrine->flush();
-
-            return new RedirectResponse('back');
         }
 
         return $form->createView();
@@ -187,8 +185,6 @@ class TricksManager
                 'success',
                 'Le trick a bien été modifié.'
             );
-
-            return new RedirectResponse('tricks');
         }
 
         return $form->createView();
@@ -226,7 +222,9 @@ class TricksManager
                                         'name' => $name,
                                     ]);
 
-            if ($trick instanceof Tricks && $trick->currentState === 'start_phase') {
+            if ($trick instanceof Tricks
+                && array_key_exists('validation', $trick->currentState)) {
+
                 // Set the workflow phase.
                 $this->workflow->apply($trick, 'validation_phase');
 

@@ -73,16 +73,14 @@ class TricksType extends AbstractType
                 'required' => true,
             ])
             ->add('images', CollectionType::class, [
-                'entry_type' => FileType::class, [
-                    'label' => 'Images (format png)',
-                ],
+                'entry_type' => FileType::class,
+                'label' => 'Images (format png)',
                 'allow_add' => true,
                 'allow_delete' => true,
             ])
             ->add('videos', CollectionType::class, [
-                'entry_type' => TextType::class, [
-                    'label' => 'Identifiant unique de la vidéo.',
-                ],
+                'entry_type' => TextType::class,
+                'label' => 'Identifiant unique de la vidéo.',
                 'allow_add' => true,
                 'allow_delete' => true,
             ])

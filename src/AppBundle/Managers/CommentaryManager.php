@@ -11,10 +11,12 @@
 
 namespace AppBundle\Managers;
 
+use AppBundle\Events\CommentaryAddedEvent;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpKernel\Debug\TraceableEventDispatcher;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 // Entity
@@ -54,21 +56,27 @@ class CommentaryManager
      */
     private $session;
 
+    /** @var TraceableEventDispatcher */
+    private $dispatcher;
+
     /**
      * CommentaryManager constructor.
      *
-     * @param EntityManager $doctrine
-     * @param FormFactory   $form
-     * @param Session       $session
+     * @param EntityManager            $doctrine
+     * @param FormFactory              $form
+     * @param Session                  $session
+     * @param TraceableEventDispatcher $dispatcher
      */
     public function __construct(
         EntityManager $doctrine,
         FormFactory $form,
-        Session $session
+        Session $session,
+        TraceableEventDispatcher $dispatcher
     ) {
         $this->doctrine = $doctrine;
         $this->form = $form;
         $this->session = $session;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -116,6 +124,10 @@ class CommentaryManager
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Dispatch a commentary event to link this last one to a tricks.
+            $event = new CommentaryAddedEvent($commentary);
+            $this->dispatcher->dispatch(CommentaryAddedEvent::NAME, $event);
+
             $this->doctrine->persist($commentary);
             $this->doctrine->flush();
         }
