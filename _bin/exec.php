@@ -15,6 +15,6 @@ $path = $datetime->format('d-m-Y').'_'.($datetime->format('H') + 1).'h'.$datetim
 exec('php-cs-fixer fix ./src --level=symfony');
 exec('php-cs-fixer fix ./tests --level=symfony');
 exec('php bin/console d:f:l -n');
-exec('phpunit --coverage-html ./_coverage/'.$path);
+exec('phpunit --testdox --coverage-html ./_coverage/'.$path);
 exec('phpmetrics --report-html ./_quality/_metrics.html ./src');
 exec('phploc ./src');

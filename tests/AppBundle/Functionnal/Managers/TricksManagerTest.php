@@ -82,9 +82,9 @@ class TricksManagerTest extends KernelTestCase
      */
     public function testTricksValidationMethod()
     {
-        $trick = $this->manager->getTricksByName('Backflip');
+        $trick = $this->manager->getTricksByName('Sideflip');
 
-        $this->workflow->apply($trick, 'start_phase');
+        $this->workflow->apply($trick, 'validation_phase');
 
         if (is_object($this->manager) && $this->manager instanceof TricksManager) {
             // Validate the tricks find earlier.

@@ -60,6 +60,6 @@ class CommentaryRepository extends Repository
                     ->andWhere('c.id = :id')
                         ->setParameter('id', $id)
                     ->getQuery()
-                    ->getSingleResult();
+                    ->getResult();
     }
 }

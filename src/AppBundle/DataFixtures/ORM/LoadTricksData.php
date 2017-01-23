@@ -62,18 +62,59 @@ class LoadTricksData extends AbstractFixture implements
         $tricksII->setPublished(false);
         $tricksII->setValidated(false);
 
-        $workflow = $this->container->get('workflow.tricks_process');
+        $tricksIII = new Tricks();
+        $tricksIII->setName('TruckDriver');
+        $tricksIII->setAuthor($this->getReference('author'));
+        $tricksIII->setCreationDate(new \DateTime());
+        $tricksIII->setGroups('Grabs');
+        $tricksIII->setResume('Look at this masterpiece !');
+        $tricksIII->setPublished(false);
+        $tricksIII->setValidated(false);
 
+        $tricksIV = new Tricks();
+        $tricksIV->setName('Bigfoot');
+        $tricksIV->setAuthor($this->getReference('author'));
+        $tricksIV->setCreationDate(new \DateTime());
+        $tricksIV->setGroups('Rotations');
+        $tricksIV->setResume('Feel like i\'m gonna be sick !');
+        $tricksIV->setPublished(true);
+        $tricksIV->setValidated(true);
+
+        $tricksV = new Tricks();
+        $tricksV->setName('Airflip');
+        $tricksV->setAuthor($this->getReference('author'));
+        $tricksV->setCreationDate(new \DateTime());
+        $tricksV->setGroups('Flip');
+        $tricksV->setResume('A simple airflip content ...');
+        $tricksV->setPublished(false);
+        $tricksV->setValidated(false);
+
+        $tricksVI = new Tricks();
+        $tricksVI->setName('Sideflip');
+        $tricksVI->setAuthor($this->getReference('author'));
+        $tricksVI->setCreationDate(new \DateTime());
+        $tricksVI->setGroups('Flip');
+        $tricksVI->setResume('A simple sideflip content ...');
+        $tricksVI->setPublished(false);
+        $tricksVI->setValidated(false);
+
+        // Apply the workflow state foe every Entity.
+        $workflow = $this->container->get('workflow.tricks_process');
         $workflow->apply($tricks, 'start_phase');
         $workflow->apply($tricks, 'validation_phase');
-
         $workflow->apply($tricksII, 'start_phase');
+        $workflow->apply($tricksIII, 'start_phase');
+        $workflow->apply($tricksIV, 'start_phase');
+        $workflow->apply($tricksIV, 'validation_phase');
+        $workflow->apply($tricksV, 'start_phase');
+        $workflow->apply($tricksVI, 'start_phase');
 
         $manager->persist($tricks);
         $manager->persist($tricksII);
-        dump($tricks);
+        $manager->persist($tricksIII);
+        $manager->persist($tricksIV);
+        $manager->persist($tricksV);
         $manager->flush();
-        dump($tricks);
 
         $this->addReference('tricks', $tricks);
     }

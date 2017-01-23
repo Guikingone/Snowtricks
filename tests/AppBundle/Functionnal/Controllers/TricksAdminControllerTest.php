@@ -65,7 +65,7 @@ class TricksAdminControllerTest extends WebTestCase
     {
         $this->logIn();
 
-        $this->client->request('GET', '/admin/tricks/refuse/Frontflip');
+        $this->client->request('GET', '/admin/tricks/refuse/TruckDriver');
 
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
     }
@@ -77,7 +77,7 @@ class TricksAdminControllerTest extends WebTestCase
     {
         $this->logIn();
 
-        $crawler = $this->client->request('GET', '/admin/tricks/update/Frontflip');
+        $crawler = $this->client->request('GET', '/admin/tricks/update/TruckDriver');
 
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
 
@@ -90,7 +90,7 @@ class TricksAdminControllerTest extends WebTestCase
 
             $crawler = $this->client->submit($form);
 
-            $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+            $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
         }
     }
 
@@ -101,7 +101,7 @@ class TricksAdminControllerTest extends WebTestCase
     {
         $this->logIn();
 
-        $this->client->request('GET', '/admin/tricks/delete/Frontflip');
+        $this->client->request('GET', '/admin/tricks/delete/Bigfoot');
 
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
     }

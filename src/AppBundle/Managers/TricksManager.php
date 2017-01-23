@@ -11,7 +11,6 @@
 
 namespace AppBundle\Managers;
 
-use AppBundle\Events\TricksDeletedEvent;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -29,8 +28,9 @@ use AppBundle\Form\Type\UpdateTricksType;
 use Symfony\Component\Form\FormView;
 
 // Events
-use AppBundle\Events\TricksRefusedEvent;
 use AppBundle\Events\TricksValidatedEvent;
+use AppBundle\Events\TricksRefusedEvent;
+use AppBundle\Events\TricksDeletedEvent;
 
 // Exceptions
 use Doctrine\ORM\OptimisticLockException;
@@ -141,6 +141,9 @@ class TricksManager
         if ($form->isSubmitted() && $form->isValid()) {
             $this->doctrine->persist($trick);
             $this->doctrine->flush();
+
+            $redirect = new RedirectResponse('home');
+            $redirect->send();
         }
 
         return $form->createView();
@@ -185,6 +188,9 @@ class TricksManager
                 'success',
                 'Le trick a bien été modifié.'
             );
+
+            $redirect = new RedirectResponse('tricks');
+            $redirect->send();
         }
 
         return $form->createView();
