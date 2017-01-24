@@ -126,6 +126,36 @@ class HomeControllerTest extends WebTestCase
      */
     public function testsTricksAdd()
     {
+        $this->logIn();
+
+        $crawler = $this->client->request('GET', '/tricks/add');
+
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+
+        if ($this->client->getResponse()->getStatusCode() === 200) {
+            $form = $crawler->selectButton('submit')->form();
+
+            $form['tricks[name]'] = 'Sideflip';
+            $form['tricks[groups]']->select('Flip');
+            $form['tricks[resume]'] = 'A new content about this tricks !';
+
+            $crawler = $this->client->submit($form);
+
+            $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        }
+    }
+
+    /**
+     * Test if a new Tricks can be added without the login phase.
+     *
+     * @see HomeController::tricksAddAction()
+     * @see TricksManager::addTrick()
+     * @see TricksType
+     * @see TricksListeners::prePersist()
+     * @see TricksListeners::postPersist()
+     */
+    public function testsTricksAddWithoutLogin()
+    {
         $crawler = $this->client->request('GET', '/tricks/add');
 
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());

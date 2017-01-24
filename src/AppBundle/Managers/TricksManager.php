@@ -11,13 +11,10 @@
 
 namespace AppBundle\Managers;
 
-use AppBundle\Events\Tricks\TricksAddedEvent;
-use AppBundle\Events\Tricks\TricksUpdatedEvent;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Workflow\Workflow;
 
 // Entity
@@ -30,6 +27,8 @@ use AppBundle\Form\Type\UpdateTricksType;
 use Symfony\Component\Form\FormView;
 
 // Events
+use AppBundle\Events\Tricks\TricksAddedEvent;
+use AppBundle\Events\Tricks\TricksUpdatedEvent;
 use AppBundle\Events\Tricks\TricksValidatedEvent;
 use AppBundle\Events\Tricks\TricksRefusedEvent;
 use AppBundle\Events\Tricks\TricksDeletedEvent;
@@ -53,9 +52,6 @@ class TricksManager
     /** @var FormFactory */
     private $form;
 
-    /** @var Session */
-    private $session;
-
     /** @var TraceableEventDispatcher */
     private $eventDispatcher;
 
@@ -68,19 +64,16 @@ class TricksManager
      * @param EntityManager            $doctrine
      * @param FormFactory              $form
      * @param Workflow                 $workflow
-     * @param Session                  $session
      * @param TraceableEventDispatcher $eventDispatcher
      */
     public function __construct(
         EntityManager $doctrine,
         FormFactory $form,
-        Session $session,
         TraceableEventDispatcher $eventDispatcher,
         Workflow $workflow
     ) {
         $this->doctrine = $doctrine;
         $this->form = $form;
-        $this->session = $session;
         $this->eventDispatcher = $eventDispatcher;
         $this->workflow = $workflow;
     }
@@ -138,7 +131,13 @@ class TricksManager
             $this->doctrine->persist($trick);
             $this->doctrine->flush();
 
-            $redirect = new RedirectResponse('home');
+            if ($trick->getPublished()) {
+                // Only if it's a Admin add.
+                $redirect = new RedirectResponse('tricks'.$trick->getName());
+                $redirect->send();
+            }
+
+            $redirect = new RedirectResponse('tricks');
             $redirect->send();
         }
 

@@ -11,7 +11,6 @@
 
 namespace AppBundle\Managers;
 
-use AppBundle\Events\CommentaryAddedEvent;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,6 +26,9 @@ use AppBundle\Entity\Tricks;
 use Symfony\Component\Form\FormFactory;
 use AppBundle\Form\Type\CommentaryType;
 use Symfony\Component\Form\FormView;
+
+// Events
+use AppBundle\Events\Commentary\CommentaryAddedEvent;
 
 // Exceptions
 use Doctrine\ORM\NonUniqueResultException;

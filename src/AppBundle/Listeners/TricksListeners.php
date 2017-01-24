@@ -215,6 +215,7 @@ class TricksListeners
                                  ]);
 
         // Finalize the workflow.
+        $this->workflow->apply($entity, 'validation_phase');
         $this->workflow->apply($entity, 'publication_phase');
 
         $this->doctrine->flush();
@@ -260,7 +261,7 @@ class TricksListeners
     {
         $entity = $refusedEvent->getTricks();
 
-        if (is_object($entity) && $this->security->isGranted('ROLE_ADMIN')) {
+        if (is_object($entity)) {
             $entity->setPublished(false);
             $entity->setValidated(false);
 

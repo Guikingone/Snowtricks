@@ -29,7 +29,6 @@ class LoadCommentaryData extends AbstractFixture implements
      */
     public function load(ObjectManager $manager)
     {
-        dump($this->getReference('tricks'));
         $commentary = new Commentary();
         $commentary->setTricks($this->getReference('tricks'));
         $commentary->setAuthor($this->getReference('user'));

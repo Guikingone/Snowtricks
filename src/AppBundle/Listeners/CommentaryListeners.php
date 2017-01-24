@@ -11,7 +11,7 @@
 
 namespace AppBundle\Listeners;
 
-use AppBundle\Events\CommentaryAddedEvent;
+use AppBundle\Events\Commentary\CommentaryAddedEvent;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -22,7 +22,7 @@ use AppBundle\Entity\Commentary;
 use AppBundle\Entity\Tricks;
 
 // Events
-use AppBundle\Events\TricksDeletedEvent;
+use AppBundle\Events\Tricks\TricksDeletedEvent;
 
 /**
  * Class CommentaryListeners.
