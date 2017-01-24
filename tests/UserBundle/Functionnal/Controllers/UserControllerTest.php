@@ -14,6 +14,7 @@ namespace tests\UserBundle\Functionnal\Controllers;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use UserBundle\Controller\UserController;
 
 /**
  * Class UserControllerTest.
@@ -48,6 +49,8 @@ class UserControllerTest extends WebTestCase
 
     /**
      * Test if the profile of a User is accessible.
+     *
+     * @see UserController::profileAction()
      */
     public function testUserProfile()
     {
@@ -56,5 +59,45 @@ class UserControllerTest extends WebTestCase
         $this->client->request('GET', '/community/profile/Guikingone');
 
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * Test if a user can be locked using his name.
+     *
+     * @see UserController::userLockedAction()
+     */
+    public function testAdminUserLockByName()
+    {
+        $this->logIn();
+
+        $this->client->request('GET', '/admin/user/lock/Loulier');
+
+        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * Test if a user can be unlocked using his name.
+     *
+     * @see UserController::userUnlockedAction()
+     */
+    public function testAdminUserUnlockByName()
+    {
+        $this->logIn();
+
+        $this->client->request('GET', '/admin/user/unlock/Loulier');
+
+        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * Test the validate.
+     *
+     * @see UserController::validateUserAction()
+     */
+    public function testValidateUser()
+    {
+        $this->client->request('GET', '/community/users/validate/dd21498e61e26a5a42d3g9r4z2a364f2s3a2');
+
+        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
     }
 }

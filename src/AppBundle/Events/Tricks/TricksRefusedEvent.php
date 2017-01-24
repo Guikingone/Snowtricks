@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace AppBundle\Events;
+namespace AppBundle\Events\Tricks;
 
 use AppBundle\Entity\Tricks;
 use Symfony\Component\EventDispatcher\Event;
@@ -21,14 +21,9 @@ use Symfony\Component\EventDispatcher\Event;
  */
 class TricksRefusedEvent extends Event
 {
-    /**
-     * The name of the event.
-     */
     const NAME = 'tricks.refused';
 
-    /**
-     * @var Tricks
-     */
+    /** @var Tricks */
     protected $tricks;
 
     /**

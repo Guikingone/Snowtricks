@@ -11,14 +11,15 @@
 
 namespace AppBundle\DataFixtures\ORM;
 
-use AppBundle\Entity\Tricks;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Workflow\Exception\LogicException;
+
+// Entity
+use AppBundle\Entity\Tricks;
 
 /**
  * Class LoadTricksData.
@@ -32,6 +33,7 @@ class LoadTricksData extends AbstractFixture implements
     /** @var ContainerInterface */
     private $container;
 
+    /** @param ContainerInterface|null $container */
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
@@ -46,7 +48,7 @@ class LoadTricksData extends AbstractFixture implements
     {
         $tricks = new Tricks();
         $tricks->setName('Backflip');
-        $tricks->setAuthor($this->getReference('author'));
+        $tricks->setAuthor($this->getReference('user'));
         $tricks->setCreationDate(new \DateTime());
         $tricks->setGroups('Flip');
         $tricks->setResume('A simple backflip content ...');
@@ -55,7 +57,7 @@ class LoadTricksData extends AbstractFixture implements
 
         $tricksII = new Tricks();
         $tricksII->setName('Frontflip');
-        $tricksII->setAuthor($this->getReference('author'));
+        $tricksII->setAuthor($this->getReference('user'));
         $tricksII->setCreationDate(new \DateTime());
         $tricksII->setGroups('Flip');
         $tricksII->setResume('A simple backflip content ...');
@@ -64,7 +66,7 @@ class LoadTricksData extends AbstractFixture implements
 
         $tricksIII = new Tricks();
         $tricksIII->setName('TruckDriver');
-        $tricksIII->setAuthor($this->getReference('author'));
+        $tricksIII->setAuthor($this->getReference('user'));
         $tricksIII->setCreationDate(new \DateTime());
         $tricksIII->setGroups('Grabs');
         $tricksIII->setResume('Look at this masterpiece !');
@@ -73,7 +75,7 @@ class LoadTricksData extends AbstractFixture implements
 
         $tricksIV = new Tricks();
         $tricksIV->setName('Bigfoot');
-        $tricksIV->setAuthor($this->getReference('author'));
+        $tricksIV->setAuthor($this->getReference('user'));
         $tricksIV->setCreationDate(new \DateTime());
         $tricksIV->setGroups('Rotations');
         $tricksIV->setResume('Feel like i\'m gonna be sick !');
@@ -82,7 +84,7 @@ class LoadTricksData extends AbstractFixture implements
 
         $tricksV = new Tricks();
         $tricksV->setName('Airflip');
-        $tricksV->setAuthor($this->getReference('author'));
+        $tricksV->setAuthor($this->getReference('user'));
         $tricksV->setCreationDate(new \DateTime());
         $tricksV->setGroups('Flip');
         $tricksV->setResume('A simple airflip content ...');
@@ -91,14 +93,14 @@ class LoadTricksData extends AbstractFixture implements
 
         $tricksVI = new Tricks();
         $tricksVI->setName('Sideflip');
-        $tricksVI->setAuthor($this->getReference('author'));
+        $tricksVI->setAuthor($this->getReference('user'));
         $tricksVI->setCreationDate(new \DateTime());
         $tricksVI->setGroups('Flip');
         $tricksVI->setResume('A simple sideflip content ...');
         $tricksVI->setPublished(false);
         $tricksVI->setValidated(false);
 
-        // Apply the workflow state foe every Entity.
+        // Apply the workflow state for every Entity.
         $workflow = $this->container->get('workflow.tricks_process');
         $workflow->apply($tricks, 'start_phase');
         $workflow->apply($tricks, 'validation_phase');

@@ -12,6 +12,7 @@
 namespace tests\UserBundle\Functionnal\Controllers;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use UserBundle\Controller\SecurityController;
 
 /**
  * Class SecurityControllerTest.
@@ -20,39 +21,48 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  */
 class SecurityControllerTest extends WebTestCase
 {
+    /** @var null */
+    private $client = null;
+
+    /** {@inheritdoc} */
+    public function setUp()
+    {
+        $this->client = static::createClient();
+    }
+
     /**
      * Test the registerAction.
+     *
+     * @see SecurityController::registerAction()
      */
     public function testRegister()
     {
-        $client = static::createClient();
+        $this->client->request('GET', '/community/register');
 
-        $client->request('GET', '/community/register');
-
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 
     /**
      * Test the loginAction.
+     *
+     * @see SecurityController::loginAction()
      */
     public function testLogin()
     {
-        $client = static::createClient();
+        $this->client->request('GET', '/community/login');
 
-        $client->request('GET', '/community/login');
-
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 
     /**
-     * Test the profileAction.
+     * Test the forgotPasswordAction.
+     *
+     * @see SecurityController::forgotPasswordAction()
      */
-    public function testProfile()
+    public function testForgotPassword()
     {
-        $client = static::createClient();
+        $this->client->request('GET', '/community/password/forgot');
 
-        $client->request('GET', '/community/profile/Guik');
-
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 }

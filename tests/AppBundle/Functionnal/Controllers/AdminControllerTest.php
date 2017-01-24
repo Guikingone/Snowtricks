@@ -81,28 +81,4 @@ class AdminControllerTest extends WebTestCase
 
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
-
-    /**
-     * Test if a user can be locked using his name.
-     */
-    public function testAdminUserLockByName()
-    {
-        $this->logIn();
-
-        $this->client->request('GET', '/admin/user/lock/Loulier');
-
-        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
-    }
-
-    /**
-     * Test if a user can be unlocked using his name.
-     */
-    public function testAdminUserUnlockByName()
-    {
-        $this->logIn();
-
-        $this->client->request('GET', '/admin/user/unlock/Loulier');
-
-        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
-    }
 }

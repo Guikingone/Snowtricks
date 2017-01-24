@@ -14,6 +14,8 @@ namespace UserBundle\DataFixtures\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+
+// Entity
 use UserBundle\Entity\User;
 
 /**
@@ -62,8 +64,8 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
         $manager->persist($author_II);
         $manager->flush();
 
-        $this->addReference('author', $author);
-        $this->setReference('author_II', $author_II);
+        $this->addReference('user', $author);
+        $this->addReference('userII', $author_II);
     }
 
     /**

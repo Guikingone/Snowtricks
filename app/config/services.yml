@@ -16,6 +16,14 @@ services:
         arguments:
             - '%images.uploads.dir%'
 
+    # Doctrine listeners
+    app.doctrine_listeners:
+        class: AppBundle\DoctrineListeners\AppBundleListeners
+        arguments:
+            - '%images.uploads.dir%'
+        tags:
+            - { name: doctrine.event_listener, event: postLoad }
+
     # Tricks hydrate command
     app.command.tricks_hydrate:
         class: AppBundle\Command\LoadTricksCommand
@@ -46,16 +54,16 @@ services:
     app.trick_listener:
         class: AppBundle\Listeners\TricksListeners
         arguments:
+            - '@doctrine.orm.entity_manager'
             - '@workflow.tricks_process'
             - '@app.uploader'
             - '@templating'
+            - '@security.authorization_checker'
             - '@session'
             - '@mailer'
             - '%images.uploads.dir%'
         tags:
-            - { name: doctrine.event_listener, event: prePersist }
-            - { name: doctrine.event_listener, event: postPersist }
-            - { name: doctrine.event_listener, event: postLoad }
+            - { name: kernel.event_listener, event: tricks.added, method: onNewTricks }
             - { name: kernel.event_listener, event: tricks.validated, method: onValidateTricks }
             - { name: kernel.event_listener, event: tricks.refused, method: onRefusetricks }
             - { name: kernel.event_listener, event: tricks.deleted, method: onDeleteTricks }

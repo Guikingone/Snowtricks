@@ -177,15 +177,6 @@ class Security
      */
     public function forgotPassword(Request $request)
     {
-        if (!$this->security->isGranted('ROLE_USER')) {
-            throw new AccessDeniedException(
-                sprintf(
-                    'L\'accès à cette ressource est bloqué 
-                    aux utilisateurs de la plateforme !'
-                )
-            );
-        }
-
         $form = $this->form->create(ForgotPasswordType::class);
         $form->handleRequest($request);
 

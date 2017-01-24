@@ -11,28 +11,26 @@
 
 namespace AppBundle\Listeners;
 
-use AppBundle\Events\TricksDeletedEvent;
-use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
+use AppBundle\Events\Tricks\TricksAddedEvent;
+use AppBundle\Events\Tricks\TricksDeletedEvent;
+use AppBundle\Events\Tricks\TricksUpdatedEvent;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\OptimisticLockException;
 use Symfony\Bundle\TwigBundle\TwigEngine;
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 use Symfony\Component\Workflow\Workflow;
 
-// Entity
-use AppBundle\Entity\Tricks;
-
 // Event
-use AppBundle\Events\TricksRefusedEvent;
-use AppBundle\Events\TricksValidatedEvent;
+use AppBundle\Events\Tricks\TricksRefusedEvent;
+use AppBundle\Events\Tricks\TricksValidatedEvent;
 
 // App services
 use AppBundle\Services\Uploader;
 
 // Exceptions
-use Symfony\Component\Workflow\Exception\InvalidDefinitionException;
 use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
 /**
  * Class TricksListeners.
@@ -41,95 +39,148 @@ use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
  */
 class TricksListeners
 {
-    /**
-     * @var Workflow
-     */
+    /** @var EntityManager */
+    private $doctrine;
+
+    /** @var Workflow */
     private $workflow;
 
-    /**
-     * @var Uploader
-     */
+    /** @var Uploader */
     private $uploader;
 
-    /**
-     * @var TwigEngine
-     */
+    /** @var TwigEngine */
     private $templating;
 
-    /**
-     * @var Session
-     */
+    /** @var AuthorizationChecker */
+    private $security;
+
+    /** @var Session */
     private $session;
 
-    /**
-     * @var \Swift_Mailer
-     */
+    /** @var \Swift_Mailer */
     private $mailer;
-
-    // Store the images.upload.dir
-    private $imagesDir;
 
     /**
      * TricksListeners constructor.
      *
-     * @param Workflow      $workflow
-     * @param Uploader      $uploader
-     * @param TwigEngine    $templating
-     * @param Session       $session
-     * @param \Swift_Mailer $mailer
-     * @param               $imagesDir
+     * @param EntityManager        $doctrine
+     * @param Workflow             $workflow
+     * @param Uploader             $uploader
+     * @param TwigEngine           $templating
+     * @param AuthorizationChecker $security
+     * @param Session              $session
+     * @param \Swift_Mailer        $mailer
      */
     public function __construct(
+        EntityManager $doctrine,
         Workflow $workflow,
         Uploader $uploader,
         TwigEngine $templating,
+        AuthorizationChecker $security,
         Session $session,
-        \Swift_Mailer $mailer,
-        $imagesDir
+        \Swift_Mailer $mailer
     ) {
+        $this->doctrine = $doctrine;
         $this->workflow = $workflow;
         $this->uploader = $uploader;
         $this->templating = $templating;
+        $this->security = $security;
         $this->session = $session;
         $this->mailer = $mailer;
-        $this->imagesDir = $imagesDir;
     }
 
     /**
-     * if the user is granted as ADMIN, we set the validation, publication
-     * and date by default.
+     * By default, a new Tricks is always validated and published if the author
+     * is considered as a admin, in the other case,
+     * the tricks is send to validation.
      *
-     * @param LifecycleEventArgs $args
+     * @param TricksAddedEvent $addedEvent
+     *
+     * @throws LogicException
+     * @throws FileException
+     * @throws \RuntimeException
+     * @throws \Twig_Error
+     */
+    public function onNewTricks(TricksAddedEvent $addedEvent)
+    {
+        $entity = $addedEvent->getTricks();
+
+        if (is_object($entity)
+            && array_key_exists('validation', $entity->currentState)
+            && $this->security->isGranted('ROLE_ADMIN')) {
+            $entity->setCreationDate(new \DateTime());
+            $entity->setValidated(true);
+            $entity->setPublished(true);
+
+            // Set the workflow phase.
+            $this->workflow->apply($entity, 'validation_phase');
+            $this->workflow->apply($entity, 'publication_phase');
+
+            // File processing.
+            $images = $entity->getImages();
+            if (is_array($images)) {
+                foreach ($images as $img) {
+                    $filename = $this->uploader->uploadFile($img);
+                    $entity->addImage($filename);
+                }
+            }
+
+            $this->session->getFlashBag()->add(
+                'success',
+                'Le trick a bien été enregistré et publié.'
+            );
+        } else {
+            $entity->setCreationDate(new \DateTime());
+            $entity->setValidated(false);
+            $entity->setPublished(false);
+
+            // File processing.
+            $images = $entity->getImages();
+            if (is_array($images)) {
+                foreach ($images as $img) {
+                    $filename = $this->uploader->uploadFile($img);
+                    $entity->addImage($filename);
+                }
+            }
+
+            $this->session->getFlashBag()->add(
+                'success',
+                'Le trick a été envoyé en validation.'
+            );
+        }
+    }
+
+    /**
+     * @param TricksUpdatedEvent $updatedEvent
      *
      * @throws \RuntimeException
      * @throws \Twig_Error
-     * @throws \LogicException
-     * @throws InvalidDefinitionException
-     * @throws FileException
-     * @throws LogicException
-     * @throws \InvalidArgumentException
      */
-    public function prePersist(LifecycleEventArgs $args)
+    public function onUpdateTricks(TricksUpdatedEvent $updatedEvent)
     {
-        $entity = $args->getObject();
+        $entity = $updatedEvent->getTricks();
 
-        if (!$entity instanceof Tricks) {
-            return;
-        }
+        if (is_object($entity) && !$entity->getPublished()) {
+            $author = $entity->getAuthor();
+            $admins = $this->doctrine->getRepository('UserBundle:User')
+                                     ->findBy([
+                                         'roles' => 'ROLE_ADMIN',
+                                     ]);
 
-        // Update case.
-        if ($entity->getValidated() && !$entity->getPublished()) {
-            $admins = $args->getObjectManager()->getRepository('UserBundle:User')
-                                               ->findBy([
-                                                   'roles' => 'ROLE_ADMIN',
-                                               ]);
+            // Take the tricks back online.
             $entity->setPublished(true);
+
+            $this->session->getFlashBag()->add(
+                'success',
+                'Le trick a bien été modifié.'
+            );
 
             foreach ($admins as $admin) {
                 // Send the update to every admins for future validations.
                 $mail = \Swift_Message::newInstance()
                     ->setSubject('Snowtricks - Notification system')
                     ->setFrom('contact@snowtricks.fr')
+                    ->setTo($author->getEmail())
                     ->setTo($admin->getEmail())
                     ->setBody($this->templating->render(
                         ':Mails:notif_update_tricks.html.twig', [
@@ -140,65 +191,43 @@ class TricksListeners
                 $this->mailer->send($mail);
             }
         }
-
-        // Normal case.
-        if (array_key_exists('validation', $entity->currentState)) {
-            $entity->setCreationDate(new \DateTime());
-            $entity->setValidated(true);
-            $entity->setPublished(true);
-
-            // Set the workflow phase.
-            $this->workflow->apply($entity, 'validation_phase');
-
-            // File processing.
-            $images = $entity->getImages();
-            if (is_array($images)) {
-                foreach ($images as $img) {
-                    $filename = $this->uploader->uploadFile($img);
-                    $entity->addImage($filename);
-                }
-            }
-        }
     }
 
     /**
-     * Once the postPersist is launched, if the publication and validation setters
-     * are defined and true, we send a email using the admin list.
+     * @param TricksValidatedEvent $validatedEvent
      *
-     * @param LifecycleEventArgs $args
-     *
-     * @throws \LogicException
      * @throws LogicException
+     * @throws OptimisticLockException
      * @throws \RuntimeException
      * @throws \Twig_Error
      */
-    public function postPersist(LifecycleEventArgs $args)
+    public function onValidateTricks(TricksValidatedEvent $validatedEvent)
     {
-        $entity = $args->getObject();
+        $entity = $validatedEvent->getTricks();
 
-        if (!$entity instanceof Tricks) {
-            return;
-        }
+        // Validate the trick.
+        $entity->setValidated(true);
 
-        if ($entity->getPublished() && $entity->getValidated() === true) {
+        // Find the admins stored to send emails.
+        $admins = $this->doctrine->getRepository('UserBundle:User')
+                                 ->findBy([
+                                     'roles' => 'ROLE_ADMIN',
+                                 ]);
 
-            // Find the admins stored to send emails.
-            $author = $args->getObjectManager()->getRepository('UserBundle:User')
-                                               ->findBy([
-                                                   'roles' => 'ROLE_ADMIN',
-                                               ]);
+        // Finalize the workflow.
+        $this->workflow->apply($entity, 'publication_phase');
 
-            // Finalize the workflow.
-            $this->workflow->apply($entity, 'publication_phase');
+        $this->doctrine->flush();
 
-            $this->session->getFlashBag()->add(
-                'success',
-                'Le trick a bien été enregistré'
-            );
+        $this->session->getFlashBag()->add(
+            'success',
+            'Le trick a bien été enregistré'
+        );
+        foreach ($admins as $admin) {
             $mail = \Swift_Message::newInstance()
                 ->setSubject('Snowtricks - Notification system')
                 ->setFrom('contact@snowtricks.fr')
-                ->setTo($author)
+                ->setTo($admin->getEmail())
                 ->setBody($this->templating->render(
                     ':Mails:notif_email.html.twig', [
                         'tricks' => $entity,
@@ -206,46 +235,8 @@ class TricksListeners
                 ), 'text/html');
 
             $this->mailer->send($mail);
-        } else {
-            $this->session->getFlashBag()->add(
-                'success',
-                'Le trick a été envoyé en validation.'
-            );
-        }
-    }
-
-    /**
-     * @param LifecycleEventArgs $args
-     *
-     * @throws FileNotFoundException
-     */
-    public function postLoad(LifecycleEventArgs $args)
-    {
-        $entity = $args->getObject();
-
-        if (!$entity instanceof Tricks) {
-            return;
         }
 
-        // Only if the entity has store files.
-        if ($entity->getImages()) {
-            $filename = $entity->getImages();
-
-            foreach ($filename as $file) {
-                $entity->addImage(new File($this->imagesDir.'/'.$file));
-            }
-        }
-    }
-
-    /**
-     * @param TricksValidatedEvent $validatedEvent
-     *
-     * @throws \LogicException
-     * @throws \RuntimeException
-     * @throws \Twig_Error
-     */
-    public function onValidateTricks(TricksValidatedEvent $validatedEvent)
-    {
         $mail = \Swift_Message::newInstance()
             ->setSubject('Snowtricks - Notification system')
             ->setFrom('contact@snowtricks.fr')
@@ -262,23 +253,34 @@ class TricksListeners
     /**
      * @param TricksRefusedEvent $refusedEvent
      *
-     * @throws \LogicException
      * @throws \RuntimeException
      * @throws \Twig_Error
      */
     public function onRefuseTricks(TricksRefusedEvent $refusedEvent)
     {
-        $mail = \Swift_Message::newInstance()
-            ->setSubject('Snowtricks - Notification system')
-            ->setFrom('contact@snowtricks.fr')
-            ->setTo($refusedEvent->getTricks()->getAuthor()->getEmail())
-            ->setBody($this->templating->render(
-                ':Mails:refuse_tricks.html.twig', [
-                    'tricks' => $refusedEvent->getTricks(),
-                ]
-            ), 'text/html');
+        $entity = $refusedEvent->getTricks();
 
-        $this->mailer->send($mail);
+        if (is_object($entity) && $this->security->isGranted('ROLE_ADMIN')) {
+            $entity->setPublished(false);
+            $entity->setValidated(false);
+
+            $mail = \Swift_Message::newInstance()
+                ->setSubject('Snowtricks - Notification system')
+                ->setFrom('contact@snowtricks.fr')
+                ->setTo($refusedEvent->getTricks()->getAuthor()->getEmail())
+                ->setBody($this->templating->render(
+                    ':Mails:refuse_tricks.html.twig', [
+                        'tricks' => $refusedEvent->getTricks(),
+                    ]
+                ), 'text/html');
+
+            $this->mailer->send($mail);
+
+            $this->session->getFlashBag()->add(
+                'infos',
+                'Le tricks a été refusé et supprimé.'
+            );
+        }
     }
 
     /**
@@ -289,6 +291,11 @@ class TricksListeners
      */
     public function onDeleteTricks(TricksDeletedEvent $deletedEvent)
     {
+        $this->session->getFlashBag()->add(
+            'infos',
+            'Le tricks a été supprimé.'
+        );
+
         $mail = \Swift_Message::newInstance()
             ->setSubject('Snowtricks - Notification system')
             ->setFrom('contact@snowtricks.fr')

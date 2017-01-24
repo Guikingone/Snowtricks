@@ -11,6 +11,8 @@
 
 namespace AppBundle\Managers;
 
+use AppBundle\Events\Tricks\TricksAddedEvent;
+use AppBundle\Events\Tricks\TricksUpdatedEvent;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -28,9 +30,9 @@ use AppBundle\Form\Type\UpdateTricksType;
 use Symfony\Component\Form\FormView;
 
 // Events
-use AppBundle\Events\TricksValidatedEvent;
-use AppBundle\Events\TricksRefusedEvent;
-use AppBundle\Events\TricksDeletedEvent;
+use AppBundle\Events\Tricks\TricksValidatedEvent;
+use AppBundle\Events\Tricks\TricksRefusedEvent;
+use AppBundle\Events\Tricks\TricksDeletedEvent;
 
 // Exceptions
 use Doctrine\ORM\OptimisticLockException;
@@ -45,29 +47,19 @@ use Symfony\Component\Workflow\Exception\LogicException;
  */
 class TricksManager
 {
-    /**
-     * @var EntityManager
-     */
+    /** @var EntityManager */
     private $doctrine;
 
-    /**
-     * @var FormFactory
-     */
+    /** @var FormFactory */
     private $form;
 
-    /**
-     * @var Session
-     */
+    /** @var Session */
     private $session;
 
-    /**
-     * @var TraceableEventDispatcher
-     */
+    /** @var TraceableEventDispatcher */
     private $eventDispatcher;
 
-    /**
-     * @var Workflow
-     */
+    /** @var Workflow */
     private $workflow;
 
     /**
@@ -139,6 +131,10 @@ class TricksManager
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Send a new event to perform new instance actions.
+            $event = new TricksAddedEvent($trick);
+            $this->eventDispatcher->dispatch(TricksAddedEvent::NAME, $event);
+
             $this->doctrine->persist($trick);
             $this->doctrine->flush();
 
@@ -183,11 +179,11 @@ class TricksManager
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Send a new Event for update phase.
+            $event = new TricksUpdatedEvent($tricks);
+            $this->eventDispatcher->dispatch(TricksUpdatedEvent::NAME, $event);
+
             $this->doctrine->flush();
-            $this->session->getFlashBag()->add(
-                'success',
-                'Le trick a bien été modifié.'
-            );
 
             $redirect = new RedirectResponse('tricks');
             $redirect->send();
@@ -231,15 +227,6 @@ class TricksManager
             if ($trick instanceof Tricks
                 && array_key_exists('validation', $trick->currentState)) {
 
-                // Set the workflow phase.
-                $this->workflow->apply($trick, 'validation_phase');
-
-                // Validate the trick.
-                $trick->setValidated(true);
-
-                // Finalize the workflow.
-                $this->workflow->apply($trick, 'publication_phase');
-
                 // Dispatch a new Event.
                 $event = new TricksValidatedEvent($trick);
                 $this->eventDispatcher->dispatch(
@@ -259,6 +246,7 @@ class TricksManager
      *
      * @throws \LogicException
      * @throws \InvalidArgumentException
+     * @throws ORMInvalidArgumentException
      *
      * @return RedirectResponse
      */
@@ -286,6 +274,8 @@ class TricksManager
                 // Dispatch a new Event.
                 $event = new TricksRefusedEvent($trick);
                 $this->eventDispatcher->dispatch(TricksRefusedEvent::NAME, $event);
+
+                $this->doctrine->remove($trick);
             }
         }
 
@@ -324,10 +314,11 @@ class TricksManager
                                     ]);
 
             if ($trick instanceof Tricks) {
-                $this->doctrine->remove($trick);
                 // Dispatch a new Event.
                 $event = new TricksDeletedEvent($trick);
                 $this->eventDispatcher->dispatch(TricksDeletedEvent::NAME, $event);
+
+                $this->doctrine->remove($trick);
             }
         }
 

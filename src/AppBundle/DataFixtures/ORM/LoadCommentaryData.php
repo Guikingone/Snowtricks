@@ -21,16 +21,18 @@ use Doctrine\Common\Persistence\ObjectManager;
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
-class LoadCommentaryData extends AbstractFixture implements OrderedFixtureInterface
+class LoadCommentaryData extends AbstractFixture implements
+      OrderedFixtureInterface
 {
     /**
      * @param ObjectManager $manager
      */
     public function load(ObjectManager $manager)
     {
+        dump($this->getReference('tricks'));
         $commentary = new Commentary();
         $commentary->setTricks($this->getReference('tricks'));
-        $commentary->setAuthor($this->getReference('author'));
+        $commentary->setAuthor($this->getReference('user'));
         $commentary->setContent('Hey !');
         $commentary->setPublicationDate(new \DateTime());
 

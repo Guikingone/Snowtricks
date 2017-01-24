@@ -9,30 +9,25 @@
  * file that was distributed with this source code.
  */
 
-namespace AppBundle\Events;
+namespace AppBundle\Events\Tricks;
 
 use AppBundle\Entity\Tricks;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Class TricksValidatedEvent.
+ * Class TricksDeletedEvent.
  *
- * @author Guillaume Loulier <contact@guillaumeloulier.fr
+ * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
-class TricksValidatedEvent extends Event
+class TricksDeletedEvent extends Event
 {
-    /**
-     * The name of the event.
-     */
-    const NAME = 'tricks.validated';
+    const NAME = 'tricks.deleted';
 
-    /**
-     * @var Tricks
-     */
+    /** @var Tricks */
     protected $tricks;
 
     /**
-     * TricksValidatedEvent constructor.
+     * TricksDeletedEvent constructor.
      *
      * @param Tricks $tricks
      */

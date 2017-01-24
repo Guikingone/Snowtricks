@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace AppBundle\Events;
+namespace AppBundle\Events\Commentary;
 
 use AppBundle\Entity\Commentary;
 use Symfony\Component\EventDispatcher\Event;
@@ -21,7 +21,6 @@ use Symfony\Component\EventDispatcher\Event;
  */
 class CommentaryAddedEvent extends Event
 {
-    /** The name of the Event */
     const NAME = 'commentary.added';
 
     /** @var Commentary */

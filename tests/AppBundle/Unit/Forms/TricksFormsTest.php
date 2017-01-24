@@ -62,7 +62,7 @@ class TricksFormsTest extends TypeTestCase
         $form->submit($data);
 
         $this->assertTrue($form->isSubmitted());
-        $this->assertEquals($data, $form->getData());
+        $this->assertEquals($entity, $form->getData());
 
         $view = $form->createView();
         $children = $view->children;
