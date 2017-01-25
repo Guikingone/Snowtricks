@@ -11,13 +11,9 @@
 
 namespace tests\AppBundle\Unit\Forms;
 
-use Symfony\Component\Form\Extension\Core\CoreExtension;
-use Symfony\Component\Form\Extension\Validator\Type\FormTypeValidatorExtension;
-use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\Test\TypeTestCase;
 use AppBundle\Form\Type\TricksType;
 use AppBundle\Entity\Tricks;
-use Symfony\Component\Validator\ConstraintViolationList;
 
 /**
  * Class TricksFormsTest.
@@ -26,25 +22,6 @@ use Symfony\Component\Validator\ConstraintViolationList;
  */
 class TricksFormsTest extends TypeTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function setUp()
-    {
-        parent::setUp();
-
-        $validators = $this->getMock('Symfony\Component\Validator\Validator\ValidatorInterface');
-        $validators->method('validate')->will($this->returnValue(new ConstraintViolationList()));
-        $formTypeExtension = new FormTypeValidatorExtension($validators);
-        $coreExtension = new CoreExtension();
-
-        $this->factory = Forms::createFormFactoryBuilder()
-                              ->addExtensions($this->getExtensions())
-                              ->addExtension($coreExtension)
-                              ->addTypeExtension($formTypeExtension)
-                              ->getFormFactory();
-    }
-
     /**
      * Test if data's can be passed through the form.
      */
@@ -62,7 +39,7 @@ class TricksFormsTest extends TypeTestCase
         $form->submit($data);
 
         $this->assertTrue($form->isSubmitted());
-        $this->assertEquals($entity, $form->getData());
+        $this->assertEquals($data, $form->getData());
 
         $view = $form->createView();
         $children = $view->children;

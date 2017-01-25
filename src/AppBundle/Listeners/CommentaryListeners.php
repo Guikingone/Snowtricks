@@ -18,7 +18,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
 // Entity
-use AppBundle\Entity\Commentary;
 use AppBundle\Entity\Tricks;
 
 // Events
@@ -78,11 +77,8 @@ class CommentaryListeners
     {
         $entity = $addedEvent->getCommentary();
 
-        if (!$entity instanceof Commentary) {
-            return;
-        }
-
-        if ($tricks = $this->requestStack->getCurrentRequest()->get('name')) {
+        if (is_object($entity)
+            && $tricks = $this->requestStack->getCurrentRequest()->get('name')) {
             // Find the tricks linked by the request.
             $object = $this->doctrine->getRepository('AppBundle:Tricks')
                                      ->findOneBy([
@@ -123,21 +119,21 @@ class CommentaryListeners
      */
     public function onDeleteTricks(TricksDeletedEvent $deletedEvent)
     {
-        $commentaries = $deletedEvent->getTricks()->getCommentary();
+        if ($commentaries = $deletedEvent->getTricks()->getCommentary()) {
+            foreach ($commentaries as $commentary) {
+                // Notify every person who post a comment.
+                $mail = \Swift_Message::newInstance()
+                    ->setSubject('Snowtricks - Notification system')
+                    ->setFrom('contact@snowtricks.fr')
+                    ->setTo($commentary->getAuthor()->getEmail())
+                    ->setBody($this->templating->render(
+                        ':Mails:delete_tricks.html.twig', [
+                            'tricks' => $deletedEvent->getTricks(),
+                        ]
+                    ), 'text/html');
 
-        foreach ($commentaries as $commentary) {
-            // Notify every person who post a comment.
-            $mail = \Swift_Message::newInstance()
-                ->setSubject('Snowtricks - Notification system')
-                ->setFrom('contact@snowtricks.fr')
-                ->setTo($commentary->getAuthor()->getEmail())
-                ->setBody($this->templating->render(
-                    ':Mails:delete_tricks.html.twig', [
-                        'tricks' => $deletedEvent->getTricks(),
-                    ]
-                ), 'text/html');
-
-            $this->mailer->send($mail);
+                $this->mailer->send($mail);
+            }
         }
     }
 }

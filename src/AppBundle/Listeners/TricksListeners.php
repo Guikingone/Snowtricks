@@ -297,16 +297,23 @@ class TricksListeners
             'Le tricks a été supprimé.'
         );
 
-        $mail = \Swift_Message::newInstance()
-            ->setSubject('Snowtricks - Notification system')
-            ->setFrom('contact@snowtricks.fr')
-            ->setTo($deletedEvent->getTricks()->getAuthor()->getEmail())
-            ->setBody($this->templating->render(
-                ':Mails:delete_tricks.html.twig', [
-                    'tricks' => $deletedEvent->getTricks(),
-                ]
-            ), 'text/html');
+        $admins = $this->doctrine->getRepository('UserBundle:User')
+                                 ->findBy([
+                                     'roles' => 'ROLE_ADMIN',
+                                 ]);
 
-        $this->mailer->send($mail);
+        foreach ($admins as $admin) {
+            $mail = \Swift_Message::newInstance()
+                ->setSubject('Snowtricks - Notification system')
+                ->setFrom('contact@snowtricks.fr')
+                ->setTo($admin->getEmail())
+                ->setBody($this->templating->render(
+                    ':Mails:delete_tricks.html.twig', [
+                        'tricks' => $deletedEvent->getTricks(),
+                    ]
+                ), 'text/html');
+
+            $this->mailer->send($mail);
+        }
     }
 }

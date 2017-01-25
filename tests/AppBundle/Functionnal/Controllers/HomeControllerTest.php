@@ -25,7 +25,7 @@ use AppBundle\Form\Type\CommentaryType;
 use AppBundle\Form\Type\TricksType;
 
 // Events
-use AppBundle\Events\CommentaryAddedEvent;
+use AppBundle\Events\Commentary\CommentaryAddedEvent;
 
 // listeners
 use AppBundle\Listeners\CommentaryListeners;
@@ -100,7 +100,7 @@ class HomeControllerTest extends WebTestCase
      */
     public function testTricksDetails()
     {
-        $crawler = $this->client->request('GET', '/tricks/Backflip');
+        $crawler = $this->client->request('GET', '/tricks/Airflip');
 
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
 
