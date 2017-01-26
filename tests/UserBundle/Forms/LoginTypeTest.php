@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace tests\UserBundle\Unit\Forms;
+namespace tests\UserBundle\Forms;
 
 use Symfony\Component\Form\Test\TypeTestCase;
 use UserBundle\Entity\User;

@@ -96,12 +96,9 @@ services:
         arguments:
            - '@doctrine.orm.entity_manager'
            - '@form.factory'
-           - '@session'
-           - '@security.authorization_checker'
            - '@security.authentication_utils'
            - '@workflow.user_process'
-           - '@templating'
-           - '@mailer'
+           - '@event_dispatcher'
 
     # User form listeners.
     app.user_listener:
@@ -113,6 +110,6 @@ services:
             - '@templating'
             - '@mailer'
         tags:
-            - { name: doctrine.event_listener, event: prePersist }
-            - { name: doctrine.event_listener, event: postPersist }
+            - { name: kernel.event_listener, event: user.registered, method: onUserRegistered }
             - { name: kernel.event_listener, event: user.validated, method: onValidatedUser }
+            - { name: kernel.event_listener, event: forgot.password, method: onForgotPassword }

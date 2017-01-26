@@ -15,19 +15,19 @@ use Symfony\Component\EventDispatcher\Event;
 use UserBundle\Entity\User;
 
 /**
- * Class ForgotPasswordEvent.
+ * Class UserRegisteredEvent.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
-class ForgotPasswordEvent extends Event
+class UserRegisteredEvent extends Event
 {
-    const NAME = 'forgot.password';
+    const NAME = 'user.registered';
 
     /** @var User */
     protected $user;
 
     /**
-     * ForgotPasswordEvent constructor.
+     * UserRegistered constructor.
      *
      * @param User $user
      */

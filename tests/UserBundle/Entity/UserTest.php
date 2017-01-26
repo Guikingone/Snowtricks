@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace tests\UserBundle\Unit\Entity;
+namespace tests\UserBundle\Entity;
 
 use AppBundle\Entity\Commentary;
 use AppBundle\Entity\Tricks;

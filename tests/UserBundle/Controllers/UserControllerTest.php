@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace tests\UserBundle\Functionnal\Controllers;
+namespace tests\UserBundle\Controllers;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\Cookie;

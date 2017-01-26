@@ -12,12 +12,10 @@
 namespace UserBundle\Services;
 
 use Doctrine\ORM\EntityManager;
-use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
+use Symfony\Component\HttpKernel\Debug\TraceableEventDispatcher;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 // Entity
@@ -26,14 +24,16 @@ use Symfony\Component\Workflow\Workflow;
 use UserBundle\Entity\User;
 
 // Forms
+use UserBundle\Events\ForgotPasswordEvent;
+use UserBundle\Events\UserRegisteredEvent;
 use UserBundle\Form\ForgotPasswordType;
 use UserBundle\Form\Type\RegisterType;
 
 // Exceptions
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMInvalidArgumentException;
+use UserBundle\Listeners\RegisterListeners;
 
 /**
  * Class Security.
@@ -53,16 +53,6 @@ class Security
     private $form;
 
     /**
-     * @var Session
-     */
-    private $session;
-
-    /**
-     * @var AuthorizationChecker
-     */
-    private $security;
-
-    /**
      * @var AuthenticationUtils
      */
     private $authenticationUtils;
@@ -72,46 +62,30 @@ class Security
      */
     private $workflow;
 
-    /**
-     * @var TwigEngine
-     */
-    private $templating;
-
-    /**
-     * @var \Swift_Mailer
-     */
-    private $mailer;
+    /** @var TraceableEventDispatcher */
+    private $dispatcher;
 
     /**
      * Security constructor.
      *
-     * @param EntityManager        $doctrine
-     * @param FormFactory          $form
-     * @param Session              $session
-     * @param AuthorizationChecker $security
-     * @param AuthenticationUtils  $authenticationUtils
-     * @param Workflow             $workflow
-     * @param TwigEngine           $templating
-     * @param \Swift_Mailer        $mailer
+     * @param EntityManager            $doctrine
+     * @param FormFactory              $form
+     * @param AuthenticationUtils      $authenticationUtils
+     * @param Workflow                 $workflow
+     * @param TraceableEventDispatcher $dispatcher
      */
     public function __construct(
         EntityManager $doctrine,
         FormFactory $form,
-        Session $session,
-        AuthorizationChecker $security,
         AuthenticationUtils $authenticationUtils,
         Workflow $workflow,
-        TwigEngine $templating,
-        \Swift_Mailer $mailer
+        TraceableEventDispatcher $dispatcher
     ) {
         $this->doctrine = $doctrine;
         $this->form = $form;
-        $this->session = $session;
-        $this->security = $security;
         $this->authenticationUtils = $authenticationUtils;
         $this->workflow = $workflow;
-        $this->templating = $templating;
-        $this->mailer = $mailer;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -124,6 +98,9 @@ class Security
      * @throws ORMInvalidArgumentException
      * @throws OptimisticLockException
      * @throws \InvalidArgumentException
+     *
+     * @see UserRegisteredEvent
+     * @see RegisterListeners::onUserRegistered()
      *
      * @return \Symfony\Component\Form\FormView|RedirectResponse
      */
@@ -138,10 +115,16 @@ class Security
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Send the event who's gonna set the password
+            // and send the token to the user.
+            $event = new UserRegisteredEvent($user);
+            $this->dispatcher->dispatch(UserRegisteredEvent::NAME, $event);
+
             $this->doctrine->persist($user);
             $this->doctrine->flush();
 
-            return new RedirectResponse('home');
+            $response = new RedirectResponse('home');
+            $response->send();
         }
 
         return $form->createView();
@@ -161,17 +144,15 @@ class Security
     }
 
     /**
-     * Allow to reinitialize the password if the user have lost him.
-     *
      * @param Request $request
      *
-     * @throws AccessDeniedException
      * @throws InvalidOptionsException
-     * @throws \InvalidArgumentException
      * @throws \LogicException
      * @throws OptimisticLockException
-     * @throws \RuntimeException
-     * @throws \Twig_Error
+     * @throws \InvalidArgumentException
+     *
+     * @see ForgotPasswordEvent
+     * @see RegisterListeners::onForgotPassword()
      *
      * @return RedirectResponse
      */
@@ -197,30 +178,10 @@ class Security
                 );
             }
 
-            // Generate a alternative password.
-            $password = uniqid('password_', true);
-            $user->setPassword($password);
+            $event = new ForgotPasswordEvent($user);
+            $this->dispatcher->dispatch(ForgotPasswordEvent::NAME, $event);
 
             $this->doctrine->flush();
-
-            $this->session->getFlashBag()->add(
-                'success',
-                'Votre mot de passe a été réinitialisé, 
-            vous le recevrez par mail, 
-            merci de le changer après votre prochaine connexion.'
-            );
-
-            $mail = \Swift_Message::newInstance()
-                ->setSubject('Snowtricks - Notification system')
-                ->setFrom('contact@snowtricks.fr')
-                ->setTo($user->getEmail())
-                ->setBody($this->templating->render(
-                    ':Mails/Users:notif_password_forgot.html.twig', [
-                        'user' => $user,
-                    ]
-                ), 'text/html');
-
-            $this->mailer->send($mail);
         }
 
         return new RedirectResponse('home');

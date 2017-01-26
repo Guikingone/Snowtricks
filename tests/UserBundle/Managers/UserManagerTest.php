@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace tests\UserBundle\Functionnal\Managers;
+namespace tests\UserBundle\Managers;
 
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use UserBundle\Entity\User;

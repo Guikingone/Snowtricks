@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace tests\UserBundle\Functionnal\Services;
+namespace tests\UserBundle\Services;
 
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use UserBundle\Services\Security;
@@ -21,9 +21,7 @@ use UserBundle\Services\Security;
  */
 class SecurityTest extends KernelTestCase
 {
-    /**
-     * @var Security
-     */
+    /** @var Security */
     private $security;
 
     /**

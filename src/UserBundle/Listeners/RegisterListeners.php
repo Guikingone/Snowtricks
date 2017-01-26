@@ -11,7 +11,6 @@
 
 namespace UserBundle\Listeners;
 
-use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
@@ -20,7 +19,10 @@ use Symfony\Component\Workflow\Workflow;
 use UserBundle\Events\ConfirmedUserEvent;
 
 // Entity
-use UserBundle\Entity\User;
+use UserBundle\Events\ForgotPasswordEvent;
+use UserBundle\Events\UserRegisteredEvent;
+use UserBundle\Managers\UserManager;
+use UserBundle\Services\Security;
 
 /**
  * Class RegisterListeners.
@@ -78,61 +80,45 @@ class RegisterListeners
     }
 
     /**
-     * @param LifecycleEventArgs $args
+     * @param UserRegisteredEvent $event
      *
-     * @throws \LogicException
-     */
-    public function prePersist(LifecycleEventArgs $args)
-    {
-        $entity = $args->getObject();
-
-        if (!$entity instanceof User) {
-            return;
-        }
-
-        $password = $this->encoder->encodePassword($entity, $entity->getPassword());
-        $entity->setPassword($password);
-        $entity->setValidated(false);
-        $entity->setLocked(false);
-        $entity->setActive(false);
-    }
-
-    /**
-     * @param LifecycleEventArgs $args
-     *
-     * @throws \LogicException
      * @throws \RuntimeException
      * @throws \Twig_Error
+     *
+     * @see Security::registerUser()
      */
-    public function postPersist(LifecycleEventArgs $args)
+    public function onUserRegistered(UserRegisteredEvent $event)
     {
-        $entity = $args->getObject();
+        $entity = $event->getUser();
 
-        if (!$entity instanceof User) {
-            return;
-        }
+        if (is_object($entity)) {
+            $password = $this->encoder->encodePassword($entity, $entity->getPassword());
+            $entity->setPassword($password);
+            $entity->setValidated(false);
+            $entity->setLocked(false);
+            $entity->setActive(false);
 
-        $token = random_int(0, 2942954362);
-        $entity->setToken($token);
-        $entity->setValidated(false);
+            $token = random_int(0, 2942954362);
+            $entity->setToken($token);
 
-        $this->session->getFlashBag()->add(
-            'success',
-            'Votre profil a bien été enregistré, 
+            $this->session->getFlashBag()->add(
+                'success',
+                'Votre profil a bien été enregistré, 
             un email de confirmation vous sera envoyé.'
-        );
+            );
 
-        $mail = \Swift_Message::newInstance()
-            ->setSubject('Snowtricks - Notification system')
-            ->setFrom('contact@snowtricks.fr')
-            ->setTo($entity->getEmail())
-            ->setBody($this->templating->render(
-                ':Mails/Users:notif_profil_creation.html.twig', [
-                    'user' => $entity,
-                ]
-            ), 'text/html');
+            $mail = \Swift_Message::newInstance()
+                ->setSubject('Snowtricks - Notification system')
+                ->setFrom('contact@snowtricks.fr')
+                ->setTo($entity->getEmail())
+                ->setBody($this->templating->render(
+                    ':Mails/Users:notif_profil_creation.html.twig', [
+                        'user' => $entity,
+                    ]
+                ), 'text/html');
 
-        $this->mailer->send($mail);
+            $this->mailer->send($mail);
+        }
     }
 
     /**
@@ -141,6 +127,8 @@ class RegisterListeners
      * @throws LogicException
      * @throws \RuntimeException
      * @throws \Twig_Error
+     *
+     * @see UserManager::validateUser()
      */
     public function onValidatedUser(ConfirmedUserEvent $event)
     {
@@ -168,5 +156,42 @@ class RegisterListeners
             ), 'text/html');
 
         $this->mailer->send($mail);
+    }
+
+    /**
+     * @param ForgotPasswordEvent $event
+     *
+     * @throws \RuntimeException
+     * @throws \Twig_Error
+     *
+     * @see Security::forgotPassword()
+     */
+    public function onForgotPassword(ForgotPasswordEvent $event)
+    {
+        $entity = $event->getUser();
+
+        if (is_object($entity)) {
+            // Generate a alternative password.
+            $password = uniqid('password_', true);
+            $entity->setPassword($password);
+
+            $this->session->getFlashBag()->add(
+                'success',
+                'Votre mot de passe a été réinitialisé, vous le recevrez par mail, 
+            merci de le changer après votre prochaine connexion.'
+            );
+
+            $mail = \Swift_Message::newInstance()
+                ->setSubject('Snowtricks - Notification system')
+                ->setFrom('contact@snowtricks.fr')
+                ->setTo($entity->getEmail())
+                ->setBody($this->templating->render(
+                    ':Mails/Users:notif_password_forgot.html.twig', [
+                        'user' => $entity,
+                    ]
+                ), 'text/html');
+
+            $this->mailer->send($mail);
+        }
     }
 }
