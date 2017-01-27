@@ -12,7 +12,11 @@
 namespace tests\UserBundle\Controllers;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 use UserBundle\Controller\SecurityController;
+
+// Service
+use UserBundle\Services\Security;
 
 /**
  * Class SecurityControllerTest.
@@ -34,35 +38,103 @@ class SecurityControllerTest extends WebTestCase
      * Test the registerAction.
      *
      * @see SecurityController::registerAction()
+     * @see Security::registerUser()
      */
     public function testRegister()
     {
-        $this->client->request('GET', '/community/register');
+        $crawler = $this->client->request('GET', '/community/register');
 
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+
+        if ($this->client->getResponse()->getStatusCode() === Response::HTTP_OK) {
+            $form = $crawler->selectButton('submit')->form();
+
+            $form['register[email]'] = 'contact@world.com';
+            $form['register[username]'] = 'Esky';
+            $form['register[password][first]'] = 'LBG,LDTH';
+            $form['register[password][second]'] = 'LBG,LDTH';
+
+            $crawler = $this->client->submit($form);
+
+            $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        }
     }
 
     /**
      * Test the loginAction.
      *
      * @see SecurityController::loginAction()
+     * @see Security::loginUser()
      */
     public function testLogin()
     {
-        $this->client->request('GET', '/community/login');
+        $crawler = $this->client->request('GET', '/community/login');
 
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+
+        if ($this->client->getResponse()->getStatusCode() === Response::HTTP_OK) {
+            $form = $crawler->selectButton('submit')->form();
+
+            $form['_username'] = 'Guikingone';
+            $form['_password'] = 'Lk__DTHE';
+
+            $crawler = $this->client->submit($form);
+
+            $this->assertEquals(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
+
+            $crawler = $this->client->followRedirect();
+            $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        }
     }
 
     /**
      * Test the forgotPasswordAction.
      *
      * @see SecurityController::forgotPasswordAction()
+     * @see Security::forgotPassword()
      */
     public function testForgotPassword()
     {
-        $this->client->request('GET', '/community/password/forgot');
+        $crawler = $this->client->request('GET', '/community/password/forgot');
 
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+
+        if ($this->client->getResponse()->getStatusCode() === Response::HTTP_OK) {
+            $form = $crawler->selectButton('submit')->form();
+
+            $form['forgot_password[email]'] = 'guik@guillaumeloulier.fr';
+            $form['forgot_password[username]'] = 'Guikingone';
+
+            $crawler = $this->client->submit($form);
+
+            $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        }
+    }
+
+    /**
+     * Test the forgotPasswordAction with bad credentials.
+     *
+     * @see SecurityController::forgotPasswordAction()
+     * @see Security::forgotPassword()
+     */
+    public function testForgotPasswordBadCredentials()
+    {
+        $crawler = $this->client->request('GET', '/community/password/forgot');
+
+        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+
+        if ($this->client->getResponse()->getStatusCode() === Response::HTTP_OK) {
+            $form = $crawler->selectButton('submit')->form();
+
+            $form['forgot_password[email]'] = 'contact@world.fr';
+            $form['forgot_password[username]'] = 'Anna';
+
+            $crawler = $this->client->submit($form);
+
+            $this->assertEquals(
+                Response::HTTP_INTERNAL_SERVER_ERROR,
+                $this->client->getResponse()->getStatusCode()
+            );
+        }
     }
 }

@@ -11,8 +11,14 @@
 
 namespace tests\AppBundle\Functionnal\Controllers;
 
+use AppBundle\Controller\Web\TricksAdminController;
+use AppBundle\Events\Tricks\TricksRefusedEvent;
+use AppBundle\Events\Tricks\TricksValidatedEvent;
+use AppBundle\Listeners\TricksListeners;
+use AppBundle\Managers\TricksManager;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\Cookie;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
@@ -48,6 +54,11 @@ class TricksAdminControllerTest extends WebTestCase
 
     /**
      * Test the validation of a tricks using his name.
+     *
+     * @see TricksAdminController::tricksValidationAction()
+     * @see TricksManager::validateTricks()
+     * @see TricksValidatedEvent
+     * @see TricksListeners::onValidateTricks()
      */
     public function testTricksValidation()
     {
@@ -55,11 +66,37 @@ class TricksAdminControllerTest extends WebTestCase
 
         $this->client->request('GET', '/admin/tricks/validate/Frontflip');
 
-        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(
+            Response::HTTP_FOUND,
+            $this->client->getResponse()->getStatusCode()
+        );
+    }
+
+    /**
+     * Test the validation of a tricks using a bad name.
+     *
+     * @see TricksAdminController::tricksValidationAction()
+     * @see TricksManager::validateTricks()
+     */
+    public function testTricksValidationWithBadName()
+    {
+        $this->logIn();
+
+        $this->client->request('GET', '/admin/tricks/validate/BackAir');
+
+        $this->assertEquals(
+            Response::HTTP_FOUND,
+            $this->client->getResponse()->getStatusCode()
+        );
     }
 
     /**
      * Test the refuse process of a tricks using his name.
+     *
+     * @see TricksAdminController::tricksRefusedAction()
+     * @see TricksManager::refuseTricks()
+     * @see TricksRefusedEvent
+     * @see TricksListeners::onRefuseTricks()
      */
     public function testTricksRefused()
     {
@@ -71,7 +108,27 @@ class TricksAdminControllerTest extends WebTestCase
     }
 
     /**
+     * Test the refuse process of a tricks using a bad argument.
+     *
+     * @see TricksAdminController::tricksRefusedAction()
+     * @see TricksManager::refuseTricks()
+     */
+    public function testTricksRefusedWithBadArgument()
+    {
+        $this->logIn();
+
+        $this->client->request('GET', '/admin/tricks/refuse/234');
+
+        $this->assertEquals(
+            Response::HTTP_FOUND,
+            $this->client->getResponse()->getStatusCode()
+        );
+    }
+
+    /**
      * Test if a tricks can be updated.
+     *
+     * @see TricksAdminController::tricksUpdateAction()
      */
     public function testTricksUpdated()
     {
@@ -92,6 +149,24 @@ class TricksAdminControllerTest extends WebTestCase
 
             $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
         }
+    }
+
+    /**
+     * Test if a tricks can be updated using a bad name.
+     *
+     * @see TricksAdminController::tricksUpdateAction()
+     * @see TricksManager::updateTricks()
+     */
+    public function testTricksUpdatedWithBadName()
+    {
+        $this->logIn();
+
+        $this->client->request('GET', '/admin/tricks/update/BackAirFlip');
+
+        $this->assertEquals(
+            Response::HTTP_INTERNAL_SERVER_ERROR,
+            $this->client->getResponse()->getStatusCode()
+        );
     }
 
     /**

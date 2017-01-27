@@ -134,7 +134,7 @@ class UserManager
     /**
      * Allow to validate a user using the generated token.
      *
-     * @param int $token
+     * @param string $token
      *
      * @throws \InvalidArgumentException
      * @throws \LogicException
@@ -143,7 +143,7 @@ class UserManager
      */
     public function validateUser($token)
     {
-        if (!is_int($token)) {
+        if (!is_string($token)) {
             throw new \InvalidArgumentException(
                 sprintf(
                     'The token MUST be a integer !, 

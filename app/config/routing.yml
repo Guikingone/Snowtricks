@@ -89,7 +89,7 @@ profile:
     defaults: { _controller: UserBundle:User:profile }
 
 validate_users:
-    path:    /community/users/validate/{name}
+    path:    /community/users/validate/{token}
     methods: 'GET'
     defaults: { _controller: UserBundle:User:validateUser }
 

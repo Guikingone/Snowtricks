@@ -1,0 +1,8 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {{ form_start(register) }}
+        {{ form_row(register) }}
+        <button type="submit" name="submit">S'enregistrer</button>
+    {{ form_end(register) }}
+{% endblock %}

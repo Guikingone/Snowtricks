@@ -96,7 +96,7 @@ class UserControllerTest extends WebTestCase
      */
     public function testValidateUser()
     {
-        $this->client->request('GET', '/community/users/validate/dd21498e61e26a5a42d3g9r4z2a364f2s3a2');
+        $this->client->request('GET', '/community/users/validate/token_e61e26a5a42d3g9r4');
 
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
     }

@@ -16,6 +16,9 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 // Entity
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Workflow\Exception\LogicException;
 use UserBundle\Entity\User;
 
 /**
@@ -23,10 +26,23 @@ use UserBundle\Entity\User;
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
-class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
+class LoadUserData extends AbstractFixture implements
+      OrderedFixtureInterface,
+      ContainerAwareInterface
 {
+    /** @var ContainerInterface */
+    private $container;
+
+    /** {@inheritdoc} */
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
+    }
+
     /**
      * @param ObjectManager $manager
+     *
+     * @throws LogicException
      */
     public function load(ObjectManager $manager)
     {
@@ -40,8 +56,8 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
         $author->setBirthdate(new \DateTime());
         $author->setOccupation('Rally Driver');
         $author->setEmail('guik@guillaumeloulier.fr');
-        $author->setToken('dd21498e61e26a5a42d3g9r4z2a364f2s3a2');
-        $author->setValidated(true);
+        $author->setToken('token_e61e26a5a42d3e85d');
+        $author->setValidated(false);
         $author->setLocked(false);
         $author->setActive(true);
 
@@ -55,10 +71,15 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
         $author_II->setPassword('Lk__DTHE');
         $author_II->setOccupation('Rally Driver');
         $author_II->setEmail('guik@guillaumeloulier.fr');
-        $author_II->setToken('dd21498e61e26a5a42d3g9r4z2a364f2s3a2');
-        $author_II->setValidated(true);
+        $author_II->setToken('token_e61e26a5a42d3g9r4');
+        $author_II->setValidated(false);
         $author_II->setLocked(false);
         $author_II->setActive(true);
+
+        $workflow = $this->container->get('workflow.user_process');
+
+        $workflow->apply($author, 'register_phase');
+        $workflow->apply($author_II, 'register_phase');
 
         $manager->persist($author);
         $manager->persist($author_II);

@@ -49,6 +49,8 @@ UserBundle\Entity\User:
             type: boolean
         isActive:
             type: boolean
+        currentStatus:
+            type: array
     oneToMany:
         tricks:
             targetEntity: AppBundle\Entity\Tricks

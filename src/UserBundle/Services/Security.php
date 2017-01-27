@@ -13,6 +13,7 @@ namespace UserBundle\Services;
 
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Debug\TraceableEventDispatcher;
@@ -23,10 +24,12 @@ use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Workflow;
 use UserBundle\Entity\User;
 
-// Forms
+// Events
 use UserBundle\Events\ForgotPasswordEvent;
 use UserBundle\Events\UserRegisteredEvent;
-use UserBundle\Form\ForgotPasswordType;
+
+// Forms
+use UserBundle\Form\Type\ForgotPasswordType;
 use UserBundle\Form\Type\RegisterType;
 
 // Exceptions
@@ -151,10 +154,11 @@ class Security
      * @throws OptimisticLockException
      * @throws \InvalidArgumentException
      *
+     * @see ForgotPasswordType
      * @see ForgotPasswordEvent
      * @see RegisterListeners::onForgotPassword()
      *
-     * @return RedirectResponse
+     * @return FormView
      */
     public function forgotPassword(Request $request)
     {
@@ -184,6 +188,6 @@ class Security
             $this->doctrine->flush();
         }
 
-        return new RedirectResponse('home');
+        return $form->createView();
     }
 }

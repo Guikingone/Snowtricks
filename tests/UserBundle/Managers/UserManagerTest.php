@@ -120,4 +120,38 @@ class UserManagerTest extends KernelTestCase
             }
         }
     }
+
+    /**
+     * Test if the service can find every users locked.
+     */
+    public function testFindUsersLocked()
+    {
+        if (is_object($this->manager) && $this->manager instanceof UserManager) {
+            // Store the result into an array
+            $users = $this->manager->getLockedUsers();
+            if (is_array($users)) {
+                foreach ($users as $user) {
+                    $this->assertInstanceOf(User::class, $user);
+                    $this->assertTrue($user->getLocked());
+                }
+            }
+        }
+    }
+
+    /**
+     * Test if the service can find every users unlocked.
+     */
+    public function testFindUsersUnLocked()
+    {
+        if (is_object($this->manager) && $this->manager instanceof UserManager) {
+            // Store the result into an array
+            $users = $this->manager->getUnlockedUsers();
+            if (is_array($users)) {
+                foreach ($users as $user) {
+                    $this->assertInstanceOf(User::class, $user);
+                    $this->assertFalse($user->getLocked());
+                }
+            }
+        }
+    }
 }

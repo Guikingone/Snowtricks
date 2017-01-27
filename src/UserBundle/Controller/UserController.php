@@ -59,14 +59,14 @@ class UserController extends Controller
     }
 
     /**
-     * @param int $token
+     * @param string $token
      *
      * @throws \InvalidArgumentException
      * @throws \LogicException
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function validateUserAction(int $token)
+    public function validateUserAction(string $token)
     {
         return $this->get('user.user_manager')->validateUser($token);
     }

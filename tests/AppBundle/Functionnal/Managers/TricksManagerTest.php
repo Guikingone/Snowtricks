@@ -28,14 +28,10 @@ use AppBundle\Entity\Tricks;
  */
 class TricksManagerTest extends KernelTestCase
 {
-    /**
-     * @var TricksManager
-     */
+    /** @var TricksManager */
     private $manager;
 
-    /**
-     * @var Workflow
-     */
+    /** @var Workflow */
     private $workflow;
 
     /** {@inheritdoc} */

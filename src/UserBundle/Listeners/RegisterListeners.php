@@ -98,7 +98,7 @@ class RegisterListeners
             $entity->setLocked(false);
             $entity->setActive(false);
 
-            $token = random_int(0, 2942954362);
+            $token = uniqid('token_', true);
             $entity->setToken($token);
 
             $this->session->getFlashBag()->add(
@@ -150,7 +150,7 @@ class RegisterListeners
             ->setFrom('contact@snowtricks.fr')
             ->setTo($user->getEmail())
             ->setBody($this->templating->render(
-                ':Mails:Users:notif_profil_validation.html.twig', [
+                ':Mails/Users:notif_profil_validation.html.twig', [
                     'user' => $user,
                 ]
             ), 'text/html');
@@ -172,7 +172,7 @@ class RegisterListeners
 
         if (is_object($entity)) {
             // Generate a alternative password.
-            $password = uniqid('password_', true);
+            $password = $this->encoder->encodePassword($entity, uniqid('password_', true));
             $entity->setPassword($password);
 
             $this->session->getFlashBag()->add(

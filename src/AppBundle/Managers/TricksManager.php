@@ -101,8 +101,6 @@ class TricksManager
     }
 
     /**
-     * Allow to add a single trick.
-     *
      * @param Request $request
      *
      * @throws LogicException
@@ -111,7 +109,7 @@ class TricksManager
      * @throws OptimisticLockException
      * @throws \InvalidArgumentException
      *
-     * @return RedirectResponse|\Symfony\Component\Form\FormView
+     * @return FormView
      */
     public function addTrick(Request $request)
     {
@@ -148,12 +146,11 @@ class TricksManager
      * @param Request $request
      * @param string  $name
      *
-     * @throws \LogicException
+     * @throws \InvalidArgumentException
      * @throws InvalidOptionsException
      * @throws OptimisticLockException
-     * @throws \InvalidArgumentException
      *
-     * @return FormView|RedirectResponse
+     * @return FormView
      */
     public function updateTricks(Request $request, string $name)
     {
@@ -161,12 +158,10 @@ class TricksManager
                                  ->findOneBy([
                                      'name' => $name,
                                  ]);
-
-        if (is_object($tricks) && !$tricks instanceof Tricks) {
-            throw new \LogicException(
+        if (!$tricks) {
+            throw new \InvalidArgumentException(
                 sprintf(
-                    'The entity MUST be a instance of Tricks !, 
-                    given "%s"', get_class($tricks)
+                    'The tricks name isn\'t correct !'
                 )
             );
         }
@@ -192,29 +187,21 @@ class TricksManager
     }
 
     /**
-     * Allow to validate a tricks using his name.
-     *
      * @param string $name
      *
-     * @throws \LogicException
-     * @throws LogicException
      * @throws \InvalidArgumentException
      *
      * @return RedirectResponse
      */
     public function validateTricks(string $name)
     {
-        try {
-            if (is_object($name)) {
-                throw new \LogicException(
-                    sprintf(
-                        'The argument MUST be a string, 
+        if (!is_string($name)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'The argument MUST be a string, 
                     given "%s"', gettype($name)
-                    )
-                );
-            }
-        } catch (\LogicException $exception) {
-            $exception->getMessage();
+                )
+            );
         }
 
         if (is_string($name)) {
@@ -239,29 +226,21 @@ class TricksManager
     }
 
     /**
-     * Allow to refuse a trick using his name.
-     *
      * @param string $name
      *
-     * @throws \LogicException
      * @throws \InvalidArgumentException
-     * @throws ORMInvalidArgumentException
      *
      * @return RedirectResponse
      */
     public function refuseTricks(string $name)
     {
-        try {
-            if (is_object($name)) {
-                throw new \LogicException(
-                    sprintf(
-                        'The argument MUST be a string, 
+        if (!is_string($name)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'The argument MUST be a string, 
                     given "%s"', gettype($name)
-                    )
-                );
-            }
-        } catch (\LogicException $exception) {
-            $exception->getMessage();
+                )
+            );
         }
 
         if (is_string($name)) {
@@ -282,28 +261,21 @@ class TricksManager
     }
 
     /**
-     * Allow to delete a tricks using his name.
-     *
      * @param string $name
      *
-     * @throws \LogicException
      * @throws \InvalidArgumentException
      *
      * @return RedirectResponse
      */
     public function deleteTricks(string $name)
     {
-        try {
-            if (is_object($name)) {
-                throw new \LogicException(
-                    sprintf(
-                        'The argument MUST be a string, 
+        if (is_object($name)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'The argument MUST be a string, 
                     given "%s"', gettype($name)
-                    )
-                );
-            }
-        } catch (\LogicException $exception) {
-            $exception->getMessage();
+                )
+            );
         }
 
         if (is_string($name)) {

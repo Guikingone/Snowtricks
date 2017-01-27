@@ -95,6 +95,7 @@ class User implements
 
     private $tricks;
 
+    /** @var array */
     public $currentStatus;
 
     /**
@@ -521,5 +522,53 @@ class User implements
             $this->username,
             $this->password,
             $this->isActive) = unserialize($serialized);
+    }
+
+    /**
+     * Set isActive.
+     *
+     * @param bool $isActive
+     *
+     * @return User
+     */
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    /**
+     * Get isActive.
+     *
+     * @return bool
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
+    }
+
+    /**
+     * Set currentStatus.
+     *
+     * @param array $currentStatus
+     *
+     * @return User
+     */
+    public function setCurrentStatus($currentStatus)
+    {
+        $this->currentStatus = $currentStatus;
+
+        return $this;
+    }
+
+    /**
+     * Get currentStatus.
+     *
+     * @return array
+     */
+    public function getCurrentStatus()
+    {
+        return $this->currentStatus;
     }
 }

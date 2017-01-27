@@ -13,7 +13,9 @@ namespace tests\UserBundle\Managers;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\Cookie;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use UserBundle\Controller\UserController;
 use UserBundle\Managers\UserManager;
 use UserBundle\Services\Security;
 
@@ -30,14 +32,10 @@ class UserManagerWebTest extends WebTestCase
     /** @var null */
     private $client = null;
 
-    /**
-     * @var UserManager
-     */
+    /** @var UserManager */
     private $manager;
 
-    /**
-     * @var Security
-     */
+    /** @var Security */
     private $security;
 
     /** {@inheritdoc} */
@@ -65,7 +63,42 @@ class UserManagerWebTest extends WebTestCase
     }
 
     /**
+     * Test if the user can be validated using his token.
+     *
+     * @see UserController::validateUserAction()
+     * @see UserManager::validateUser()
+     */
+    public function testUserCanBeValidated()
+    {
+        $this->client->request('GET', '/community/users/validate/token_e61e26a5a42d3g9r4');
+
+        $this->assertEquals(
+            Response::HTTP_FOUND,
+            $this->client->getResponse()->getStatusCode()
+        );
+    }
+
+    /**
+     * Test if the user can be validated using a bad token.
+     *
+     * @see UserController::validateUserAction()
+     * @see UserManager::validateUser()
+     */
+    public function testUserCanBeValidatedWithBadToken()
+    {
+        $this->client->request('GET', '/community/users/validate/2540');
+
+        $this->assertEquals(
+            Response::HTTP_INTERNAL_SERVER_ERROR,
+            $this->client->getResponse()->getStatusCode()
+        );
+    }
+
+    /**
      * Test if the user can be locked using his lastname.
+     *
+     * @see UserController::userLockedAction()
+     * @see UserManager::lockUser()
      */
     public function testUserCanBeLocked()
     {
@@ -77,7 +110,44 @@ class UserManagerWebTest extends WebTestCase
     }
 
     /**
+     * Test if the user can be locked using his lastname.
+     *
+     * @see UserController::userLockedAction()
+     * @see UserManager::lockUser()
+     */
+    public function testUserCanBeLockedWithoutLogin()
+    {
+        $this->client->request('GET', '/admin/user/lock/Loulier');
+
+        $this->assertEquals(
+            Response::HTTP_FOUND,
+            $this->client->getResponse()->getStatusCode()
+        );
+    }
+
+    /**
+     * Test if the user can be locked using his lastname.
+     *
+     * @see UserController::userLockedAction()
+     * @see UserManager::lockUser()
+     */
+    public function testUserCanBeLockedWithBadInfos()
+    {
+        $this->logIn();
+
+        $this->client->request('GET', '/admin/user/lock/Etna');
+
+        $this->assertEquals(
+            Response::HTTP_INTERNAL_SERVER_ERROR,
+            $this->client->getResponse()->getStatusCode()
+        );
+    }
+
+    /**
      * Test if the user can be unlocked using his lastname.
+     *
+     * @see UserController::userUnlockedAction()
+     * @see UserManager::unlockUser()
      */
     public function testUserCanBeUnlocked()
     {
@@ -89,36 +159,36 @@ class UserManagerWebTest extends WebTestCase
     }
 
     /**
-     * Test if the service can find every users locked.
+     * Test if the user can be unlocked using his lastname.
+     *
+     * @see UserController::userUnlockedAction()
+     * @see UserManager::unlockUser()
      */
-    public function testFindUsersLocked()
+    public function testUserCanBeUnlockedWithoutLogin()
     {
-        if (is_object($this->manager) && $this->manager instanceof UserManager) {
-            // Store the result into an array
-            $users = $this->manager->getLockedUsers();
-            if (is_array($users)) {
-                foreach ($users as $user) {
-                    $this->assertInstanceOf(User::class, $user);
-                    $this->assertTrue($user->getLocked());
-                }
-            }
-        }
+        $this->client->request('GET', '/admin/user/unlock/Loulier');
+
+        $this->assertEquals(
+            Response::HTTP_FOUND,
+            $this->client->getResponse()->getStatusCode()
+        );
     }
 
     /**
-     * Test if the service can find every users unlocked.
+     * Test if the user can be unlocked using his lastname.
+     *
+     * @see UserController::userUnlockedAction()
+     * @see UserManager::unlockUser()
      */
-    public function testFindUsersUnLocked()
+    public function testUserCanBeUnlockedWithBadCredentials()
     {
-        if (is_object($this->manager) && $this->manager instanceof UserManager) {
-            // Store the result into an array
-            $users = $this->manager->getUnlockedUsers();
-            if (is_array($users)) {
-                foreach ($users as $user) {
-                    $this->assertInstanceOf(User::class, $user);
-                    $this->assertFalse($user->getLocked());
-                }
-            }
-        }
+        $this->logIn();
+
+        $this->client->request('GET', '/admin/user/unlock/Etna');
+
+        $this->assertEquals(
+            Response::HTTP_INTERNAL_SERVER_ERROR,
+            $this->client->getResponse()->getStatusCode()
+        );
     }
 }

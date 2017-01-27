@@ -1,5 +1,7 @@
 <?php
 
+ini_set('memory_limit', '16MB');
+
 /*
  * This file is part of the Snowtricks project.
  *
@@ -18,6 +20,6 @@ exec('php bin/console d:s:u --force');
 exec('php-cs-fixer fix ./src --level=symfony');
 exec('php-cs-fixer fix ./tests --level=symfony');
 exec('php bin/console d:f:l -n');
-exec('phpunit --testdox --coverage-html ./_coverage/'.$path);
+exec('phpunit --coverage-html ./_coverage/'.$path);
 exec('phpmetrics --report-html ./_quality/_metrics.html ./src');
 exec('phploc ./src');
