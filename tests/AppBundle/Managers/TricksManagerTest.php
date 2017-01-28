@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace tests\AppBundle\Functionnal\Managers;
+namespace tests\AppBundle\Managers;
 
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;

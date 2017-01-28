@@ -23,8 +23,9 @@ security:
         # Main firewall used for back usage.
         main:
             remember_me:
+                name: _snowtricks
                 secret:    '%secret%'
-                lifetime:    604800
+                lifetime:    259200
                 path:    /
             anonymous: ~
             provider: user

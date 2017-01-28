@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace tests\AppBundle\Unit\Forms;
+namespace tests\AppBundle\Forms;
 
 use Symfony\Component\Form\Test\TypeTestCase;
 use AppBundle\Form\Type\UpdateTricksType;

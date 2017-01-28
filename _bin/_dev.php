@@ -1,7 +1,5 @@
 <?php
 
-ini_set('memory_limit', '16MB');
-
 /*
  * This file is part of the Snowtricks project.
  *

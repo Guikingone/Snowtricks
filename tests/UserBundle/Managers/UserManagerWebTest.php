@@ -76,6 +76,8 @@ class UserManagerWebTest extends WebTestCase
             Response::HTTP_FOUND,
             $this->client->getResponse()->getStatusCode()
         );
+
+        $this->assertTrue($this->client->getResponse()->isRedirect('login'));
     }
 
     /**
@@ -86,7 +88,7 @@ class UserManagerWebTest extends WebTestCase
      */
     public function testUserCanBeValidatedWithBadToken()
     {
-        $this->client->request('GET', '/community/users/validate/2540');
+        $this->client->request('GET', '/community/users/validate/"%d"'. 25415);
 
         $this->assertEquals(
             Response::HTTP_INTERNAL_SERVER_ERROR,
@@ -106,7 +108,12 @@ class UserManagerWebTest extends WebTestCase
 
         $this->client->request('GET', '/admin/user/lock/Loulier');
 
-        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(
+            Response::HTTP_FOUND,
+            $this->client->getResponse()->getStatusCode()
+        );
+
+        $this->assertTrue($this->client->getResponse()->isRedirect('admin'));
     }
 
     /**
@@ -123,6 +130,8 @@ class UserManagerWebTest extends WebTestCase
             Response::HTTP_FOUND,
             $this->client->getResponse()->getStatusCode()
         );
+
+        $this->assertTrue($this->client->getResponse()->isRedirect());
     }
 
     /**
@@ -155,7 +164,12 @@ class UserManagerWebTest extends WebTestCase
 
         $this->client->request('GET', '/admin/user/unlock/Loulier');
 
-        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(
+            Response::HTTP_FOUND,
+            $this->client->getResponse()->getStatusCode()
+        );
+
+        $this->assertTrue($this->client->getResponse()->isRedirect('admin'));
     }
 
     /**
@@ -172,6 +186,8 @@ class UserManagerWebTest extends WebTestCase
             Response::HTTP_FOUND,
             $this->client->getResponse()->getStatusCode()
         );
+
+        $this->assertTrue($this->client->getResponse()->isRedirect());
     }
 
     /**

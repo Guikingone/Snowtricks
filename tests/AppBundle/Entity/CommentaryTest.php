@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace tests\AppBundle\Unit\Entity;
+namespace tests\AppBundle\Entity;
 
 use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
 

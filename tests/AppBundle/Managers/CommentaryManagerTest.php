@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace tests\AppBundle\Functionnal\Managers;
+namespace tests\AppBundle\Managers;
 
 use AppBundle\Entity\Tricks;
 use AppBundle\Managers\CommentaryManager;
@@ -42,7 +42,10 @@ class CommentaryManagerTest extends KernelTestCase
     public function testBackServiceIsFound()
     {
         if (is_object($this->manager)) {
-            $this->assertInstanceOf(CommentaryManager::class, $this->manager);
+            $this->assertInstanceOf(
+                CommentaryManager::class,
+                $this->manager
+            );
         }
     }
 
@@ -51,7 +54,8 @@ class CommentaryManagerTest extends KernelTestCase
      */
     public function testCommentaryIsFoundByTricks()
     {
-        if (is_object($this->manager) && $this->manager instanceof CommentaryManager) {
+        if (is_object($this->manager)
+            && $this->manager instanceof CommentaryManager) {
             $this->manager->getCommentaryByTricks('Backflip', 2);
 
             $this->returnValue(array());
@@ -64,7 +68,8 @@ class CommentaryManagerTest extends KernelTestCase
      */
     public function testCommentariesDeletingMethod()
     {
-        if (is_object($this->manager) && $this->manager instanceof CommentaryManager) {
+        if (is_object($this->manager)
+            && $this->manager instanceof CommentaryManager) {
             // Store the result to test the class.
             $this->manager->deleteCommentaries('Backflip');
 
@@ -83,16 +88,47 @@ class CommentaryManagerTest extends KernelTestCase
     }
 
     /**
+     * Test if the app.back method who delete all the commentaries
+     * linked to a trick work.
+     */
+    public function testCommentariesDeletingMethodWithBadArgument()
+    {
+        if (is_object($this->manager)
+            && $this->manager instanceof CommentaryManager) {
+            // Store the result to test the class.
+            $this->manager->deleteCommentaries(5742);
+
+            $this->setExpectedException(\InvalidArgumentException::class);
+        }
+    }
+
+    /**
      * Test if the app.back method who delete a commentary linked to a tricks
      * using his id and the tricks name works.
      */
     public function testCommentaryDeletingByTricksMethod()
     {
-        if (is_object($this->manager) && $this->manager instanceof CommentaryManager) {
+        if (is_object($this->manager)
+            && $this->manager instanceof CommentaryManager) {
             // Store the result to test the class.
             $this->manager->deleteCommentary('Backflip', 2);
             // Find a single commentary using tricks name and commentary id.
             $this->returnValue(RedirectResponse::class);
+        }
+    }
+
+    /**
+     * Test if the app.back method who delete a commentary linked to a tricks
+     * using his id and the tricks name works.
+     */
+    public function testCommentaryDeletingByTricksMethodWithBadArguments()
+    {
+        if (is_object($this->manager)
+            && $this->manager instanceof CommentaryManager) {
+            // Store the result to test the class.
+            $this->manager->deleteCommentary(2451, 'BackAir');
+
+            $this->setExpectedException(\InvalidArgumentException::class);
         }
     }
 }

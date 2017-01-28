@@ -143,24 +143,19 @@ class CommentaryManager
      *
      * @param string $name
      *
-     * @throws \LogicException
      * @throws \InvalidArgumentException
      *
      * @return RedirectResponse
      */
     public function deleteCommentaries(string $name)
     {
-        try {
-            if (is_object($name)) {
-                throw new \LogicException(
-                    sprintf(
-                        'The argument MUST be a string, 
-                    given "%s"', gettype($name)
-                    )
-                );
-            }
-        } catch (\LogicException $exception) {
-            $exception->getMessage();
+        if (!is_string($name)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'The argument MUST be a string, 
+                   given "%s"', gettype($name)
+                )
+            );
         }
 
         if (is_string($name)) {
@@ -198,17 +193,13 @@ class CommentaryManager
      */
     public function deleteCommentary(string $name, int $id)
     {
-        try {
-            if (is_object($name) || !is_int($id)) {
-                throw new \LogicException(
-                    sprintf(
-                        'The arguments MUST be a string and an integer, 
-                    given "%s"', gettype([$name, $id])
-                    )
-                );
-            }
-        } catch (\LogicException $exception) {
-            $exception->getMessage();
+        if (!is_string($name) || !is_int($id)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'The arguments MUST be a string and an integer, 
+                   given "%s"', gettype([$name, $id])
+                )
+            );
         }
 
         if (is_string($name) && is_int($id)) {

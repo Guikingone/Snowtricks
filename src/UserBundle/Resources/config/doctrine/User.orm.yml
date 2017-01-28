@@ -47,7 +47,7 @@ UserBundle\Entity\User:
             type: boolean
         locked:
             type: boolean
-        isActive:
+        active:
             type: boolean
         currentStatus:
             type: array

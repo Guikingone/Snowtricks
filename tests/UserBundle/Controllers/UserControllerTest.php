@@ -13,8 +13,12 @@ namespace tests\UserBundle\Controllers;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\Cookie;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use UserBundle\Controller\UserController;
+use UserBundle\Events\ConfirmedUserEvent;
+use UserBundle\Listeners\RegisterListeners;
+use UserBundle\Managers\UserManager;
 
 /**
  * Class UserControllerTest.
@@ -58,13 +62,17 @@ class UserControllerTest extends WebTestCase
 
         $this->client->request('GET', '/community/profile/Guikingone');
 
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(
+            Response::HTTP_OK,
+            $this->client->getResponse()->getStatusCode()
+        );
     }
 
     /**
      * Test if a user can be locked using his name.
      *
      * @see UserController::userLockedAction()
+     * @see UserManager::lockUser()
      */
     public function testAdminUserLockByName()
     {
@@ -72,7 +80,10 @@ class UserControllerTest extends WebTestCase
 
         $this->client->request('GET', '/admin/user/lock/Loulier');
 
-        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(
+            Response::HTTP_FOUND,
+            $this->client->getResponse()->getStatusCode()
+        );
     }
 
     /**
@@ -86,18 +97,45 @@ class UserControllerTest extends WebTestCase
 
         $this->client->request('GET', '/admin/user/unlock/Loulier');
 
-        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(
+            Response::HTTP_FOUND,
+            $this->client->getResponse()->getStatusCode()
+        );
     }
 
     /**
-     * Test the validate.
+     * Test the validation of a user using his token.
      *
      * @see UserController::validateUserAction()
+     * @see UserManager::validateUser()
+     * @see ConfirmedUserEvent
+     * @see RegisterListeners::onValidatedUser()
      */
     public function testValidateUser()
     {
         $this->client->request('GET', '/community/users/validate/token_e61e26a5a42d3g9r4');
 
-        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(
+            Response::HTTP_FOUND,
+            $this->client->getResponse()->getStatusCode()
+        );
+    }
+
+    /**
+     * Test the validation of a user with bad token.
+     *
+     * @see UserController::validateUserAction()
+     * @see UserManager::validateUser()
+     * @see ConfirmedUserEvent
+     * @see RegisterListeners::onValidatedUser()
+     */
+    public function testValidateUserWithBadToken()
+    {
+        $this->client->request('GET', '/community/users/validate/"%d"'. 2546813218);
+
+        $this->assertEquals(
+            Response::HTTP_INTERNAL_SERVER_ERROR,
+            $this->client->getResponse()->getStatusCode()
+        );
     }
 }

@@ -146,7 +146,7 @@ class UserManager
         if (!is_string($token)) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    'The token MUST be a integer !, 
+                    'The token MUST be a string !, 
                     given "%s"', gettype($token)
                 )
             );

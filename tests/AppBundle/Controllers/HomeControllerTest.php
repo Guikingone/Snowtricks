@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace tests\AppBundle\Functionnal\Controllers;
+namespace tests\AppBundle\Controllers;
 
 use AppBundle\Controller\Web\HomeController;
 use AppBundle\Managers\TricksManager;

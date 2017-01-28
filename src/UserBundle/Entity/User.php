@@ -26,70 +26,45 @@ class User implements
     AdvancedUserInterface,
     \Serializable
 {
-    /**
-     * @var int
-     */
+    /** @var int */
     private $id;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $firstname;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $lastname;
 
-    /**
-     * @var \DateTime
-     */
+    /** @var \DateTime */
     private $birthdate;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $occupation;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $username;
 
     /**
-     * @var string
-     */
+     * @var string */
     private $password;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $email;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $roles;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $token;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private $validated;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private $locked;
 
-    /**
-     * @var bool
-     */
-    private $isActive;
+    /** @var bool */
+    private $active;
 
     private $commentary;
 
@@ -97,6 +72,15 @@ class User implements
 
     /** @var array */
     public $currentStatus;
+
+    /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        $this->tricks = new ArrayCollection();
+        $this->commentary = new ArrayCollection();
+    }
 
     /**
      * Get id.
@@ -375,13 +359,13 @@ class User implements
     /**
      * Set isActive.
      *
-     * @param bool $isActive
+     * @param bool $active
      *
      * @return User
      */
-    public function setActive($isActive)
+    public function setActive($active)
     {
-        $this->isActive = $isActive;
+        $this->active = $active;
 
         return $this;
     }
@@ -393,16 +377,7 @@ class User implements
      */
     public function getActive()
     {
-        return $this->isActive;
-    }
-
-    /**
-     * Constructor.
-     */
-    public function __construct()
-    {
-        $this->tricks = new ArrayCollection();
-        $this->commentary = new ArrayCollection();
+        return $this->active;
     }
 
     /**
@@ -473,81 +448,6 @@ class User implements
         return $this->commentary;
     }
 
-    public function isAccountNonExpired()
-    {
-        return true;
-    }
-
-    public function isAccountNonLocked()
-    {
-        return true;
-    }
-
-    public function isCredentialsNonExpired()
-    {
-        return true;
-    }
-
-    public function isEnabled()
-    {
-        return $this->isActive;
-    }
-
-    public function getSalt()
-    {
-        return null;
-    }
-
-    public function eraseCredentials()
-    {
-        // TODO: Implement eraseCredentials() method.
-    }
-
-    /** @see \Serializable::serialize() */
-    public function serialize()
-    {
-        return serialize([
-            $this->id,
-            $this->username,
-            $this->password,
-            $this->isActive,
-        ]);
-    }
-
-    /** @see \Serializable::unserialize() */
-    public function unserialize($serialized)
-    {
-        list(
-            $this->id,
-            $this->username,
-            $this->password,
-            $this->isActive) = unserialize($serialized);
-    }
-
-    /**
-     * Set isActive.
-     *
-     * @param bool $isActive
-     *
-     * @return User
-     */
-    public function setIsActive($isActive)
-    {
-        $this->isActive = $isActive;
-
-        return $this;
-    }
-
-    /**
-     * Get isActive.
-     *
-     * @return bool
-     */
-    public function getIsActive()
-    {
-        return $this->isActive;
-    }
-
     /**
      * Set currentStatus.
      *
@@ -570,5 +470,53 @@ class User implements
     public function getCurrentStatus()
     {
         return $this->currentStatus;
+    }
+
+    public function isAccountNonExpired()
+    {
+        return true;
+    }
+
+    public function isAccountNonLocked()
+    {
+        return true;
+    }
+
+    public function isCredentialsNonExpired()
+    {
+        return true;
+    }
+
+    public function isEnabled()
+    {
+        return $this->active;
+    }
+
+    public function getSalt()
+    {
+        return null;
+    }
+
+    public function eraseCredentials(){}
+
+    /** @see \Serializable::serialize() */
+    public function serialize()
+    {
+        return serialize([
+            $this->id,
+            $this->username,
+            $this->password,
+            $this->active,
+        ]);
+    }
+
+    /** @see \Serializable::unserialize() */
+    public function unserialize($serialized)
+    {
+        list(
+            $this->id,
+            $this->username,
+            $this->password,
+            $this->active) = unserialize($serialized);
     }
 }

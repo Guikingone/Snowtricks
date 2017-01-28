@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace tests\AppBundle\Functionnal\Controllers;
+namespace tests\AppBundle\Controllers;
 
 use AppBundle\Controller\Web\TricksAdminController;
 use AppBundle\Events\Tricks\TricksRefusedEvent;
@@ -104,7 +104,10 @@ class TricksAdminControllerTest extends WebTestCase
 
         $this->client->request('GET', '/admin/tricks/refuse/TruckDriver');
 
-        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(
+            Response::HTTP_FOUND,
+            $this->client->getResponse()->getStatusCode()
+        );
     }
 
     /**
@@ -136,7 +139,10 @@ class TricksAdminControllerTest extends WebTestCase
 
         $crawler = $this->client->request('GET', '/admin/tricks/update/TruckDriver');
 
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(
+            Response::HTTP_OK,
+            $this->client->getResponse()->getStatusCode()
+        );
 
         if ($this->client->getResponse()->getStatusCode() === 200) {
             $form = $crawler->selectButton('submit')->form();
@@ -147,7 +153,10 @@ class TricksAdminControllerTest extends WebTestCase
 
             $crawler = $this->client->submit($form);
 
-            $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+            $this->assertEquals(
+                Response::HTTP_OK,
+                $this->client->getResponse()->getStatusCode()
+            );
         }
     }
 
@@ -178,6 +187,9 @@ class TricksAdminControllerTest extends WebTestCase
 
         $this->client->request('GET', '/admin/tricks/delete/Bigfoot');
 
-        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(
+            Response::HTTP_FOUND,
+            $this->client->getResponse()->getStatusCode()
+        );
     }
 }
