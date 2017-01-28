@@ -21,49 +21,32 @@ use UserBundle\Entity\User;
  */
 class Tricks
 {
-    /**
-     * @var int
-     */
+    /** @var int */
     private $id;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $name;
 
-    /**
-     * @var \DateTime
-     */
+    /** @var \DateTime */
     private $creationDate;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $groups;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $resume;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $images;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $videos;
 
     /**
-     * @var bool
-     */
+     * @var bool */
     private $published;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private $validated;
 
     private $author;
@@ -403,5 +386,17 @@ class Tricks
     public function getCurrentState()
     {
         return $this->currentState;
+    }
+
+    /**
+     * Allow to check if the user connected is the author.
+     *
+     * @param User|null $user
+     *
+     * @return bool
+     */
+    public function isAuthor(User $user = null)
+    {
+        return $user === $this->author;
     }
 }

@@ -88,7 +88,7 @@ class UserManagerWebTest extends WebTestCase
      */
     public function testUserCanBeValidatedWithBadToken()
     {
-        $this->client->request('GET', '/community/users/validate/"%d"'. 25415);
+        $this->client->request('GET', '/community/users/validate/'. 25415);
 
         $this->assertEquals(
             Response::HTTP_INTERNAL_SERVER_ERROR,

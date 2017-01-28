@@ -87,6 +87,7 @@ class TricksTest extends TestCase
         $this->assertEquals($author, $tricks->getAuthor());
         $this->assertContains('Flip', $tricks->getGroups());
         $this->assertEquals('A simple test.', $tricks->getResume());
+        $this->assertTrue($tricks->isAuthor($author));
     }
 
     /**
