@@ -153,9 +153,9 @@ class TricksAdminControllerTest extends WebTestCase
         if ($this->client->getResponse()->getStatusCode() === 200) {
             $form = $crawler->selectButton('submit')->form();
 
-            $form['update_tricks[name]'] = 'Airflip';
-            $form['update_tricks[groups]']->select('Flip');
-            $form['update_tricks[resume]'] = 'A new content about this tricks !';
+            $form['update_tricks[name]'] = 'FrontGrab';
+            $form['update_tricks[groups]']->select('Grabs');
+            $form['update_tricks[resume]'] = 'A new grab content !';
 
             $crawler = $this->client->submit($form);
 

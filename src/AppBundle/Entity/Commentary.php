@@ -48,7 +48,7 @@ class Commentary
     private $content;
 
     /**
-     * @ORM\ManyToOne(targetEntity="UserBundle\Entity\User", inversedBy="commentary", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity="UserBundle\Entity\User", inversedBy="commentary", cascade={"persist"})
      * @ORM\JoinColumn(name="author_id", referencedColumnName="id")
      */
     private $author;

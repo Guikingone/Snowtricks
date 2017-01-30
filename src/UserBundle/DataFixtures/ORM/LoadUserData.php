@@ -55,9 +55,9 @@ class LoadUserData extends AbstractFixture implements
         $author->setPassword('Lk__DTHE');
         $author->setBirthdate(new \DateTime());
         $author->setOccupation('Rally Driver');
-        $author->setEmail('guik@guillaumeloulier.fr');
+        $author->setEmail('duduche@snowtricks.fr');
         $author->setToken('token_e61e26a5a42d3e85d');
-        $author->setValidated(false);
+        $author->setValidated(true);
         $author->setLocked(false);
         $author->setActive(true);
 
@@ -72,21 +72,59 @@ class LoadUserData extends AbstractFixture implements
         $author_II->setOccupation('Rally Driver');
         $author_II->setEmail('guik@guillaumeloulier.fr');
         $author_II->setToken('token_e61e26a5a42d3g9r4');
-        $author_II->setValidated(false);
+        $author_II->setValidated(true);
         $author_II->setLocked(false);
         $author_II->setActive(true);
+
+        // Create a user in order to simulate the authentication process.
+        $author_III = new User();
+        $author_III->setFirstname('Hervé');
+        $author_III->setLastname('Delafalaise');
+        $author_III->setUsername('Vévé');
+        $author_III->setRoles(['ROLE_USER']);
+        $author_III->setPassword('LODP_DIL');
+        $author_III->setBirthdate(new \DateTime());
+        $author_III->setOccupation('F1 Driver');
+        $author_III->setEmail('veve@snowtricks.fr');
+        $author_III->setToken('token_e61e26a5a42d34281');
+        $author_III->setValidated(true);
+        $author_III->setLocked(false);
+        $author_III->setActive(true);
+
+        // Create a user in order to simulate the authentication process.
+        $author_IV = new User();
+        $author_IV->setFirstname('Manon');
+        $author_IV->setLastname('Delasource');
+        $author_IV->setUsername('Nanon');
+        $author_IV->setRoles(['ROLE_ADMIN']);
+        $author_IV->setPassword('lappd_dep');
+        $author_IV->setBirthdate(new \DateTime());
+        $author_IV->setOccupation('Professionnal jumper');
+        $author_IV->setEmail('nanon@snowtricks.fr');
+        $author_IV->setToken('token_e61e26a5a42d1247d');
+        $author_IV->setValidated(true);
+        $author_IV->setLocked(false);
+        $author_IV->setActive(true);
 
         $workflow = $this->container->get('workflow.user_process');
 
         $workflow->apply($author, 'register_phase');
         $workflow->apply($author_II, 'register_phase');
+        $workflow->apply($author_III, 'register_phase');
+        $workflow->apply($author_III, 'validation_phase');
+        $workflow->apply($author_IV, 'register_phase');
+        $workflow->apply($author_IV, 'validation_phase');
 
         $manager->persist($author);
         $manager->persist($author_II);
+        $manager->persist($author_III);
+        $manager->persist($author_IV);
         $manager->flush();
 
         $this->addReference('user', $author);
         $this->addReference('userII', $author_II);
+        $this->addReference('userIII', $author_III);
+        $this->addReference('userIV', $author_IV);
     }
 
     /**

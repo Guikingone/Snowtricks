@@ -57,7 +57,7 @@ class LoadTricksData extends AbstractFixture implements
 
         $tricksII = new Tricks();
         $tricksII->setName('Frontflip');
-        $tricksII->setAuthor($this->getReference('user'));
+        $tricksII->setAuthor($this->getReference('userII'));
         $tricksII->setCreationDate(new \DateTime());
         $tricksII->setGroups('Flip');
         $tricksII->setResume('A simple backflip content ...');
@@ -75,7 +75,7 @@ class LoadTricksData extends AbstractFixture implements
 
         $tricksIV = new Tricks();
         $tricksIV->setName('Bigfoot');
-        $tricksIV->setAuthor($this->getReference('user'));
+        $tricksIV->setAuthor($this->getReference('userIII'));
         $tricksIV->setCreationDate(new \DateTime());
         $tricksIV->setGroups('Rotations');
         $tricksIV->setResume('Feel like i\'m gonna be sick !');
@@ -84,7 +84,7 @@ class LoadTricksData extends AbstractFixture implements
 
         $tricksV = new Tricks();
         $tricksV->setName('Airflip');
-        $tricksV->setAuthor($this->getReference('user'));
+        $tricksV->setAuthor($this->getReference('userII'));
         $tricksV->setCreationDate(new \DateTime());
         $tricksV->setGroups('Flip');
         $tricksV->setResume('A simple airflip content ...');
@@ -119,6 +119,9 @@ class LoadTricksData extends AbstractFixture implements
         $manager->flush();
 
         $this->addReference('tricks', $tricks);
+        $this->addReference('tricksII', $tricksII);
+        $this->addReference('tricksIII', $tricksIII);
+        $this->addReference('tricksIV', $tricksIV);
     }
 
     /**

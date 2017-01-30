@@ -31,11 +31,25 @@ class LoadCommentaryData extends AbstractFixture implements
     {
         $commentary = new Commentary();
         $commentary->setTricks($this->getReference('tricks'));
-        $commentary->setAuthor($this->getReference('user'));
+        $commentary->setAuthor($this->getReference('userII'));
         $commentary->setContent('Hey !');
         $commentary->setPublicationDate(new \DateTime());
 
+        $commentary_II = new Commentary();
+        $commentary_II->setTricks($this->getReference('tricksII'));
+        $commentary_II->setAuthor($this->getReference('userII'));
+        $commentary_II->setContent('Hey !');
+        $commentary_II->setPublicationDate(new \DateTime());
+
+        $commentary_III = new Commentary();
+        $commentary_III->setTricks($this->getReference('tricksIV'));
+        $commentary_III->setAuthor($this->getReference('userII'));
+        $commentary_III->setContent('Hey !');
+        $commentary_III->setPublicationDate(new \DateTime());
+
         $manager->persist($commentary);
+        $manager->persist($commentary_II);
+        $manager->persist($commentary_III);
         $manager->flush();
     }
 

@@ -17,9 +17,6 @@ use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
-// Entity
-use AppBundle\Entity\Tricks;
-
 // Events
 use AppBundle\Events\Tricks\TricksDeletedEvent;
 
@@ -92,19 +89,11 @@ class CommentaryListeners
                                          'username' => $user,
                                      ]);
 
-            if (is_object($object) && $object instanceof Tricks) {
-                $entity->setPublicationDate(new \DateTime());
-                $entity->setAuthor($author);
-                $entity->setTricks($object);
-                $object->addCommentary($entity);
-            } else {
-                throw new \InvalidArgumentException(
-                    sprintf(
-                        'The entity MUST be a instance of Tricks !,
-                         given "%s"', get_class($object)
-                    )
-                );
-            }
+            $entity->setPublicationDate(new \DateTime());
+            $entity->setAuthor($author);
+            $entity->setTricks($object);
+            // Link the tricks->Commentary
+            $object->addCommentary($entity);
         }
     }
 

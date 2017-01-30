@@ -91,7 +91,7 @@ class Tricks
     private $validated;
 
     /**
-     * @ORM\ManyToOne(targetEntity="UserBundle\Entity\User", inversedBy="tricks", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity="UserBundle\Entity\User", inversedBy="tricks", cascade={"persist"})
      * @ORM\JoinColumn(name="author_id", referencedColumnName="id")
      */
     private $author;

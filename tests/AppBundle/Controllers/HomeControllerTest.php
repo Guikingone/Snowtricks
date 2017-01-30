@@ -163,8 +163,8 @@ class HomeControllerTest extends WebTestCase
         if ($this->client->getResponse()->getStatusCode() === 200) {
             $form = $crawler->selectButton('submit')->form();
 
-            $form['tricks[name]'] = 'Sideflip';
-            $form['tricks[groups]']->select('Flip');
+            $form['tricks[name]'] = 'BackAir';
+            $form['tricks[groups]']->select('Grabs');
             $form['tricks[resume]'] = 'A new content about this tricks !';
 
             $crawler = $this->client->submit($form);

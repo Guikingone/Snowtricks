@@ -207,21 +207,19 @@ class CommentaryManager
             );
         }
 
-        if (is_string($name) && is_int($id)) {
-            $commentary = $this->doctrine->getRepository('AppBundle:Commentary')
-                                         ->getCommentaryByTricks($name, $id);
+        $commentary = $this->doctrine->getRepository('AppBundle:Commentary')
+                                     ->getCommentaryByTricks($name, $id);
 
-            if ($commentary) {
-                $this->doctrine->remove($commentary);
-                $this->doctrine->flush();
+        if ($commentary) {
+            $this->doctrine->remove($commentary);
+            $this->doctrine->flush();
 
-                $this->session->getFlashBag()->add(
-                    'success',
-                    'Le commentaire a bien été supprimé.'
-                );
+            $this->session->getFlashBag()->add(
+                'success',
+                'Le commentaire a bien été supprimé.'
+            );
 
-                return new RedirectResponse('tricks');
-            }
+            return new RedirectResponse('tricks');
         }
 
         return new RedirectResponse('tricks');
