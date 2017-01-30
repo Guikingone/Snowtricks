@@ -14,63 +14,134 @@ namespace UserBundle\Entity;
 // Entities
 use AppBundle\Entity\Tricks;
 use AppBundle\Entity\Commentary;
+
+// ORM
+use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+
+// Security
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 /**
  * User.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
+ *
+ * @ORM\Entity(repositoryClass="UserBundle\Repository\UserRepository")
+ * @ORM\Table("_user")
  */
 class User implements
     AdvancedUserInterface,
     \Serializable
 {
-    /** @var int */
+    /**
+     * @var int
+     *
+     * @ORM\Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
     private $id;
 
-    /** @var string */
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="firstname", type="string", length=155)
+     */
     private $firstname;
 
-    /** @var string */
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="lastname", type="string", length=155)
+     */
     private $lastname;
 
-    /** @var \DateTime */
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="birthdate", type="datetime")
+     */
     private $birthdate;
 
-    /** @var string */
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="occupation", type="string", length=200)
+     */
     private $occupation;
 
-    /** @var string */
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="username", type="string", length=100, nullable=false)
+     */
     private $username;
 
     /**
-     * @var string */
+     * @var string
+     *
+     * @ORM\Column(name="password", type="string", length=50, nullable=false)
+     */
     private $password;
 
-    /** @var string */
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="email", type="string", length=100, nullable=true)
+     */
     private $email;
 
-    /** @var array */
+    /**
+     * @var array
+     *
+     * @ORM\Column(name="roles", type="array")
+     */
     private $roles;
 
-    /** @var string */
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="token", type="string", length=36, nullable=true)
+     */
     private $token;
 
-    /** @var bool */
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="validated", type="boolean")
+     */
     private $validated;
 
-    /** @var bool */
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="locked", type="boolean")
+     */
     private $locked;
 
-    /** @var bool */
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="active", type="boolean")
+     */
     private $active;
 
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Commentary", mappedBy="author")
+     */
     private $commentary;
 
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Tricks", mappedBy="author")
+     */
     private $tricks;
 
-    /** @var array */
+    /**
+     * @var array
+     *
+     * @ORM\Column(name="current_status", type="array")
+     */
     public $currentStatus;
 
     /**
@@ -497,7 +568,9 @@ class User implements
         return null;
     }
 
-    public function eraseCredentials(){}
+    public function eraseCredentials()
+    {
+    }
 
     /** @see \Serializable::serialize() */
     public function serialize()

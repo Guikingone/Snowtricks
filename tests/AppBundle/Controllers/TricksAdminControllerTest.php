@@ -12,14 +12,20 @@
 namespace tests\AppBundle\Controllers;
 
 use AppBundle\Controller\Web\TricksAdminController;
-use AppBundle\Events\Tricks\TricksRefusedEvent;
-use AppBundle\Events\Tricks\TricksValidatedEvent;
-use AppBundle\Listeners\TricksListeners;
-use AppBundle\Managers\TricksManager;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+
+// Listeners
+use AppBundle\Listeners\TricksListeners;
+
+// Manager
+use AppBundle\Managers\TricksManager;
+
+// Events
+use AppBundle\Events\Tricks\TricksRefusedEvent;
+use AppBundle\Events\Tricks\TricksValidatedEvent;
 
 /**
  * Class TricksAdminControllerTest.

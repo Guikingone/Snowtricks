@@ -11,32 +11,52 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
 use UserBundle\Entity\User;
 
 /**
  * Commentary.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
+ *
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\CommentaryRepository")
+ * @ORM\Table("_commentary")
  */
 class Commentary
 {
     /**
      * @var int
+     *
+     * @ORM\Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
     /**
      * @var \DateTime
+     *
+     * @ORM\Column(name="publication_date", type="datetime")
      */
     private $publicationDate;
 
     /**
      * @var string
+     *
+     * @ORM\Column(name="content", type="string", length=255, nullable=false)
      */
     private $content;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="UserBundle\Entity\User", inversedBy="commentary", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(name="author_id", referencedColumnName="id")
+     */
     private $author;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Tricks", inversedBy="commentary", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(name="tricks_id", referencedColumnName="id")
+     */
     private $tricks;
 
     /**

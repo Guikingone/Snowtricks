@@ -11,6 +11,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use UserBundle\Entity\User;
 
@@ -18,42 +19,93 @@ use UserBundle\Entity\User;
  * Tricks.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
+ *
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\TricksRepository")
+ * @ORM\Table("_tricks")
  */
 class Tricks
 {
-    /** @var int */
+    /**
+     * @var int
+     *
+     * @ORM\Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
     private $id;
 
-    /** @var string */
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="name", type="string", length=100, nullable=false)
+     */
     private $name;
 
-    /** @var \DateTime */
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="creation_date", type="datetime")
+     */
     private $creationDate;
 
-    /** @var string */
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="groups", type="string", length=100, nullable=false)
+     */
     private $groups;
 
-    /** @var string */
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="resume", type="text", nullable=false)
+     */
     private $resume;
 
-    /** @var array */
+    /**
+     * @var array
+     *
+     * @ORM\Column(name="images", type="array", nullable=true)
+     */
     private $images;
 
-    /** @var array */
+    /**
+     * @var array
+     *
+     * @ORM\Column(name="videos", type="array", nullable=true)
+     */
     private $videos;
 
     /**
-     * @var bool */
+     * @var bool
+     *
+     * @ORM\Column(name="published", type="boolean")
+     */
     private $published;
 
-    /** @var bool */
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="validated", type="boolean")
+     */
     private $validated;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="UserBundle\Entity\User", inversedBy="tricks", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(name="author_id", referencedColumnName="id")
+     */
     private $author;
 
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Commentary", mappedBy="tricks", cascade={"persist", "remove"})
+     */
     private $commentary;
 
-    /** @var array */
+    /**
+     * @var array
+     *
+     * @ORM\Column(name="current_state", type="array", nullable=false)
+     */
     public $currentState;
 
     /**

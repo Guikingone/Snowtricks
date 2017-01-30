@@ -144,6 +144,8 @@ class CommentaryManager
      * @param string $name
      *
      * @throws \InvalidArgumentException
+     * @throws ORMInvalidArgumentException
+     * @throws OptimisticLockException
      *
      * @return RedirectResponse
      */
@@ -170,6 +172,8 @@ class CommentaryManager
                 foreach ($commentaries as $commentary) {
                     $this->doctrine->remove($commentary);
                 }
+
+                $this->doctrine->flush();
             }
         }
 
@@ -188,6 +192,7 @@ class CommentaryManager
      * @throws NoResultException
      * @throws NonUniqueResultException
      * @throws ORMInvalidArgumentException
+     * @throws OptimisticLockException
      *
      * @return RedirectResponse
      */
@@ -208,6 +213,8 @@ class CommentaryManager
 
             if ($commentary) {
                 $this->doctrine->remove($commentary);
+                $this->doctrine->flush();
+
                 $this->session->getFlashBag()->add(
                     'success',
                     'Le commentaire a bien été supprimé.'

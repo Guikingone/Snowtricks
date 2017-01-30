@@ -15,6 +15,7 @@ services:
         class: AppBundle\Services\Uploader
         arguments:
             - '%images.uploads.dir%'
+        public: false
 
     # Doctrine listeners
     app.doctrine_listeners:
@@ -63,6 +64,7 @@ services:
             - '%images.uploads.dir%'
         tags:
             - { name: kernel.event_listener, event: tricks.added, method: onNewTricks }
+            - { name: kernel.event_listener, event: tricks.updated, method: onUpdateTricks }
             - { name: kernel.event_listener, event: tricks.validated, method: onValidateTricks }
             - { name: kernel.event_listener, event: tricks.refused, method: onRefusetricks }
             - { name: kernel.event_listener, event: tricks.deleted, method: onDeleteTricks }

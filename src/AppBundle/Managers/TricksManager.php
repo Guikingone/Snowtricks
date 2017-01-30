@@ -229,6 +229,8 @@ class TricksManager
      * @param string $name
      *
      * @throws \InvalidArgumentException
+     * @throws ORMInvalidArgumentException
+     * @throws OptimisticLockException
      *
      * @return RedirectResponse
      */
@@ -254,6 +256,7 @@ class TricksManager
                 $this->eventDispatcher->dispatch(TricksRefusedEvent::NAME, $event);
 
                 $this->doctrine->remove($trick);
+                $this->doctrine->flush();
             }
         }
 
@@ -264,6 +267,8 @@ class TricksManager
      * @param string $name
      *
      * @throws \InvalidArgumentException
+     * @throws ORMInvalidArgumentException
+     * @throws OptimisticLockException
      *
      * @return RedirectResponse
      */
@@ -290,6 +295,7 @@ class TricksManager
                 $this->eventDispatcher->dispatch(TricksDeletedEvent::NAME, $event);
 
                 $this->doctrine->remove($trick);
+                $this->doctrine->flush();
             }
         }
 

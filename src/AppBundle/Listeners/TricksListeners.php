@@ -160,12 +160,7 @@ class TricksListeners
     {
         $entity = $updatedEvent->getTricks();
 
-        if (is_object($entity) && !$entity->getPublished()) {
-            $author = $entity->getAuthor();
-            $admins = $this->doctrine->getRepository('UserBundle:User')
-                                     ->findBy([
-                                         'roles' => 'ROLE_ADMIN',
-                                     ]);
+        if (is_object($entity)) {
 
             // Take the tricks back online.
             $entity->setPublished(true);
@@ -175,21 +170,17 @@ class TricksListeners
                 'Le trick a bien été modifié.'
             );
 
-            foreach ($admins as $admin) {
-                // Send the update to every admins for future validations.
-                $mail = \Swift_Message::newInstance()
-                    ->setSubject('Snowtricks - Notification system')
-                    ->setFrom('contact@snowtricks.fr')
-                    ->setTo($author->getEmail())
-                    ->setTo($admin->getEmail())
-                    ->setBody($this->templating->render(
-                        ':Mails:notif_update_tricks.html.twig', [
-                            'tricks' => $entity,
-                        ]
-                    ), 'text/html');
+            $mail = \Swift_Message::newInstance()
+                ->setSubject('Snowtricks - Notification system')
+                ->setFrom('contact@snowtricks.fr')
+                ->setTo($entity->getAuthor()->getEmail())
+                ->setBody($this->templating->render(
+                    ':Mails:notif_update_tricks.html.twig', [
+                        'tricks' => $entity,
+                    ]
+                ), 'text/html');
 
-                $this->mailer->send($mail);
-            }
+            $this->mailer->send($mail);
         }
     }
 
@@ -208,12 +199,6 @@ class TricksListeners
         // Validate the trick.
         $entity->setValidated(true);
 
-        // Find the admins stored to send emails.
-        $admins = $this->doctrine->getRepository('UserBundle:User')
-                                 ->findBy([
-                                     'roles' => 'ROLE_ADMIN',
-                                 ]);
-
         // Finalize the workflow.
         $this->workflow->apply($entity, 'validation_phase');
         $this->workflow->apply($entity, 'publication_phase');
@@ -224,19 +209,6 @@ class TricksListeners
             'success',
             'Le trick a bien été enregistré'
         );
-        foreach ($admins as $admin) {
-            $mail = \Swift_Message::newInstance()
-                ->setSubject('Snowtricks - Notification system')
-                ->setFrom('contact@snowtricks.fr')
-                ->setTo($admin->getEmail())
-                ->setBody($this->templating->render(
-                    ':Mails:notif_email.html.twig', [
-                        'tricks' => $entity,
-                    ]
-                ), 'text/html');
-
-            $this->mailer->send($mail);
-        }
 
         $mail = \Swift_Message::newInstance()
             ->setSubject('Snowtricks - Notification system')
@@ -268,7 +240,7 @@ class TricksListeners
             $mail = \Swift_Message::newInstance()
                 ->setSubject('Snowtricks - Notification system')
                 ->setFrom('contact@snowtricks.fr')
-                ->setTo($refusedEvent->getTricks()->getAuthor()->getEmail())
+                ->setTo($entity->getAuthor()->getEmail())
                 ->setBody($this->templating->render(
                     ':Mails:refuse_tricks.html.twig', [
                         'tricks' => $refusedEvent->getTricks(),
@@ -292,21 +264,18 @@ class TricksListeners
      */
     public function onDeleteTricks(TricksDeletedEvent $deletedEvent)
     {
-        $this->session->getFlashBag()->add(
-            'infos',
-            'Le tricks a été supprimé.'
-        );
+        $entity = $deletedEvent->getTricks();
 
-        $admins = $this->doctrine->getRepository('UserBundle:User')
-                                 ->findBy([
-                                     'roles' => 'ROLE_ADMIN',
-                                 ]);
+        if (is_object($entity)) {
+            $this->session->getFlashBag()->add(
+                'infos',
+                'Le tricks a été supprimé.'
+            );
 
-        foreach ($admins as $admin) {
             $mail = \Swift_Message::newInstance()
                 ->setSubject('Snowtricks - Notification system')
                 ->setFrom('contact@snowtricks.fr')
-                ->setTo($admin->getEmail())
+                ->setTo($entity->getAuthor()->getEmail())
                 ->setBody($this->templating->render(
                     ':Mails:delete_tricks.html.twig', [
                         'tricks' => $deletedEvent->getTricks(),
