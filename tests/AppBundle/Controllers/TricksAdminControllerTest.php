@@ -39,7 +39,7 @@ class TricksAdminControllerTest extends WebTestCase
     public function setUp()
     {
         $this->client = static::createClient([], [
-            'PHP_AUTH_USER' => 'Nano',
+            'PHP_AUTH_USER' => 'Nanon',
             'PHP_AUTH_PW' => 'lappd_dep',
         ]);
     }

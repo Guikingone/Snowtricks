@@ -141,8 +141,8 @@ class Security
     public function loginUser()
     {
         return [
-            'errors' => $errors = $this->authenticationUtils->getLastAuthenticationError(),
-            'lastUsername' => $lastUsername = $this->authenticationUtils->getLastUsername(),
+            $errors = $this->authenticationUtils->getLastAuthenticationError(),
+            $lastUsername = $this->authenticationUtils->getLastUsername(),
         ];
     }
 

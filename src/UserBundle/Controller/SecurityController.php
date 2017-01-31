@@ -55,8 +55,8 @@ class SecurityController extends Controller
         $security = $this->get('user.security')->loginUser();
 
         return $this->render(':Security:login.html.twig', [
-            'error' => $security['errors'],
-            'last_username' => $security['lastUsername'],
+            'error' => $security[0],
+            'last_username' => $security[1],
         ]);
     }
 

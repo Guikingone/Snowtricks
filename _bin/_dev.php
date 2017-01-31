@@ -18,6 +18,7 @@ exec('php bin/console d:s:u --force');
 exec('php-cs-fixer fix ./src --level=symfony');
 exec('php-cs-fixer fix ./tests --level=symfony');
 exec('php bin/console d:f:l -n');
+exec('php bin/console appbundle:tricks:hydrate cache');
 exec('phpunit --coverage-html ./_coverage/'.$path);
 exec('phpmetrics --report-html ./_quality/_metrics.html ./src');
 exec('phploc ./src');

@@ -44,8 +44,8 @@ class HomeControllerTest extends WebTestCase
     public function setUp()
     {
         $this->client = static::createClient([], [
-            'PHP_AUTH_USER' => 'Guikingone',
-            'PHP_AUTH_PW' => 'Lk__DTHE',
+            'PHP_AUTH_USER' => 'Nanon',
+            'PHP_AUTH_PW' => 'lappd_dep',
         ]);
     }
 
