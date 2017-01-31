@@ -63,8 +63,8 @@ class TricksManager
      *
      * @param EntityManager            $doctrine
      * @param FormFactory              $form
-     * @param Workflow                 $workflow
      * @param TraceableEventDispatcher $eventDispatcher
+     * @param Workflow                 $workflow
      */
     public function __construct(
         EntityManager $doctrine,

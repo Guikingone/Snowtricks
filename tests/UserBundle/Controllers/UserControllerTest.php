@@ -12,12 +12,18 @@
 namespace tests\UserBundle\Controllers;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+
+// Controller
 use UserBundle\Controller\UserController;
+
+// Event
 use UserBundle\Events\ConfirmedUserEvent;
+
+// Listeners
 use UserBundle\Listeners\RegisterListeners;
+
+// Managers
 use UserBundle\Managers\UserManager;
 
 /**
@@ -33,22 +39,10 @@ class UserControllerTest extends WebTestCase
     /** {@inheritdoc} */
     public function setUp()
     {
-        $this->client = static::createClient();
-    }
-
-    /** Only for authentication purpose */
-    private function logIn()
-    {
-        $session = $this->client->getContainer()->get('session');
-
-        $firewall = 'main';
-
-        $token = new UsernamePasswordToken('admin', null, $firewall, array('ROLE_ADMIN'));
-        $session->set('_security_'.$firewall, serialize($token));
-        $session->save();
-
-        $cookie = new Cookie($session->getName(), $session->getId());
-        $this->client->getCookieJar()->set($cookie);
+        $this->client = static::createClient([], [], [
+            'PHP_AUTH_USER' => 'Nanon',
+            'PHP_AUTH_PW' => 'lappd_dep',
+        ]);
     }
 
     /**
@@ -58,8 +52,6 @@ class UserControllerTest extends WebTestCase
      */
     public function testUserProfile()
     {
-        $this->logIn();
-
         $this->client->request('GET', '/community/profile/Guikingone');
 
         $this->assertEquals(
@@ -76,9 +68,27 @@ class UserControllerTest extends WebTestCase
      */
     public function testAdminUserLockByName()
     {
-        $this->logIn();
-
         $this->client->request('GET', '/admin/user/lock/Loulier');
+
+        $this->assertEquals(
+            Response::HTTP_FOUND,
+            $this->client->getResponse()->getStatusCode()
+        );
+    }
+
+    /**
+     * Test if a user can be locked without the login phase.
+     *
+     * @see UserController::userLockedAction()
+     * @see UserManager::lockUser()
+     */
+    public function testAdminUserLockByNameWithoutLogin()
+    {
+        // Surcharge the client headers to get rid of authenticated user.
+        $this->client->request('GET', '/admin/user/lock/Delasource', [], [], [
+            'PHP_AUTH_USER' => '',
+            'PHP_AUTH_PW' => '',
+        ]);
 
         $this->assertEquals(
             Response::HTTP_FOUND,
@@ -93,8 +103,6 @@ class UserControllerTest extends WebTestCase
      */
     public function testAdminUserUnlockByName()
     {
-        $this->logIn();
-
         $this->client->request('GET', '/admin/user/unlock/Loulier');
 
         $this->assertEquals(

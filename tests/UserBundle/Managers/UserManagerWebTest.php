@@ -15,12 +15,21 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use UserBundle\Controller\UserController;
-use UserBundle\Managers\UserManager;
-use UserBundle\Services\Security;
 
-// Entity
-use UserBundle\Entity\User;
+// Controllers
+use UserBundle\Controller\UserController;
+
+// Events
+use UserBundle\Events\ConfirmedUserEvent;
+
+// Listeners
+use UserBundle\Listeners\RegisterListeners;
+
+// Managers
+use UserBundle\Managers\UserManager;
+
+// Services
+use UserBundle\Services\Security;
 
 /**
  * Class UserManagerWebTest.
@@ -67,6 +76,8 @@ class UserManagerWebTest extends WebTestCase
      *
      * @see UserController::validateUserAction()
      * @see UserManager::validateUser()
+     * @see ConfirmedUserEvent
+     * @see RegisterListeners::onValidatedUser()
      */
     public function testUserCanBeValidated()
     {
@@ -78,6 +89,22 @@ class UserManagerWebTest extends WebTestCase
         );
 
         $this->assertTrue($this->client->getResponse()->isRedirect('login'));
+    }
+
+    /**
+     * Test if the user can be validated using a bad token extension.
+     *
+     * @see UserController::validateUserAction()
+     * @see UserManager::validateUser()
+     */
+    public function testUserCanBeValidatedWithBadTokenExtension()
+    {
+        $this->client->request('GET', '/community/users/validate/token_e61e26a5a421426944');
+
+        $this->assertEquals(
+            Response::HTTP_INTERNAL_SERVER_ERROR,
+            $this->client->getResponse()->getStatusCode()
+        );
     }
 
     /**

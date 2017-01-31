@@ -13,9 +13,9 @@ services:
     # Manage the upload files or assets.
     app.uploader:
         class: AppBundle\Services\Uploader
+        public: false
         arguments:
             - '%images.uploads.dir%'
-        public: false
 
     # Doctrine listeners
     app.doctrine_listeners:
@@ -63,11 +63,11 @@ services:
             - '@mailer'
             - '%images.uploads.dir%'
         tags:
-            - { name: kernel.event_listener, event: tricks.added, method: onNewTricks }
-            - { name: kernel.event_listener, event: tricks.updated, method: onUpdateTricks }
-            - { name: kernel.event_listener, event: tricks.validated, method: onValidateTricks }
-            - { name: kernel.event_listener, event: tricks.refused, method: onRefusetricks }
-            - { name: kernel.event_listener, event: tricks.deleted, method: onDeleteTricks }
+            - { name: kernel.event_listener, event: tricks.added, method: onNewTricks, priority: -255 }
+            - { name: kernel.event_listener, event: tricks.updated, method: onUpdateTricks, priority: -255 }
+            - { name: kernel.event_listener, event: tricks.validated, method: onValidateTricks, priority: -255 }
+            - { name: kernel.event_listener, event: tricks.refused, method: onRefusetricks, priority: -255 }
+            - { name: kernel.event_listener, event: tricks.deleted, method: onDeleteTricks, priority: -255 }
 
     # Commentary listeners
     app.commentary_listener:

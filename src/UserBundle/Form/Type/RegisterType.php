@@ -61,7 +61,7 @@ class RegisterType extends AbstractType
                 ],
                 'required' => true,
             ])
-            ->add('password', RepeatedType::class, [
+            ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'first_options' => ['label' => 'Mot de passe'],
                 'second_options' => ['label' => 'Veuillez répéter le mot de passe'],

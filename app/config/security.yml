@@ -1,7 +1,6 @@
 security:
     encoders:
-        UserBundle\Entity\User:
-            algorithm: bcrypt
+        UserBundle\Entity\User: bcrypt
     providers:
         user:
             entity:

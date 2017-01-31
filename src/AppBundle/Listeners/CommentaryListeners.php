@@ -11,7 +11,9 @@
 
 namespace AppBundle\Listeners;
 
+use AppBundle\Controller\Web\HomeController;
 use AppBundle\Events\Commentary\CommentaryAddedEvent;
+use AppBundle\Managers\CommentaryManager;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -19,6 +21,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
 // Events
 use AppBundle\Events\Tricks\TricksDeletedEvent;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Class CommentaryListeners.
@@ -69,6 +72,11 @@ class CommentaryListeners
      * @param CommentaryAddedEvent $addedEvent
      *
      * @throws \InvalidArgumentException
+     * @throws AccessDeniedException
+     *
+     * @see HomeController::tricksDetailsAction()
+     * @see CommentaryManager::addCommentary()
+     * @see CommentaryAddedEvent
      */
     public function onCommentaryAdded(CommentaryAddedEvent $addedEvent)
     {
@@ -89,10 +97,17 @@ class CommentaryListeners
                                          'username' => $user,
                                      ]);
 
+            if (!$author) {
+                throw new AccessDeniedException(
+                    sprintf(
+                        'Vous devez être connecté pour poster un commentaire !'
+                    )
+                );
+            }
+
             $entity->setPublicationDate(new \DateTime());
             $entity->setAuthor($author);
             $entity->setTricks($object);
-            // Link the tricks->Commentary
             $object->addCommentary($entity);
         }
     }

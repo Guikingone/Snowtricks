@@ -92,7 +92,9 @@ class RegisterListeners
         $entity = $event->getUser();
 
         if (is_object($entity)) {
-            $password = $this->encoder->encodePassword($entity, $entity->getPassword());
+            $password = $this->encoder->encodePassword(
+                $entity, $entity->getPlainPassword()
+            );
             $entity->setPassword($password);
             $entity->setValidated(false);
             $entity->setLocked(false);
@@ -135,6 +137,7 @@ class RegisterListeners
         $user = $event->getUser();
 
         $user->setValidated(true);
+        $user->setRoles(['ROLE_USER']);
 
         $this->workflow->apply($user, 'validation_phase');
 

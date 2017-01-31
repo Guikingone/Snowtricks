@@ -52,7 +52,7 @@ class LoadUserData extends AbstractFixture implements
         $author->setLastname('Duchemin');
         $author->setUsername('Duduche');
         $author->setRoles(['ROLE_ADMIN']);
-        $author->setPassword('Lk__DTHE');
+        $author->setPlainPassword('Lk__DTHE');
         $author->setBirthdate(new \DateTime());
         $author->setOccupation('Rally Driver');
         $author->setEmail('duduche@snowtricks.fr');
@@ -68,7 +68,7 @@ class LoadUserData extends AbstractFixture implements
         $author_II->setUsername('Guikingone');
         $author_II->setBirthdate(new \DateTime());
         $author_II->setRoles(['ROLE_ADMIN']);
-        $author_II->setPassword('Lk__DTHE');
+        $author_II->setPlainPassword('Lk__DTHE');
         $author_II->setOccupation('Rally Driver');
         $author_II->setEmail('guik@guillaumeloulier.fr');
         $author_II->setToken('token_e61e26a5a42d3g9r4');
@@ -82,7 +82,7 @@ class LoadUserData extends AbstractFixture implements
         $author_III->setLastname('Delafalaise');
         $author_III->setUsername('Vévé');
         $author_III->setRoles(['ROLE_USER']);
-        $author_III->setPassword('LODP_DIL');
+        $author_III->setPlainPassword('LODP_DIL');
         $author_III->setBirthdate(new \DateTime());
         $author_III->setOccupation('F1 Driver');
         $author_III->setEmail('veve@snowtricks.fr');
@@ -97,7 +97,7 @@ class LoadUserData extends AbstractFixture implements
         $author_IV->setLastname('Delasource');
         $author_IV->setUsername('Nanon');
         $author_IV->setRoles(['ROLE_ADMIN']);
-        $author_IV->setPassword('lappd_dep');
+        $author_IV->setPlainPassword('lappd_dep');
         $author_IV->setBirthdate(new \DateTime());
         $author_IV->setOccupation('Professionnal jumper');
         $author_IV->setEmail('nanon@snowtricks.fr');
@@ -106,7 +106,38 @@ class LoadUserData extends AbstractFixture implements
         $author_IV->setLocked(false);
         $author_IV->setActive(true);
 
+        // Create a user in order to simulate the authentication process.
+        $author_V = new User();
+        $author_V->setFirstname('Maurice');
+        $author_V->setLastname('Delacarrière');
+        $author_V->setUsername('Momo');
+        $author_V->setRoles(['ROLE_USER']);
+        $author_V->setPlainPassword('ldpalpd');
+        $author_V->setBirthdate(new \DateTime());
+        $author_V->setOccupation('Professionnal runner');
+        $author_V->setEmail('momo@snowtricks.fr');
+        $author_V->setToken('token_e61e26a5a42d12875');
+        $author_V->setValidated(true);
+        $author_V->setLocked(false);
+        $author_V->setActive(true);
+
         $workflow = $this->container->get('workflow.user_process');
+        $encoder = $this->container->get('security.password_encoder');
+
+        $password = $encoder->encodePassword($author, $author->getPlainPassword());
+        $author->setPassword($password);
+
+        $password = $encoder->encodePassword($author_II, $author_II->getPlainPassword());
+        $author_II->setPassword($password);
+
+        $password = $encoder->encodePassword($author_III, $author_III->getPlainPassword());
+        $author_III->setPassword($password);
+
+        $password = $encoder->encodePassword($author_IV, $author_IV->getPlainPassword());
+        $author_IV->setPassword($password);
+
+        $password = $encoder->encodePassword($author_V, $author_V->getPlainPassword());
+        $author_V->setPassword($password);
 
         $workflow->apply($author, 'register_phase');
         $workflow->apply($author_II, 'register_phase');
@@ -114,11 +145,14 @@ class LoadUserData extends AbstractFixture implements
         $workflow->apply($author_III, 'validation_phase');
         $workflow->apply($author_IV, 'register_phase');
         $workflow->apply($author_IV, 'validation_phase');
+        $workflow->apply($author_V, 'register_phase');
+        $workflow->apply($author_V, 'validation_phase');
 
         $manager->persist($author);
         $manager->persist($author_II);
         $manager->persist($author_III);
         $manager->persist($author_IV);
+        $manager->persist($author_V);
         $manager->flush();
 
         $this->addReference('user', $author);

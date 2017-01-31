@@ -13,9 +13,7 @@ namespace tests\AppBundle\Controllers;
 
 use AppBundle\Controller\Web\TricksAdminController;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 // Listeners
 use AppBundle\Listeners\TricksListeners;
@@ -40,22 +38,10 @@ class TricksAdminControllerTest extends WebTestCase
     /** {@inheritdoc} */
     public function setUp()
     {
-        $this->client = static::createClient();
-    }
-
-    /** Only for authentication purpose */
-    private function logIn()
-    {
-        $session = $this->client->getContainer()->get('session');
-
-        $firewall = 'main';
-
-        $token = new UsernamePasswordToken('admin', null, $firewall, array('ROLE_ADMIN'));
-        $session->set('_security_'.$firewall, serialize($token));
-        $session->save();
-
-        $cookie = new Cookie($session->getName(), $session->getId());
-        $this->client->getCookieJar()->set($cookie);
+        $this->client = static::createClient([], [
+            'PHP_AUTH_USER' => 'Nano',
+            'PHP_AUTH_PW' => 'lappd_dep',
+        ]);
     }
 
     /**
@@ -68,8 +54,6 @@ class TricksAdminControllerTest extends WebTestCase
      */
     public function testTricksValidation()
     {
-        $this->logIn();
-
         $this->client->request('GET', '/admin/tricks/validate/Frontflip');
 
         $this->assertEquals(
@@ -86,8 +70,6 @@ class TricksAdminControllerTest extends WebTestCase
      */
     public function testTricksValidationWithBadName()
     {
-        $this->logIn();
-
         $this->client->request('GET', '/admin/tricks/validate/BackAir');
 
         $this->assertEquals(
@@ -106,8 +88,6 @@ class TricksAdminControllerTest extends WebTestCase
      */
     public function testTricksRefused()
     {
-        $this->logIn();
-
         $this->client->request('GET', '/admin/tricks/refuse/TruckDriver');
 
         $this->assertEquals(
@@ -124,9 +104,7 @@ class TricksAdminControllerTest extends WebTestCase
      */
     public function testTricksRefusedWithBadArgument()
     {
-        $this->logIn();
-
-        $this->client->request('GET', '/admin/tricks/refuse/234');
+        $this->client->request('GET', '/admin/tricks/refuse/'. 243);
 
         $this->assertEquals(
             Response::HTTP_FOUND,
@@ -141,16 +119,14 @@ class TricksAdminControllerTest extends WebTestCase
      */
     public function testTricksUpdated()
     {
-        $this->logIn();
-
-        $crawler = $this->client->request('GET', '/admin/tricks/update/TruckDriver');
+        $crawler = $this->client->request('GET', '/admin/tricks/update/BackAir');
 
         $this->assertEquals(
             Response::HTTP_OK,
             $this->client->getResponse()->getStatusCode()
         );
 
-        if ($this->client->getResponse()->getStatusCode() === 200) {
+        if ($this->client->getResponse()->getStatusCode() === Response::HTTP_OK) {
             $form = $crawler->selectButton('submit')->form();
 
             $form['update_tricks[name]'] = 'FrontGrab';
@@ -174,8 +150,6 @@ class TricksAdminControllerTest extends WebTestCase
      */
     public function testTricksUpdatedWithBadName()
     {
-        $this->logIn();
-
         $this->client->request('GET', '/admin/tricks/update/BackAirFlip');
 
         $this->assertEquals(
@@ -189,8 +163,6 @@ class TricksAdminControllerTest extends WebTestCase
      */
     public function testTricksDeleted()
     {
-        $this->logIn();
-
         $this->client->request('GET', '/admin/tricks/delete/Bigfoot');
 
         $this->assertEquals(

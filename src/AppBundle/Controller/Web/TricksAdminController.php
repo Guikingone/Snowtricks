@@ -12,6 +12,7 @@
 namespace AppBundle\Controller\Web;
 
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMInvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
@@ -43,6 +44,8 @@ class TricksAdminController extends Controller
      *
      * @throws \InvalidArgumentException
      * @throws \LogicException
+     * @throws OptimisticLockException
+     * @throws ORMInvalidArgumentException
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */

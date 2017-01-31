@@ -13,9 +13,13 @@ namespace tests\UserBundle\Controllers;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
+
+// Controllers
 use UserBundle\Controller\SecurityController;
 
 // Service
+use UserBundle\Events\UserRegisteredEvent;
+use UserBundle\Listeners\RegisterListeners;
 use UserBundle\Services\Security;
 
 /**
@@ -39,24 +43,32 @@ class SecurityControllerTest extends WebTestCase
      *
      * @see SecurityController::registerAction()
      * @see Security::registerUser()
+     * @see UserRegisteredEvent
+     * @see RegisterListeners::onUserRegistered()
      */
     public function testRegister()
     {
         $crawler = $this->client->request('GET', '/community/register');
 
-        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(
+            Response::HTTP_OK,
+            $this->client->getResponse()->getStatusCode()
+        );
 
         if ($this->client->getResponse()->getStatusCode() === Response::HTTP_OK) {
             $form = $crawler->selectButton('submit')->form();
 
             $form['register[email]'] = 'contact@world.com';
             $form['register[username]'] = 'Esky';
-            $form['register[password][first]'] = 'LBG,LDTH';
-            $form['register[password][second]'] = 'LBG,LDTH';
+            $form['register[plainPassword][first]'] = 'LBG,LDTH';
+            $form['register[plainPassword][second]'] = 'LBG,LDTH';
 
             $crawler = $this->client->submit($form);
 
-            $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+            $this->assertEquals(
+                Response::HTTP_OK,
+                $this->client->getResponse()->getStatusCode()
+            );
         }
     }
 
@@ -70,7 +82,10 @@ class SecurityControllerTest extends WebTestCase
     {
         $crawler = $this->client->request('GET', '/community/login');
 
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(
+            Response::HTTP_OK,
+            $this->client->getResponse()->getStatusCode()
+        );
 
         if ($this->client->getResponse()->getStatusCode() === Response::HTTP_OK) {
             $form = $crawler->selectButton('submit')->form();
@@ -80,10 +95,17 @@ class SecurityControllerTest extends WebTestCase
 
             $crawler = $this->client->submit($form);
 
-            $this->assertEquals(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
+            $this->assertEquals(
+                Response::HTTP_FOUND,
+                $this->client->getResponse()->getStatusCode()
+            );
 
             $crawler = $this->client->followRedirect();
-            $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+
+            $this->assertEquals(
+                Response::HTTP_OK,
+                $this->client->getResponse()->getStatusCode()
+            );
         }
     }
 
@@ -97,7 +119,10 @@ class SecurityControllerTest extends WebTestCase
     {
         $crawler = $this->client->request('GET', '/community/password/forgot');
 
-        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(
+            Response::HTTP_OK,
+            $this->client->getResponse()->getStatusCode()
+        );
 
         if ($this->client->getResponse()->getStatusCode() === Response::HTTP_OK) {
             $form = $crawler->selectButton('submit')->form();
@@ -107,7 +132,10 @@ class SecurityControllerTest extends WebTestCase
 
             $crawler = $this->client->submit($form);
 
-            $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+            $this->assertEquals(
+                Response::HTTP_OK,
+                $this->client->getResponse()->getStatusCode()
+            );
         }
     }
 
@@ -121,7 +149,10 @@ class SecurityControllerTest extends WebTestCase
     {
         $crawler = $this->client->request('GET', '/community/password/forgot');
 
-        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(
+            Response::HTTP_OK,
+            $this->client->getResponse()->getStatusCode()
+        );
 
         if ($this->client->getResponse()->getStatusCode() === Response::HTTP_OK) {
             $form = $crawler->selectButton('submit')->form();

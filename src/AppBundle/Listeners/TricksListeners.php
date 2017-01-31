@@ -151,16 +151,21 @@ class TricksListeners
     }
 
     /**
-     * @param TricksUpdatedEvent $updatedEvent
+     * @param TricksUpdatedEvent $event
      *
      * @throws \RuntimeException
      * @throws \Twig_Error
      */
-    public function onUpdateTricks(TricksUpdatedEvent $updatedEvent)
+    public function onUpdateTricks(TricksUpdatedEvent $event)
     {
-        $entity = $updatedEvent->getTricks();
+        $entity = $event->getTricks();
 
         if (is_object($entity)) {
+            $admin = $this->doctrine->getRepository('UserBundle:User')
+                                    ->findOneBy([
+                                        'validated' => true,
+                                        'active' => true,
+                                    ]);
 
             // Take the tricks back online.
             $entity->setPublished(true);
@@ -174,6 +179,7 @@ class TricksListeners
                 ->setSubject('Snowtricks - Notification system')
                 ->setFrom('contact@snowtricks.fr')
                 ->setTo($entity->getAuthor()->getEmail())
+                ->setTo($admin->getEmail())
                 ->setBody($this->templating->render(
                     ':Mails:notif_update_tricks.html.twig', [
                         'tricks' => $entity,

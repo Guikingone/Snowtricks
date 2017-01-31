@@ -143,11 +143,11 @@ class UserManager
      */
     public function validateUser($token)
     {
-        if (!is_string($token)) {
+        if (!preg_match('/token_[a-z0-9A-Z]/', $token)) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    'The token MUST be a string !, 
-                    given "%s"', gettype($token)
+                    'The token MUST be valid !, 
+                    given "%s"', $token
                 )
             );
         }
@@ -188,15 +188,6 @@ class UserManager
      */
     public function lockUser(string $name)
     {
-        if (!$this->security->isGranted('ROLE_ADMIN')) {
-            throw new AccessDeniedException(
-                sprintf(
-                    'L\'accès à cette ressource est bloqué 
-                    aux administrateurs !'
-                )
-            );
-        }
-
         $user = $this->doctrine->getRepository('UserBundle:User')
                                ->findOneBy([
                                    'lastname' => $name,
@@ -237,15 +228,6 @@ class UserManager
      */
     public function unlockUser(string $name)
     {
-        if (!$this->security->isGranted('ROLE_ADMIN')) {
-            throw new AccessDeniedException(
-                sprintf(
-                    'L\'accès à cette ressource est bloqué 
-                    aux administrateurs !'
-                )
-            );
-        }
-
         $user = $this->doctrine->getRepository('UserBundle:User')
                                ->findOneBy([
                                    'lastname' => $name,

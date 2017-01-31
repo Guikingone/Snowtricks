@@ -20,6 +20,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 // Security
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 /**
@@ -29,6 +30,9 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
  *
  * @ORM\Entity(repositoryClass="UserBundle\Repository\UserRepository")
  * @ORM\Table("_user")
+ *
+ * @UniqueEntity(fields="email", message="L'adresse email est déjà utilisée.")
+ * @UniqueEntity(fields="username", message="Le pseudonyme est déjà utilisé.")
  */
 class User implements
     AdvancedUserInterface,
@@ -46,28 +50,28 @@ class User implements
     /**
      * @var string
      *
-     * @ORM\Column(name="firstname", type="string", length=155)
+     * @ORM\Column(name="firstname", type="string", length=155, nullable=true)
      */
     private $firstname;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="lastname", type="string", length=155)
+     * @ORM\Column(name="lastname", type="string", length=155, nullable=true)
      */
     private $lastname;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="birthdate", type="datetime")
+     * @ORM\Column(name="birthdate", type="datetime", nullable=true)
      */
     private $birthdate;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="occupation", type="string", length=200)
+     * @ORM\Column(name="occupation", type="string", length=200, nullable=true)
      */
     private $occupation;
 
@@ -80,8 +84,13 @@ class User implements
 
     /**
      * @var string
+     */
+    private $plainPassword;
+
+    /**
+     * @var string
      *
-     * @ORM\Column(name="password", type="string", length=50, nullable=false)
+     * @ORM\Column(name="password", type="string", length=64, nullable=false)
      */
     private $password;
 
@@ -95,7 +104,7 @@ class User implements
     /**
      * @var array
      *
-     * @ORM\Column(name="roles", type="array")
+     * @ORM\Column(name="roles", type="array", nullable=true)
      */
     private $roles;
 
@@ -281,6 +290,30 @@ class User implements
     public function getUsername()
     {
         return $this->username;
+    }
+
+    /**
+     * Get plainPassword.
+     *
+     * @return string
+     */
+    public function getPlainPassword()
+    {
+        return $this->plainPassword;
+    }
+
+    /**
+     * Set plainPassword.
+     *
+     * @param $password
+     *
+     * @return User
+     */
+    public function setPlainPassword($password)
+    {
+        $this->plainPassword = $password;
+
+        return $this;
     }
 
     /**
