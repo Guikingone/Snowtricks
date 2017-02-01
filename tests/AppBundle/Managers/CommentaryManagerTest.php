@@ -111,7 +111,7 @@ class CommentaryManagerTest extends KernelTestCase
         if (is_object($this->manager)
             && $this->manager instanceof CommentaryManager) {
             // Store the result to test the class.
-            $this->manager->deleteCommentary('Backflip', 2);
+            $this->manager->deleteCommentary('FrontGrab', 2);
             // Find a single commentary using tricks name and commentary id.
             $this->returnValue(RedirectResponse::class);
         }

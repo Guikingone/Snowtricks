@@ -12,11 +12,12 @@
 namespace tests\AppBundle\Controllers;
 
 use AppBundle\Controller\Web\HomeController;
-use AppBundle\Managers\TricksManager;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
 
 // Managers
+use AppBundle\Managers\TricksManager;
 use AppBundle\Managers\CommentaryManager;
 
 // Forms
@@ -40,6 +41,9 @@ class HomeControllerTest extends WebTestCase
     /** @var null */
     private $client = null;
 
+    /** @var null */
+    private $secondClient = null;
+
     /** {@inheritdoc} */
     public function setUp()
     {
@@ -47,6 +51,9 @@ class HomeControllerTest extends WebTestCase
             'PHP_AUTH_USER' => 'Nanon',
             'PHP_AUTH_PW' => 'lappd_dep',
         ]);
+
+        // Just for anonymous tests.
+        $this->secondClient = static::createClient();
     }
 
     /**
@@ -108,8 +115,42 @@ class HomeControllerTest extends WebTestCase
             $crawler = $this->client->submit($form);
 
             $this->assertEquals(
-                Response::HTTP_FOUND,
+                Response::HTTP_OK,
                 $this->client->getResponse()->getStatusCode()
+            );
+        }
+    }
+
+    /**
+     * Test if a commentary can be added without login.
+     *
+     * @see HomeController::tricksDetailsAction()
+     * @see CommentaryManager::addCommentary()
+     * @see CommentaryType
+     * @see CommentaryAddedEvent
+     * @see CommentaryListeners::onCommentaryAdded()
+     */
+    public function testCommentaryAddedWithoutLogin()
+    {
+        $crawler = $this->secondClient->request('GET', '/tricks/Backflip');
+
+        $this->assertEquals(
+            Response::HTTP_OK,
+            $this->secondClient->getResponse()->getStatusCode()
+        );
+
+        if ($this->secondClient->getResponse()->getStatusCode() === Response::HTTP_OK) {
+            $form = $crawler->selectButton('submit')->form();
+
+            $form['commentary[content]'] = 'A new comment about this backflip !';
+
+            $crawler = $this->secondClient->submit($form);
+
+            dump($this->secondClient->getResponse());
+
+            $this->assertEquals(
+                Response::HTTP_FOUND,
+                $this->secondClient->getResponse()->getStatusCode()
             );
         }
     }
@@ -126,7 +167,7 @@ class HomeControllerTest extends WebTestCase
      * @see CommentaryAddedEvent
      * @see CommentaryListeners::onCommentaryAdded()
      */
-    public function testTricksDetailsWithoutLogin()
+    public function testTricksDetailsWithLogin()
     {
         $crawler = $this->client->request('GET', '/tricks/Airflip');
 
@@ -143,7 +184,7 @@ class HomeControllerTest extends WebTestCase
             $crawler = $this->client->submit($form);
 
             $this->assertEquals(
-                Response::HTTP_FOUND,
+                Response::HTTP_OK,
                 $this->client->getResponse()->getStatusCode()
             );
         }
@@ -170,9 +211,27 @@ class HomeControllerTest extends WebTestCase
         if ($this->client->getResponse()->getStatusCode() === Response::HTTP_OK) {
             $form = $crawler->selectButton('submit')->form();
 
+            $img = new UploadedFile(
+                'C:/Users/Guillaume/Pictures/NAO.PNG',
+                'NAO.PNG',
+                'images/png',
+                319
+            );
+
+            // Used to test the CollectionType on images/videos.
+            $values = $form->getPhpValues();
+
             $form['tricks[name]'] = 'Sideflip';
             $form['tricks[groups]']->select('Flip');
             $form['tricks[resume]'] = 'A new content about this tricks !';
+            $values['tricks']['images'][0] = $img;
+
+            $crawler = $this->client->request(
+                $form->getMethod(),
+                $form->getUri(),
+                $values,
+                $form->getPhpFiles()
+            );
 
             $crawler = $this->client->submit($form);
 
@@ -194,25 +253,25 @@ class HomeControllerTest extends WebTestCase
      */
     public function testsTricksAddWithoutLogin()
     {
-        $crawler = $this->client->request('GET', '/tricks/add');
+        $crawler = $this->secondClient->request('GET', '/tricks/add');
 
         $this->assertEquals(
             Response::HTTP_OK,
-            $this->client->getResponse()->getStatusCode()
+            $this->secondClient->getResponse()->getStatusCode()
         );
 
-        if ($this->client->getResponse()->getStatusCode() === Response::HTTP_OK) {
+        if ($this->secondClient->getResponse()->getStatusCode() === Response::HTTP_OK) {
             $form = $crawler->selectButton('submit')->form();
 
             $form['tricks[name]'] = 'BackAir';
             $form['tricks[groups]']->select('Grabs');
             $form['tricks[resume]'] = 'A new content about this tricks !';
 
-            $crawler = $this->client->submit($form);
+            $crawler = $this->secondClient->submit($form);
 
             $this->assertEquals(
                 Response::HTTP_OK,
-                $this->client->getResponse()->getStatusCode()
+                $this->secondClient->getResponse()->getStatusCode()
             );
         }
     }

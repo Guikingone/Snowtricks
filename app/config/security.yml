@@ -21,11 +21,6 @@ security:
 
         # Main firewall used for back usage.
         main:
-            remember_me:
-                name: _snowtricks
-                secret:    '%secret%'
-                lifetime:    259200
-                path:    /
             anonymous: ~
             provider: user
             form_login:
@@ -37,6 +32,11 @@ security:
             logout:
                path:    /logout
                target:  /
+            remember_me:
+                name: _snowtricks
+                secret:    '%secret%'
+                lifetime:    259200
+                path:    /admin
 
     access_control:
        - { path: ^/admin, roles: ROLE_ADMIN }

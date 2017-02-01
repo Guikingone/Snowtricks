@@ -119,7 +119,7 @@ class TricksAdminControllerTest extends WebTestCase
      */
     public function testTricksUpdated()
     {
-        $crawler = $this->client->request('GET', '/admin/tricks/update/BackAir');
+        $crawler = $this->client->request('GET', '/admin/tricks/update/Airflip');
 
         $this->assertEquals(
             Response::HTTP_OK,

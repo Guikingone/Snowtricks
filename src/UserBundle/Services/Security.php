@@ -45,24 +45,16 @@ use UserBundle\Listeners\RegisterListeners;
  */
 class Security
 {
-    /**
-     * @var EntityManager
-     */
+    /** @var EntityManager */
     private $doctrine;
 
-    /**
-     * @var FormFactory
-     */
+    /** @var FormFactory */
     private $form;
 
-    /**
-     * @var AuthenticationUtils
-     */
+    /** @var AuthenticationUtils */
     private $authenticationUtils;
 
-    /**
-     * @var Workflow
-     */
+    /** @var Workflow */
     private $workflow;
 
     /** @var TraceableEventDispatcher */
@@ -141,8 +133,8 @@ class Security
     public function loginUser()
     {
         return [
-            $errors = $this->authenticationUtils->getLastAuthenticationError(),
-            $lastUsername = $this->authenticationUtils->getLastUsername(),
+            $this->authenticationUtils->getLastAuthenticationError(),
+            $this->authenticationUtils->getLastUsername(),
         ];
     }
 

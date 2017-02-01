@@ -13,6 +13,9 @@ This project is build with love and passion by Travis, SensioLabsInsight and Git
 
 **_Gitlab_**
 
+**_Coverage_**
+
+[![Coverage Status](https://coveralls.io/repos/github/Guikingone/Snowtricks/badge.svg?branch=master)](https://coveralls.io/github/Guikingone/Snowtricks?branch=master)
 
 
 Contexte

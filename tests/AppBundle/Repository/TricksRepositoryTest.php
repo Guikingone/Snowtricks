@@ -46,11 +46,11 @@ class TricksRepositoryTest extends KernelTestCase
     {
         $tricks = $this->doctrine->getRepository('AppBundle:Tricks')
                                  ->findOneBy([
-                                     'name' => 'Backflip',
+                                     'name' => 'Frontflip',
                                  ]);
 
         if (is_object($tricks)) {
-            $this->assertEquals('Backflip', $tricks->getName());
+            $this->assertEquals('Frontflip', $tricks->getName());
             $this->assertTrue(is_int($tricks->getAuthor()));
             $this->assertContains('Flip', $tricks->getGroups());
             $this->assertEquals('A simple backflip content ...', $tricks->getResume());

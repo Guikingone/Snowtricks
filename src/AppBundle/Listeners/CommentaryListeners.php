@@ -90,7 +90,7 @@ class CommentaryListeners
                                          'name' => $tricks,
                                      ]);
 
-            $user = $this->storage->getToken()->getUser();
+            $user = $this->storage->getToken()->getUsername();
 
             $author = $this->doctrine->getRepository('UserBundle:User')
                                      ->findOneBy([
