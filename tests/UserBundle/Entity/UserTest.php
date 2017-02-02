@@ -40,6 +40,7 @@ class UserTest extends TestCase
         $user->setEmail('contact@snowtricks.fr');
         $user->setRoles(['ROLE_ADMIN']);
         $user->setToken('dd21498e61e26a5a42d3g9r4z2a364f2s3a2');
+        $user->setApiKey('154a87d22a87c12az88c2e2ed42gg5h87g2');
         $user->setValidated(true);
         $user->setLocked(false);
         $user->setActive(true);
@@ -54,6 +55,7 @@ class UserTest extends TestCase
         $this->assertEquals('contact@snowtricks.fr', $user->getEmail());
         $this->assertContains('ROLE_ADMIN', $user->getRoles());
         $this->assertEquals('dd21498e61e26a5a42d3g9r4z2a364f2s3a2', $user->getToken());
+        $this->assertEquals('154a87d22a87c12az88c2e2ed42gg5h87g2', $user->getApiKey());
         $this->assertTrue($user->getValidated());
         $this->assertFalse($user->getLocked());
         $this->assertTrue($user->getActive());
@@ -78,6 +80,7 @@ class UserTest extends TestCase
         $user->setEmail('contact@snowtricks.fr');
         $user->setRoles(['ROLE_ADMIN']);
         $user->setToken('dd21498e61e26a5a42d3g9r4z2a364f2s3a2');
+        $user->setApiKey('154a87d22a87c12az88c2e2ed42gg5h87g2');
         $user->setValidated(true);
         $user->setLocked(false);
         $user->setActive(true);
@@ -111,6 +114,7 @@ class UserTest extends TestCase
         $user->setEmail('contact@snowtricks.fr');
         $user->setRoles(['ROLE_ADMIN']);
         $user->setToken('dd21498e61e26a5a42d3g9r4z2a364f2s3a2');
+        $user->setApiKey('154a87d22a87c12az88c2e2ed42gg5h87g2');
         $user->setValidated(true);
         $user->setLocked(false);
         $user->setActive(true);

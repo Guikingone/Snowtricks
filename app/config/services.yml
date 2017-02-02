@@ -1,7 +1,16 @@
-parameters:
-#    parameter_name: value
-
 services:
+    # ApiBundle
+    api.guard_token:
+        class: ApiBundle\Guard\JWTTokenAuthenticator
+        arguments:
+            - '@lexik_jwt_authentication.encoder'
+            - '@doctrine.orm.entity_manager'
+
+    api.converter:
+        class: ApiBundle\Services\ApiConverter
+        arguments:
+            - '@serializer'
+
     # File manager
     app.manager:
         class: AppBundle\Services\FileManager

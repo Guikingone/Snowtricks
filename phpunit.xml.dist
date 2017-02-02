@@ -20,6 +20,7 @@
 
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory>./src/ApiBundle/*</directory>
             <directory>./src/AppBundle/*</directory>
             <directory>./src/UserBundle/*</directory>
             <exclude>

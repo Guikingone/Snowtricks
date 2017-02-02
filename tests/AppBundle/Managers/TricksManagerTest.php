@@ -61,13 +61,13 @@ class TricksManagerTest extends KernelTestCase
     {
         if (is_object($this->manager) && $this->manager instanceof TricksManager) {
             // Store the result to test the class.
-            $trick = $this->manager->getTricksByName('Backflip');
+            $trick = $this->manager->getTricksByName('Frontflip');
             $this->assertInstanceOf(
                 Tricks::class,
                 $trick
             );
             $this->assertEquals(
-                'Backflip',
+                'Frontflip',
                 $trick->getName()
             );
         }
@@ -93,7 +93,7 @@ class TricksManagerTest extends KernelTestCase
      */
     public function testTricksNoValidationMethod()
     {
-        $trick = $this->manager->getTricksByName('Backflip');
+        $trick = $this->manager->getTricksByName('Bigfoot');
 
         if (is_object($this->manager) && $this->manager instanceof TricksManager) {
             // Refuse the tricks find earlier.
@@ -108,7 +108,7 @@ class TricksManagerTest extends KernelTestCase
      */
     public function testTricksSuppressionMethod()
     {
-        $tricks = $this->manager->getTricksByName('Backflip');
+        $tricks = $this->manager->getTricksByName('Airflip');
 
         if (is_object($this->manager) && $this->manager instanceof TricksManager) {
             // Delete the tricks using his name

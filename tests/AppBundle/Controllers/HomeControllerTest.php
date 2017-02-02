@@ -146,8 +146,6 @@ class HomeControllerTest extends WebTestCase
 
             $crawler = $this->secondClient->submit($form);
 
-            dump($this->secondClient->getResponse());
-
             $this->assertEquals(
                 Response::HTTP_FOUND,
                 $this->secondClient->getResponse()->getStatusCode()
@@ -201,7 +199,10 @@ class HomeControllerTest extends WebTestCase
      */
     public function testsTricksAdd()
     {
-        $crawler = $this->client->request('GET', '/tricks/add');
+        $crawler = $this->client->request('GET', '/tricks/add', [], [], [
+            'PHP_AUTH_USER' => 'Nanon',
+            'PHP_AUTH_PW' => 'lappd_dep',
+        ]);
 
         $this->assertEquals(
             Response::HTTP_OK,
@@ -224,7 +225,7 @@ class HomeControllerTest extends WebTestCase
             $form['tricks[name]'] = 'Sideflip';
             $form['tricks[groups]']->select('Flip');
             $form['tricks[resume]'] = 'A new content about this tricks !';
-            $values['tricks']['images'][0] = $img;
+            $values['tricks']['images'][0]->upload($img);
 
             $crawler = $this->client->request(
                 $form->getMethod(),

@@ -11,12 +11,16 @@
 
 namespace AppBundle\DependencyInjection;
 
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+
+// Services
+use AppBundle\Services\Uploader;
+
+// Managers
 use AppBundle\Managers\CommentaryManager;
 use AppBundle\Managers\TricksManager;
 use AppBundle\Services\FileManager;
-use AppBundle\Services\Uploader;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
  * Class AppBundleExtension.

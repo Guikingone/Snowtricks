@@ -116,19 +116,4 @@ class CommentaryManagerTest extends KernelTestCase
             $this->returnValue(RedirectResponse::class);
         }
     }
-
-    /**
-     * Test if the app.back method who delete a commentary linked to a tricks
-     * using his id and the tricks name works.
-     */
-    public function testCommentaryDeletingByTricksMethodWithBadArguments()
-    {
-        if (is_object($this->manager)
-            && $this->manager instanceof CommentaryManager) {
-            // Store the result to test the class.
-            $this->manager->deleteCommentary(2451, 'BackAir');
-
-            $this->setExpectedException(\InvalidArgumentException::class);
-        }
-    }
 }

@@ -116,6 +116,13 @@ class User implements
     private $token;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="api_key", type="string", nullable=true)
+     */
+    private $apiKey;
+
+    /**
      * @var bool
      *
      * @ORM\Column(name="validated", type="boolean")
@@ -410,6 +417,28 @@ class User implements
     public function getToken()
     {
         return $this->token;
+    }
+
+    /**
+     * Set apiKey.
+     *
+     * @param string $apiKey
+     *
+     * @return $this
+     */
+    public function setApiKey($apiKey)
+    {
+        $this->apiKey = $apiKey;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getApiKey()
+    {
+        return $this->apiKey;
     }
 
     /**

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Snowtricks - API{% block title %}{% endblock %}</title>
+        {% block stylesheets %}{% endblock %}
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    </head>
+        <body>
+            <form method="post" action="{{ path('api_login') }}">
+                <label for="username">Username :
+                    <input type="text" name="_username" />
+                </label>
+                <label for="password">Password :
+                    <input type="password" name="_password" />
+                </label>
+            </form>
+        </body>
+</html>
