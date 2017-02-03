@@ -1,10 +1,4 @@
 services:
-    # ApiBundle
-    api.guard_token:
-        class: ApiBundle\Guard\JWTTokenAuthenticator
-        arguments:
-            - '@lexik_jwt_authentication.encoder'
-            - '@doctrine.orm.entity_manager'
 
     api.converter:
         class: ApiBundle\Services\ApiConverter

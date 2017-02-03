@@ -97,21 +97,6 @@ logout:
     path:    /logout
 
 # API routes
-api_home:
-    path:    /api
-    methods: ['GET', 'POST']
-    defaults: { _controller: ApiBundle:Home:home }
-
-api_login:
-    path:    /api/login
-    methods: ['GET', 'POST']
-    defaults: { _controller: ApiBundle:Home:login }
-
-api_tricks_all:
-    path:    /api/tricks
-    methods: 'GET'
-    defaults: { _controller: ApiBundle:Tricks:getTricks }
-
-# JWT routes
-api_login_check:
-    path: /api/login_check
+api:
+    prefix: /api
+    resource: "routing_api.yml"
