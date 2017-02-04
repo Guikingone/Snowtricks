@@ -11,9 +11,7 @@
 
 namespace AppBundle\Managers\ApiManagers;
 
-use AppBundle\Form\Type\TricksType;
 use Doctrine\ORM\EntityManager;
-use FOS\RestBundle\View\View;
 use FOS\RestBundle\View\ViewHandler;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,6 +22,9 @@ use Symfony\Component\Workflow\Workflow;
 
 // Entity
 use AppBundle\Entity\Tricks;
+
+// Form
+use AppBundle\Form\Type\TricksType;
 
 // Events
 use AppBundle\Events\Tricks\TricksAddedEvent;
@@ -116,10 +117,7 @@ class ApiTricksManager
             ];
         }
 
-        $view = View::create($data);
-        $view->setFormat('json');
-
-        return $this->viewHandler->handle($view);
+        return new JsonResponse($data);
     }
 
     /**
@@ -143,10 +141,12 @@ class ApiTricksManager
             ]);
         }
 
-        $view = View::create($trick);
-        $view->setFormat('json');
+        $data[] = [
+            'id' => $trick->getId(),
+            'name' => $trick->getName()
+        ];
 
-        return $this->viewHandler->handle($view);
+        return new JsonResponse($data);
     }
 
     /**
@@ -191,5 +191,38 @@ class ApiTricksManager
         }
 
         return $form;
+    }
+
+    /**
+     * Allow to delete a resource using his id stored inside the request.
+     *
+     * @throws ORMInvalidArgumentException
+     * @throws OptimisticLockException
+     *
+     * @return JsonResponse
+     */
+    public function deleteSingleTricks()
+    {
+        $id = $this->request->getCurrentRequest()->get('id');
+
+        $trick = $this->doctrine->getRepository('AppBundle:Tricks')
+                                ->findOneBy([
+                                    'id' => $id
+                                ]);
+
+        if ($trick) {
+            $this->doctrine->remove($trick);
+            $this->doctrine->flush();
+
+            return new JsonResponse([
+                'message' => 'Resource deleted',
+                Response::HTTP_NO_CONTENT
+            ]);
+        }
+
+        return new JsonResponse(
+            ['message' => 'Resource not found'],
+            Response::HTTP_NOT_FOUND
+        );
     }
 }

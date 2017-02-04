@@ -16,3 +16,9 @@ api_single_tricks_new:
     path:    /tricks/new
     methods: 'POST'
     defaults: { _controller: AppBundle:Api/Tricks:postTricks }
+
+# DELETE routes
+api_single_tricks_delete:
+    path:    /tricks/delete/{id}
+    methods: 'DELETE'
+    defaults: { _controller: AppBundle:Api/Tricks:deleteTricksById }

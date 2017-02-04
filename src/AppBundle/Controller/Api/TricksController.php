@@ -11,9 +11,11 @@
 
 namespace AppBundle\Controller\Api;
 
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+
+// Exceptions
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMInvalidArgumentException;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Exception\AlreadySubmittedException;
 use Symfony\Component\HttpKernel\Exception\UnsupportedMediaTypeHttpException;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
@@ -60,5 +62,16 @@ class TricksController extends Controller
     public function postTricksAction()
     {
         return $this->get('api.tricks_manager')->postNewTricks();
+    }
+
+    /**
+     * @throws ORMInvalidArgumentException
+     * @throws OptimisticLockException
+     *
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function deleteTricksByIdAction()
+    {
+        return $this->get('api.tricks_manager')->deleteSingleTricks();
     }
 }
