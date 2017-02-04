@@ -1,5 +1,4 @@
 services:
-
     api.converter:
         class: ApiBundle\Services\ApiConverter
         arguments:

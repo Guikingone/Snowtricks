@@ -9,15 +9,14 @@
  * file that was distributed with this source code.
  */
 
-namespace ApiBundle;
-
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+namespace UserBundle\Managers\Api;
 
 /**
- * Class ApiBundle.
+ * Class ApiUserManager
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
-class ApiBundle extends Bundle
+class ApiUserManager
 {
+
 }

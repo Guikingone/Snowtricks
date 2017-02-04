@@ -1,0 +1,10 @@
+services:
+    api.tricks_manager:
+        class: AppBundle\Managers\ApiManagers\ApiTricksManager
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@form.factory'
+            - '@event_dispatcher'
+            - '@workflow.tricks_process'
+            - '@fos_rest.view_handler'
+            - '@request_stack'

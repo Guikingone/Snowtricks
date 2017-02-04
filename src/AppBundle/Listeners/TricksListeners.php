@@ -108,6 +108,7 @@ class TricksListeners
         if (is_object($entity)
             && array_key_exists('validation', $entity->currentState)
             && $this->security->isGranted('ROLE_ADMIN')) {
+
             $entity->setCreationDate(new \DateTime());
             $entity->setValidated(true);
             $entity->setPublished(true);

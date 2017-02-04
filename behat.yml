@@ -1,5 +1,21 @@
 default:
-    extensions:
-        Behat\MinkExtension:
-            base_url: http://localhost:8000
-            goutte: ~
+  calls:
+    error_reporting: 16383 # E_ALL & ~E_USER_DEPRECATED
+  formatters:
+      progress: ~
+  suites:
+    default:
+      filters:
+        tags: "~@skip"
+      contexts:
+        - Behat\MinkExtension\Context\MinkContext
+  extensions:
+    Behat\Symfony2Extension:
+      kernel:
+        env: "test"
+        debug: "true"
+    Behat\MinkExtension:
+      base_url: "http://127.0.0.1:8000/"
+      sessions:
+        default:
+          symfony2: ~

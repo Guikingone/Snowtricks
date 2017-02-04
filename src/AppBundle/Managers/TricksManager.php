@@ -11,7 +11,6 @@
 
 namespace AppBundle\Managers;
 
-use AppBundle\Form\Type\Api\ApiTricksType;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -145,48 +144,6 @@ class TricksManager
             if ($trick->getPublished()) {
                 // Only if it's a Admin add.
                 $redirect = new RedirectResponse('tricks'.$trick->getName());
-                $redirect->send();
-            }
-
-            $redirect = new RedirectResponse('tricks');
-            $redirect->send();
-        }
-
-        return $form->createView();
-    }
-
-    /**
-     * @param Request $request
-     *
-     * @throws LogicException
-     * @throws InvalidOptionsException
-     * @throws ORMInvalidArgumentException
-     * @throws OptimisticLockException
-     * @throws \InvalidArgumentException
-     *
-     * @return FormView
-     */
-    public function addTricksFromAPI(Request $request)
-    {
-        $tricks = new Tricks();
-
-        // Init the workflow phase.
-        $this->workflow->apply($tricks, 'start_phase');
-
-        $form = $this->form->create(ApiTricksType::class, $tricks);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Send a new event to perform new instance actions.
-            $event = new TricksAddedEvent($tricks);
-            $this->eventDispatcher->dispatch(TricksAddedEvent::NAME, $event);
-
-            $this->doctrine->persist($tricks);
-            $this->doctrine->flush();
-
-            if ($tricks->getPublished()) {
-                // Only if it's a Admin add.
-                $redirect = new RedirectResponse('tricks'.$tricks->getName());
                 $redirect->send();
             }
 

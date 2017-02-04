@@ -4,5 +4,4 @@ Feature: homepage
   and find the index page
   Scenario: Search for the hello world phrase
     Given: I'm on "/"
-    When I press "Se connecter"
-    Then I should see "Se connecter"
+    Then the response status code should be 200

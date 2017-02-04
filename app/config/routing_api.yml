@@ -2,15 +2,17 @@
 api_tricks:
     path:     /tricks
     methods: 'GET'
-    defaults: { _controller: ApiBundle:Tricks/Tricks:getAllTricks }
+    defaults: { _controller: AppBundle:Api/Tricks:getTricks }
 
 api_single_tricks:
     path:     /tricks/{id}
     methods: 'GET'
-    defaults: { _controller: ApiBundle:Tricks/Tricks:getSingleTricks }
+    defaults: { _controller: AppBundle:Api/Tricks:getTricksById }
+    requirements:
+        id: \d+
 
 # POST routes
 api_single_tricks_new:
     path:    /tricks/new
     methods: 'POST'
-    defaults: { _controller: ApiBundle:Tricks/TricksPost:newTricks}
+    defaults: { _controller: AppBundle:Api/Tricks:postTricks }
