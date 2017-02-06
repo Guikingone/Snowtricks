@@ -99,5 +99,4 @@ logout:
 # API routes
 api:
     prefix: /api
-    type: rest
     resource: "routing_api.yml"

@@ -17,6 +17,22 @@ api_single_tricks_new:
     methods: 'POST'
     defaults: { _controller: AppBundle:Api/Tricks:postTricks }
 
+# PUT routes
+api_single_tricks_put:
+    path:    /tricks/put/{id}
+    methods: 'PUT'
+    defaults: { _controller: AppBundle:Api/Tricks:putSingleTricks }
+    requirements:
+        id: \d+
+
+# PATCH routes
+api_single_tricks_patch:
+    path:    /tricks/patch/{id}
+    methods: 'PATCH'
+    defaults: { _controller: AppBundle:Api/Tricks:patchSingleTricks }
+    requirements:
+        id: \d+
+
 # DELETE routes
 api_single_tricks_delete:
     path:    /tricks/delete/{id}

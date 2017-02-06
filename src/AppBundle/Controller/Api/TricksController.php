@@ -65,6 +65,25 @@ class TricksController extends Controller
     }
 
     /**
+     * @throws LogicException
+     * @throws InvalidOptionsException
+     * @throws AlreadySubmittedException
+     * @throws ORMInvalidArgumentException
+     * @throws OptimisticLockException
+     *
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function putSingleTricksAction()
+    {
+        return $this->get('api.tricks_manager')->putSingleTricks();
+    }
+
+    public function patchSingleTricksAction()
+    {
+        return $this->get('api.tricks_manager')->patchSingleTricks();
+    }
+
+    /**
      * @throws ORMInvalidArgumentException
      * @throws OptimisticLockException
      *
