@@ -19,7 +19,7 @@ use Doctrine\ORM\ORMInvalidArgumentException;
 use UserBundle\Entity\User;
 
 /**
- * Class UserSetupContext
+ * Class UserSetupContext.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
@@ -34,7 +34,7 @@ class UserSetupContext implements
      *
      * @param EntityManager $doctrine
      */
-    public function __construct (EntityManager $doctrine)
+    public function __construct(EntityManager $doctrine)
     {
         $this->doctrine = $doctrine;
     }
@@ -51,8 +51,7 @@ class UserSetupContext implements
     {
         $usr = new User();
 
-        foreach ($users->getColumnsHash() as $key => $value)
-        {
+        foreach ($users->getColumnsHash() as $key => $value) {
             $confirmationToken = isset($val['confirmation_token']) && $val['confirmation_token'] !== ''
                 ? $val['confirmation_token']
                 : null;

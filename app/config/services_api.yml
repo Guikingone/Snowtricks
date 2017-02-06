@@ -6,5 +6,9 @@ services:
             - '@form.factory'
             - '@event_dispatcher'
             - '@workflow.tricks_process'
-            - '@fos_rest.view_handler'
             - '@request_stack'
+
+    api.commentary_manager:
+        class: AppBundle\Managers\ApiManagers\ApiCommentaryManager
+        arguments:
+            - '@doctrine.orm.entity_manager'

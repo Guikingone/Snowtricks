@@ -12,7 +12,6 @@
 namespace AppBundle\Managers\ApiManagers;
 
 use Doctrine\ORM\EntityManager;
-use FOS\RestBundle\View\ViewHandler;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -38,7 +37,7 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\Workflow\Exception\LogicException;
 
 /**
- * Class ApiTricksManager
+ * Class ApiTricksManager.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
@@ -56,9 +55,6 @@ class ApiTricksManager
     /** @var Workflow */
     private $workflow;
 
-    /** @var ViewHandler */
-    private $viewHandler;
-
     /** @var RequestStack */
     private $request;
 
@@ -69,22 +65,19 @@ class ApiTricksManager
      * @param FormFactory              $form
      * @param TraceableEventDispatcher $dispatcher
      * @param Workflow                 $workflow
-     * @param ViewHandler              $handler
      * @param RequestStack             $requestStack
      */
-    public function __construct (
+    public function __construct(
         EntityManager $doctrine,
         FormFactory $form,
         TraceableEventDispatcher $dispatcher,
         Workflow $workflow,
-        ViewHandler $handler,
         RequestStack $requestStack
     ) {
         $this->doctrine = $doctrine;
         $this->form = $form;
         $this->dispatcher = $dispatcher;
         $this->workflow = $workflow;
-        $this->viewHandler = $handler;
         $this->request = $requestStack;
     }
 
@@ -102,7 +95,7 @@ class ApiTricksManager
         if (!$tricks) {
             return new JsonResponse([
                 'message' => 'Resources not found',
-                Response::HTTP_NOT_FOUND
+                Response::HTTP_NOT_FOUND,
             ]);
         }
 
@@ -113,7 +106,7 @@ class ApiTricksManager
                 'name' => $trick->getName(),
                 'groups' => $trick->getGroups(),
                 'resume' => $trick->getResume(),
-                'published' => $trick->getPublished()
+                'published' => $trick->getPublished(),
             ];
         }
 
@@ -131,19 +124,19 @@ class ApiTricksManager
     {
         $trick = $this->doctrine->getRepository('AppBundle:Tricks')
                                 ->findOneBy([
-                                    'id' => $id
+                                    'id' => $id,
                                 ]);
 
         if (!$trick) {
             return new JsonResponse([
                 'message' => 'Resource not found',
-                Response::HTTP_NOT_FOUND
+                Response::HTTP_NOT_FOUND,
             ]);
         }
 
         $data[] = [
             'id' => $trick->getId(),
-            'name' => $trick->getName()
+            'name' => $trick->getName(),
         ];
 
         return new JsonResponse($data);
@@ -186,7 +179,7 @@ class ApiTricksManager
         $data = $this->request->getCurrentRequest()->request->all();
 
         $form = $this->form->create(TricksType::class, $tricks, [
-            'csrf_protection' => false
+            'csrf_protection' => false,
         ]);
         $form->submit($data);
 
@@ -204,7 +197,7 @@ class ApiTricksManager
                         'message' => 'Resource already found.',
                         'name' => $trick->getName(),
                         'groups' => $trick->getGroups(),
-                        'resume' => $trick->getResume()
+                        'resume' => $trick->getResume(),
                     ],
                     Response::HTTP_SEE_OTHER
                 );
@@ -222,7 +215,7 @@ class ApiTricksManager
                     'message' => 'Resource created',
                     'name' => $tricks->getName(),
                     'groups' => $tricks->getGroups(),
-                    'resume' => $tricks->getResume()
+                    'resume' => $tricks->getResume(),
                 ],
                 Response::HTTP_CREATED
             );
@@ -230,7 +223,7 @@ class ApiTricksManager
 
         return new JsonResponse(
             [
-                'message' => 'Form invalid'
+                'message' => 'Form invalid',
             ],
             Response::HTTP_BAD_REQUEST
         );
@@ -254,6 +247,7 @@ class ApiTricksManager
      * the response send a 200 (OK) headers code
      * and the actual state of the resource.
      *
+     *
      * @see Response::HTTP_OK
      *
      * In the case that the resource could'nt been updated,
@@ -275,7 +269,7 @@ class ApiTricksManager
 
         $trick = $this->doctrine->getRepository('AppBundle:Tricks')
                                 ->findOneBy([
-                                    'id' => $id
+                                    'id' => $id,
                                 ]);
 
         if (!$trick) {
@@ -285,7 +279,7 @@ class ApiTricksManager
             $this->workflow->apply($tricks, 'start_phase');
 
             $form = $this->form->create(TricksType::class, $tricks, [
-                'csrf_protection' => false
+                'csrf_protection' => false,
             ]);
             $form->submit($tricks);
 
@@ -293,7 +287,7 @@ class ApiTricksManager
                 // Search if a equivalent resource has been created.
                 $data = $form->getData();
                 $trick = $this->doctrine->getRepository('AppBundle:Tricks')
-                    ->findOneBy(['name' => $data->getName(),]);
+                    ->findOneBy(['name' => $data->getName()]);
 
                 if ($trick) {
                     return new JsonResponse(
@@ -301,7 +295,7 @@ class ApiTricksManager
                             'message' => 'Resource already found.',
                             'name' => $trick->getName(),
                             'groups' => $trick->getGroups(),
-                            'resume' => $trick->getResume()
+                            'resume' => $trick->getResume(),
                         ],
                         Response::HTTP_SEE_OTHER
                     );
@@ -319,7 +313,7 @@ class ApiTricksManager
                         'message' => 'Resource created',
                         'name' => $tricks->getName(),
                         'groups' => $tricks->getGroups(),
-                        'resume' => $tricks->getResume()
+                        'resume' => $tricks->getResume(),
                     ],
                     Response::HTTP_CREATED
                 );
@@ -329,7 +323,7 @@ class ApiTricksManager
         $data = $this->request->getCurrentRequest()->request->all();
 
         $form = $this->form->create(TricksType::class, $trick, [
-            'csrf_protection' => false
+            'csrf_protection' => false,
         ]);
         $form->submit($data);
 
@@ -341,7 +335,7 @@ class ApiTricksManager
                     'message' => 'Resource updated',
                     'name' => $trick->getName(),
                     'groups' => $trick->getGroups(),
-                    'resume' => $trick->getResume()
+                    'resume' => $trick->getResume(),
                 ],
                 Response::HTTP_OK
             );
@@ -349,7 +343,7 @@ class ApiTricksManager
 
         return new JsonResponse(
             [
-                'message' => 'Resource not updated'
+                'message' => 'Resource not updated',
             ],
             Response::HTTP_NO_CONTENT
         );
@@ -380,13 +374,13 @@ class ApiTricksManager
 
         $trick = $this->doctrine->getRepository('AppBundle:Tricks')
                                 ->findOneBy([
-                                    'id' => $id
+                                    'id' => $id,
                                 ]);
 
         $data = $this->request->getCurrentRequest()->request->all();
 
         $form = $this->form->create(TricksType::class, $trick, [
-            'csrf_protection' => false
+            'csrf_protection' => false,
         ]);
         $form->submit($data, false);
 
@@ -398,7 +392,7 @@ class ApiTricksManager
                     'message' => 'Resource updated',
                     'name' => $trick->getName(),
                     'groups' => $trick->getGroups(),
-                    'resume' => $trick->getResume()
+                    'resume' => $trick->getResume(),
                 ],
                 Response::HTTP_OK
             );
@@ -406,7 +400,7 @@ class ApiTricksManager
 
         return new JsonResponse(
             [
-                'message' => 'Resource not found'
+                'message' => 'Resource not found',
             ],
             Response::HTTP_NOT_FOUND
         );
@@ -426,7 +420,7 @@ class ApiTricksManager
 
         $trick = $this->doctrine->getRepository('AppBundle:Tricks')
                                 ->findOneBy([
-                                    'id' => $id
+                                    'id' => $id,
                                 ]);
 
         if ($trick) {

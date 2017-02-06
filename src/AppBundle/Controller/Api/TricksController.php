@@ -22,7 +22,7 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\Workflow\Exception\LogicException;
 
 /**
- * Class TricksController
+ * Class TricksController.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
@@ -78,6 +78,15 @@ class TricksController extends Controller
         return $this->get('api.tricks_manager')->putSingleTricks();
     }
 
+    /**
+     * @throws LogicException
+     * @throws InvalidOptionsException
+     * @throws AlreadySubmittedException
+     * @throws ORMInvalidArgumentException
+     * @throws OptimisticLockException
+     *
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
     public function patchSingleTricksAction()
     {
         return $this->get('api.tricks_manager')->patchSingleTricks();

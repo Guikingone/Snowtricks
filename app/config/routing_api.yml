@@ -11,11 +11,33 @@ api_single_tricks:
     requirements:
         id: \d+
 
+api_commentary_single_tricks:
+    path:    /tricks/{id}/commentaries
+    methods: 'GET'
+    defaults: { _controller: AppBundle:Api/Commentary:getCommentariesByTricks }
+    requirements:
+        id: \d+
+
+api_single_commentary_single_tricks:
+    path:    /tricks/{tricks}/commentary/{id}
+    methods: 'GET'
+    defaults: { _controller: AppBundle:Api/Commentary:getSingleCommentaryByTricks }
+    requirements:
+        tricks: \d+
+        id: \d+
+
 # POST routes
 api_single_tricks_new:
     path:    /tricks/new
     methods: 'POST'
     defaults: { _controller: AppBundle:Api/Tricks:postTricks }
+
+api_single_commentary_new_single_tricks:
+    path:    /tricks/{id}/commentary/new
+    methods: 'POST'
+    defaults:
+    requirements:
+        id: \d+
 
 # PUT routes
 api_single_tricks_put:

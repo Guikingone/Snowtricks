@@ -1,9 +1,4 @@
 services:
-    api.converter:
-        class: ApiBundle\Services\ApiConverter
-        arguments:
-            - '@serializer'
-
     # File manager
     app.manager:
         class: AppBundle\Services\FileManager
