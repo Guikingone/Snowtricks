@@ -2,6 +2,7 @@ services:
     api.tricks_manager:
         class: AppBundle\Managers\ApiManagers\ApiTricksManager
         arguments:
+            - '@serializer'
             - '@doctrine.orm.entity_manager'
             - '@form.factory'
             - '@event_dispatcher'
@@ -11,4 +12,8 @@ services:
     api.commentary_manager:
         class: AppBundle\Managers\ApiManagers\ApiCommentaryManager
         arguments:
+            - '@jms_serializer'
             - '@doctrine.orm.entity_manager'
+            - '@form.factory'
+            - '@request_stack'
+            - '@event_dispatcher'

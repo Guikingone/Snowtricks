@@ -12,6 +12,7 @@
 namespace AppBundle\Managers\ApiManagers;
 
 use Doctrine\ORM\EntityManager;
+use JMS\Serializer\Serializer;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -32,7 +33,6 @@ use AppBundle\Events\Tricks\TricksAddedEvent;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use Symfony\Component\Form\Exception\AlreadySubmittedException;
-use Symfony\Component\HttpKernel\Exception\UnsupportedMediaTypeHttpException;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\Workflow\Exception\LogicException;
 
@@ -43,6 +43,9 @@ use Symfony\Component\Workflow\Exception\LogicException;
  */
 class ApiTricksManager
 {
+    /** @var Serializer */
+    private $serializer;
+
     /** @var EntityManager */
     private $doctrine;
 
@@ -61,6 +64,7 @@ class ApiTricksManager
     /**
      * ApiTricksManager constructor.
      *
+     * @param Serializer               $serializer
      * @param EntityManager            $doctrine
      * @param FormFactory              $form
      * @param TraceableEventDispatcher $dispatcher
@@ -68,12 +72,14 @@ class ApiTricksManager
      * @param RequestStack             $requestStack
      */
     public function __construct(
+        Serializer $serializer,
         EntityManager $doctrine,
         FormFactory $form,
         TraceableEventDispatcher $dispatcher,
         Workflow $workflow,
         RequestStack $requestStack
     ) {
+        $this->serializer = $serializer;
         $this->doctrine = $doctrine;
         $this->form = $form;
         $this->dispatcher = $dispatcher;
@@ -84,7 +90,7 @@ class ApiTricksManager
     /**
      * Return every tricks saved into json format.
      *
-     * @throws UnsupportedMediaTypeHttpException
+     * @throws \InvalidArgumentException
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
@@ -99,32 +105,27 @@ class ApiTricksManager
             ]);
         }
 
-        $data = [];
-        foreach ($tricks as $trick) {
-            $data[] = [
-                'id' => $trick->getId(),
-                'name' => $trick->getName(),
-                'groups' => $trick->getGroups(),
-                'resume' => $trick->getResume(),
-                'published' => $trick->getPublished(),
-            ];
-        }
+        $object = $this->serializer->serialize($tricks, 'json');
 
-        return new JsonResponse($data);
+        return new Response(
+            $object,
+            Response::HTTP_OK,
+            ['Content-Type' => 'application/json']
+        );
     }
 
     /**
-     * @param int $id
+     * @param string $name
      *
-     * @throws UnsupportedMediaTypeHttpException
+     * @throws \InvalidArgumentException
      *
      * @return JsonResponse|Response
      */
-    public function getSingleTricks(int $id)
+    public function getSingleTricks(string $name)
     {
         $trick = $this->doctrine->getRepository('AppBundle:Tricks')
                                 ->findOneBy([
-                                    'id' => $id,
+                                    'name' => $name,
                                 ]);
 
         if (!$trick) {
@@ -134,12 +135,13 @@ class ApiTricksManager
             ]);
         }
 
-        $data[] = [
-            'id' => $trick->getId(),
-            'name' => $trick->getName(),
-        ];
+        $object = $this->serializer->serialize($trick, 'json');
 
-        return new JsonResponse($data);
+        return new Response(
+            $object,
+            Response::HTTP_OK,
+            ['Content-Type' => 'application/json']
+        );
     }
 
     /**
@@ -151,13 +153,11 @@ class ApiTricksManager
      * @see Response::HTTP_SEE_OTHER
      *
      * In the case the resource does not exist, the response contain
-     * a 201 (CREATED) headers code and the content of the resource created.
-     *
+     * a 201 (CREATED) headers code and the content of the resource created
      * @see Response::HTTP_CREATED
      *
      * In the case that the form isn't valid, the response contain
-     * a 400 (BAD REQUEST) headers code.
-     *
+     * a 400 (BAD REQUEST) headers code
      * @see Response::HTTP_BAD_REQUEST
      *
      * @throws LogicException
@@ -239,20 +239,16 @@ class ApiTricksManager
      *
      * In the case that the resource is created but has been found
      * due by a past persist, a 303 (SEE OTHER) headers code is return
-     * with the state of the resource.
-     *
+     * with the state of the resource
      * @see Response::HTTP_SEE_OTHER
      *
      * In the case that the resource is find and could be updated,
      * the response send a 200 (OK) headers code
-     * and the actual state of the resource.
-     *
-     *
+     * and the actual state of the resource
      * @see Response::HTTP_OK
      *
      * In the case that the resource could'nt been updated,
-     * the response send a 204 (NO CONTENT) headers code.
-     *
+     * the response send a 204 (NO CONTENT) headers code
      * @see Response::HTTP_NO_CONTENT
      *
      * @throws LogicException
@@ -287,7 +283,9 @@ class ApiTricksManager
                 // Search if a equivalent resource has been created.
                 $data = $form->getData();
                 $trick = $this->doctrine->getRepository('AppBundle:Tricks')
-                    ->findOneBy(['name' => $data->getName()]);
+                                        ->findOneBy([
+                                            'name' => $data->getName()
+                                        ]);
 
                 if ($trick) {
                     return new JsonResponse(

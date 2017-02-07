@@ -17,7 +17,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use Symfony\Component\Form\Exception\AlreadySubmittedException;
-use Symfony\Component\HttpKernel\Exception\UnsupportedMediaTypeHttpException;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\Workflow\Exception\LogicException;
 
@@ -29,7 +28,7 @@ use Symfony\Component\Workflow\Exception\LogicException;
 class TricksController extends Controller
 {
     /**
-     * @throws UnsupportedMediaTypeHttpException
+     * @throws \InvalidArgumentException
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
@@ -39,15 +38,15 @@ class TricksController extends Controller
     }
 
     /**
-     * @param int $id
+     * @param string $name
      *
-     * @throws UnsupportedMediaTypeHttpException
+     * @throws \InvalidArgumentException
      *
      * @return \Symfony\Component\HttpFoundation\JsonResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function getTricksByIdAction(int $id)
+    public function getTricksByNameAction(string $name)
     {
-        return $this->get('api.tricks_manager')->getSingleTricks($id);
+        return $this->get('api.tricks_manager')->getSingleTricks($name);
     }
 
     /**

@@ -14,6 +14,7 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 // Entity
+use Symfony\Component\Serializer\Annotation\Groups;
 use UserBundle\Entity\User;
 
 /**
@@ -32,6 +33,8 @@ class Commentary
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @Groups({"commentary"})
      */
     private $id;
 
@@ -39,6 +42,8 @@ class Commentary
      * @var \DateTime
      *
      * @ORM\Column(name="publication_date", type="datetime")
+     *
+     * @Groups({"commentary"})
      */
     private $publicationDate;
 
@@ -46,6 +51,8 @@ class Commentary
      * @var string
      *
      * @ORM\Column(name="content", type="string", length=255, nullable=false)
+     *
+     * @Groups({"commentary"})
      */
     private $content;
 

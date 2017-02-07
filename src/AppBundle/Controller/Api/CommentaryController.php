@@ -13,6 +13,12 @@ namespace AppBundle\Controller\Api;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
+// Exceptions
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMInvalidArgumentException;
+use Symfony\Component\Form\Exception\AlreadySubmittedException;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
+
 /**
  * Class CommentaryController.
  *
@@ -22,6 +28,8 @@ class CommentaryController extends Controller
 {
     /**
      * @param int $id
+     *
+     * @throws \InvalidArgumentException
      *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
@@ -34,10 +42,49 @@ class CommentaryController extends Controller
      * @param int $id
      * @param int $tricks
      *
+     * @throws \InvalidArgumentException
+     *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function getSingleCommentaryByTricksAction(int $id, int $tricks)
     {
         return $this->get('api.commentary_manager')->getSingleCommentaryById($id, $tricks);
+    }
+
+    /**
+     * @throws InvalidOptionsException
+     * @throws AlreadySubmittedException
+     * @throws ORMInvalidArgumentException
+     * @throws OptimisticLockException
+     *
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function postNewCommentaryByTricksNameAction()
+    {
+        return $this->get('api.commentary_manager')->postNewCommentary();
+    }
+
+    /**
+     * @throws InvalidOptionsException
+     * @throws AlreadySubmittedException
+     * @throws ORMInvalidArgumentException
+     * @throws OptimisticLockException
+     *
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function putSingleCommentaryByIdAction()
+    {
+        return $this->get('api.commentary_manager')->putSingleCommentary();
+    }
+
+    /**
+     * @throws ORMInvalidArgumentException
+     * @throws OptimisticLockException
+     *
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function deleteSingleCommentaryByIdAction()
+    {
+        return $this->get('api.commentary_manager')->deleteCommentary();
     }
 }

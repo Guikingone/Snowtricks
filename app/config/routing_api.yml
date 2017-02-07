@@ -5,11 +5,11 @@ api_tricks:
     defaults: { _controller: AppBundle:Api/Tricks:getTricks }
 
 api_single_tricks:
-    path:     /tricks/{id}
+    path:     /tricks/{name}
     methods: 'GET'
-    defaults: { _controller: AppBundle:Api/Tricks:getTricksById }
+    defaults: { _controller: AppBundle:Api/Tricks:getTricksByName }
     requirements:
-        id: \d+
+        id: \s+
 
 api_commentary_single_tricks:
     path:    /tricks/{id}/commentaries
@@ -33,17 +33,24 @@ api_single_tricks_new:
     defaults: { _controller: AppBundle:Api/Tricks:postTricks }
 
 api_single_commentary_new_single_tricks:
-    path:    /tricks/{id}/commentary/new
+    path:    /tricks/{name}/commentary/new
     methods: 'POST'
-    defaults:
+    defaults: { _controller: AppBundle:Api/Commentary:postNewCommentaryByTricksName }
     requirements:
-        id: \d+
+        id: \s+
 
 # PUT routes
 api_single_tricks_put:
-    path:    /tricks/put/{id}
+    path:    /tricks/put/{tricks}
     methods: 'PUT'
     defaults: { _controller: AppBundle:Api/Tricks:putSingleTricks }
+    requirements:
+        tricks: \d+
+
+api_single_commentary_put:
+    path:    /commentary/put/{id}
+    methods: 'PUT'
+    defaults: { _controller: AppBundle:Api/Commentary:putSingleCommentaryById }
     requirements:
         id: \d+
 
@@ -60,3 +67,10 @@ api_single_tricks_delete:
     path:    /tricks/delete/{id}
     methods: 'DELETE'
     defaults: { _controller: AppBundle:Api/Tricks:deleteTricksById }
+
+api_single_commentary_delete:
+    path:    /commentary/delete/{id}
+    methods: 'DELETE'
+    defaults: { _controller: AppBundle:Api/Commentary:deleteSingleCommentaryById }
+    requirements:
+        id: \d+
