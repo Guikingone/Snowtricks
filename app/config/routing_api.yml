@@ -67,6 +67,8 @@ api_single_tricks_delete:
     path:    /tricks/delete/{id}
     methods: 'DELETE'
     defaults: { _controller: AppBundle:Api/Tricks:deleteTricksById }
+    requirements:
+        id: \d+
 
 api_single_commentary_delete:
     path:    /commentary/delete/{id}

@@ -12,7 +12,7 @@ services:
     api.commentary_manager:
         class: AppBundle\Managers\ApiManagers\ApiCommentaryManager
         arguments:
-            - '@jms_serializer'
+            - '@serializer'
             - '@doctrine.orm.entity_manager'
             - '@form.factory'
             - '@request_stack'

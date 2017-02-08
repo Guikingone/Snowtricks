@@ -271,20 +271,22 @@ class ApiTricksManager
         if (!$trick) {
             $tricks = new Tricks();
 
+            $data = $this->request->getCurrentRequest()->request->all();
+
             // Init the workflow phase.
             $this->workflow->apply($tricks, 'start_phase');
 
             $form = $this->form->create(TricksType::class, $tricks, [
                 'csrf_protection' => false,
             ]);
-            $form->submit($tricks);
+            $form->submit($data);
 
             if ($form->isSubmitted() && $form->isValid()) {
                 // Search if a equivalent resource has been created.
-                $data = $form->getData();
+                $object = $form->getData();
                 $trick = $this->doctrine->getRepository('AppBundle:Tricks')
                                         ->findOneBy([
-                                            'name' => $data->getName()
+                                            'name' => $object->getName(),
                                         ]);
 
                 if ($trick) {

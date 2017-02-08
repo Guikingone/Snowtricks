@@ -11,10 +11,14 @@
 
 namespace tests\AppBundle\Controllers\Api;
 
-use AppBundle\Controller\Api\TricksController;
-use AppBundle\Managers\ApiManagers\ApiTricksManager;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
+
+// Controllers
+use AppBundle\Controller\Api\TricksController;
+
+// Managers
+use AppBundle\Managers\ApiManagers\ApiTricksManager;
 
 /**
  * Class TricksControllerTest.
@@ -65,6 +69,22 @@ class TricksControllerTest extends WebTestCase
     }
 
     /**
+     * Test if a single tricks can be found using his name.
+     *
+     * @see TricksController::getTricksByNameAction()
+     * @see ApiTricksManager::getSingleTricks()
+     */
+    public function testSingleTricksFoundByName_Failure()
+    {
+        $this->client->request('GET', '/api/tricks/MarioTime');
+
+        $this->assertEquals(
+            Response::HTTP_NOT_FOUND,
+            $this->client->getResponse()->getStatusCode()
+        );
+    }
+
+    /**
      * Test if a new Tricks can be added.
      *
      * @see TricksController::postTricksAction()
@@ -75,7 +95,7 @@ class TricksControllerTest extends WebTestCase
         $this->client->request('POST', '/api/tricks/new', [
             'name' => 'AirLock',
             'groups' => 'Old school',
-            'resume' => 'My jaw, that\'s what i call a trick !'
+            'resume' => 'My jaw, that\'s what i call a trick !',
         ]);
 
         $this->assertEquals(
@@ -84,16 +104,113 @@ class TricksControllerTest extends WebTestCase
         );
     }
 
+    /**
+     * Test if a new Tricks can be added with bad informations
+     * send through the form.
+     *
+     * @see TricksController::postTricksAction()
+     * @see ApiTricksManager::postNewTricks()
+     */
+    public function testNewTricks_Failure()
+    {
+        $this->client->request('POST', '/api/tricks/new', [
+            'nam' => 'AirLock',
+            'group' => 'Old school',
+            'resume' => 'My jaw, that\'s what i call a trick !',
+        ]);
+
+        $this->assertEquals(
+            Response::HTTP_BAD_REQUEST,
+            $this->client->getResponse()->getStatusCode()
+        );
+    }
+
+    /**
+     * Test the put method in order to update the tricks.
+     *
+     * @see TricksController::putSingleTricksAction()
+     * @see ApiTricksManager::putSingleTricks()
+     */
     public function testPutTricksUsingHisId()
     {
         $this->client->request('PUT', '/api/tricks/put/5', [
             'name' => 'FrontGrab',
             'groups' => 'Grabs',
-            'resume' => 'What a nice grab !'
+            'resume' => 'What a nice grab !',
+        ]);
+
+        $this->assertEquals(
+            Response::HTTP_CREATED,
+            $this->client->getResponse()->getStatusCode()
+        );
+    }
+
+    /**
+     * Test if the resource can be patched using his id.
+     *
+     * @see TricksController::patchSingleTricksAction()
+     * @see ApiTricksManager::patchSingleTricks()
+     */
+    public function testPatchSingleTricksUsingHisId()
+    {
+        $this->client->request('PATCH', '/api/tricks/patch/5', [
+            'name' => 'BackLockFlip',
+            'groups' => 'Flip',
         ]);
 
         $this->assertEquals(
             Response::HTTP_OK,
+            $this->client->getResponse()->getStatusCode()
+        );
+    }
+
+    /**
+     * Test if the resource can be patched using his id.
+     *
+     * @see TricksController::patchSingleTricksAction()
+     * @see ApiTricksManager::patchSingleTricks()
+     */
+    public function testPatchSingleTricksUsingHisId_Failure()
+    {
+        $this->client->request('PATCH', '/api/tricks/patch/268', [
+            'name' => 'BackLockFlip',
+            'groups' => 'Flip',
+        ]);
+
+        $this->assertEquals(
+            Response::HTTP_NOT_FOUND,
+            $this->client->getResponse()->getStatusCode()
+        );
+    }
+
+    /**
+     * Test if a resource can be deleted using his id.
+     *
+     * @see TricksController::deleteTricksByIdAction()
+     * @see ApiTricksManager::deleteSingleTricks()
+     */
+    public function deleteSingleTricksUsingHisId()
+    {
+        $this->client->request('DELETE', '/api/tricks/delete/5');
+
+        $this->assertEquals(
+            Response::HTTP_NO_CONTENT,
+            $this->client->getResponse()->getStatusCode()
+        );
+    }
+
+    /**
+     * Test if the delete method could fail if the wrong id is send.
+     *
+     * @see TricksController::deleteTricksByIdAction()
+     * @see ApiTricksManager::deleteSingleTricks()
+     */
+    public function deleteSingleTricksUsingHisId_Failure()
+    {
+        $this->client->request('DELETE', '/api/tricks/delete/354');
+
+        $this->assertEquals(
+            Response::HTTP_NOT_FOUND,
             $this->client->getResponse()->getStatusCode()
         );
     }
