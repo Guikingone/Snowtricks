@@ -17,3 +17,14 @@ services:
             - '@form.factory'
             - '@request_stack'
             - '@event_dispatcher'
+
+    api.security:
+        class: UserBundle\Services\Api\Security
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@form.factory'
+            - '@security.password_encoder'
+            - '@workflow.user_process'
+            - '@lexik_jwt_authentication.encoder'
+            - '@event_dispatcher'
+            - '@request_stack'

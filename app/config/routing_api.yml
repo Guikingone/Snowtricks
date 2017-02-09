@@ -76,3 +76,14 @@ api_single_commentary_delete:
     defaults: { _controller: AppBundle:Api/Commentary:deleteSingleCommentaryById }
     requirements:
         id: \d+
+
+# Security routes
+api_register:
+    path:    /register
+    methods: 'POST'
+    defaults: { _controller: UserBundle:Api/Security:register }
+
+api_login:
+    path:    /login
+    methods: 'POST'
+    defaults: { _controller: UserBundle:Api/Security:login }

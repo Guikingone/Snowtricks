@@ -111,6 +111,27 @@ class TricksControllerTest extends WebTestCase
      * @see TricksController::postTricksAction()
      * @see ApiTricksManager::postNewTricks()
      */
+    public function testNewTricks_Failure_SameName()
+    {
+        $this->client->request('POST', '/api/tricks/new', [
+            'name' => 'AirLock',
+            'groups' => 'Old school',
+            'resume' => 'My jaw, that\'s what i call a trick !',
+        ]);
+
+        $this->assertEquals(
+            Response::HTTP_SEE_OTHER,
+            $this->client->getResponse()->getStatusCode()
+        );
+    }
+
+    /**
+     * Test if a new Tricks can be added with bad informations
+     * send through the form.
+     *
+     * @see TricksController::postTricksAction()
+     * @see ApiTricksManager::postNewTricks()
+     */
     public function testNewTricks_Failure()
     {
         $this->client->request('POST', '/api/tricks/new', [
@@ -133,6 +154,26 @@ class TricksControllerTest extends WebTestCase
      */
     public function testPutTricksUsingHisId()
     {
+        $this->client->request('PUT', '/api/tricks/put/11', [
+            'name' => 'Frontflip',
+            'groups' => 'Flip',
+            'resume' => 'What a nice flip from hell !',
+        ]);
+
+        $this->assertEquals(
+            Response::HTTP_OK,
+            $this->client->getResponse()->getStatusCode()
+        );
+    }
+
+    /**
+     * Test the put method in order to update the tricks.
+     *
+     * @see TricksController::putSingleTricksAction()
+     * @see ApiTricksManager::putSingleTricks()
+     */
+    public function testPutTricksUsingHisId_Failure_BadId()
+    {
         $this->client->request('PUT', '/api/tricks/put/5', [
             'name' => 'FrontGrab',
             'groups' => 'Grabs',
@@ -141,6 +182,26 @@ class TricksControllerTest extends WebTestCase
 
         $this->assertEquals(
             Response::HTTP_CREATED,
+            $this->client->getResponse()->getStatusCode()
+        );
+    }
+
+    /**
+     * Test the put method in order to update the tricks.
+     *
+     * @see TricksController::putSingleTricksAction()
+     * @see ApiTricksManager::putSingleTricks()
+     */
+    public function testPutTricksUsingHisId_Failure()
+    {
+        $this->client->request('PUT', '/api/tricks/put/568', [
+            'name' => 'Frontflip',
+            'groups' => 'Flip',
+            'resume' => 'What a nice flip from hell !',
+        ]);
+
+        $this->assertEquals(
+            Response::HTTP_SEE_OTHER,
             $this->client->getResponse()->getStatusCode()
         );
     }
@@ -172,8 +233,8 @@ class TricksControllerTest extends WebTestCase
      */
     public function testPatchSingleTricksUsingHisId_Failure()
     {
-        $this->client->request('PATCH', '/api/tricks/patch/268', [
-            'name' => 'BackLockFlip',
+        $this->client->request('PATCH', '/api/tricks/patch/5', [
+            'nam' => 'BackLockFlip',
             'groups' => 'Flip',
         ]);
 
