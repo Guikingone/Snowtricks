@@ -12,25 +12,41 @@
 namespace UserBundle\Services\Api;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMInvalidArgumentException;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\DefaultEncoder;
-use Symfony\Component\Form\Exception\AlreadySubmittedException;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Debug\TraceableEventDispatcher;
-use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Workflow;
+
+// Entity
 use UserBundle\Entity\User;
+
+// Events
+use UserBundle\Events\ConfirmedUserEvent;
+use UserBundle\Events\ForgotPasswordEvent;
 use UserBundle\Events\UserRegisteredEvent;
+
+// Forms
+use UserBundle\Form\Type\ForgotPasswordType;
 use UserBundle\Form\Type\LoginType;
 use UserBundle\Form\Type\RegisterType;
 
+// Exceptions
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMInvalidArgumentException;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
+use Symfony\Component\Workflow\Exception\LogicException;
+use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTEncodeFailureException;
+use Symfony\Component\Form\Exception\AlreadySubmittedException;
+
+/**
+ * Class Security.
+ *
+ * @author Guillaume Loulier <contact@guillaumeloulier.fr>
+ */
 class Security
 {
     /** @var EntityManager */
@@ -38,9 +54,6 @@ class Security
 
     /** @var FormFactory */
     private $form;
-
-    /** @var UserPasswordEncoder */
-    private $security;
 
     /** @var AuthenticationUtils */
     private $authentication;
@@ -62,16 +75,16 @@ class Security
      *
      * @param EntityManager            $doctrine
      * @param FormFactory              $form
-     * @param UserPasswordEncoder      $security
+     * @param AuthenticationUtils      $authentication
      * @param Workflow                 $workflow
      * @param DefaultEncoder           $encoder
      * @param TraceableEventDispatcher $dispatcher
      * @param RequestStack             $request
      */
-    public function __construct (
+    public function __construct(
         EntityManager $doctrine,
         FormFactory $form,
-        UserPasswordEncoder $security,
+        AuthenticationUtils $authentication,
         Workflow $workflow,
         DefaultEncoder $encoder,
         TraceableEventDispatcher $dispatcher,
@@ -79,7 +92,7 @@ class Security
     ) {
         $this->doctrine = $doctrine;
         $this->form = $form;
-        $this->security = $security;
+        $this->authentication = $authentication;
         $this->workflow = $workflow;
         $this->encoder = $encoder;
         $this->dispatcher = $dispatcher;
@@ -119,7 +132,7 @@ class Security
         $data = $this->request->getCurrentRequest()->request->all();
 
         $form = $this->form->create(RegisterType::class, $user, [
-            'csrf_protection' => false
+            'csrf_protection' => false,
         ]);
         $form->submit($data);
 
@@ -135,7 +148,7 @@ class Security
             return new JsonResponse(
                 [
                     $user,
-                    'message' => 'Resource created'
+                    'message' => 'Resource created',
                 ],
                 Response::HTTP_CREATED
             );
@@ -143,14 +156,174 @@ class Security
 
         return new JsonResponse(
             [
-                'message' => 'Form Invalid.'
+                'message' => 'Form Invalid.',
             ],
             Response::HTTP_BAD_REQUEST
         );
     }
 
+    /**
+     * Allow to log a user by using the data passed through the request;.
+     *
+     * In the case that the values are valid, the token is generated and send
+     * through a 200 (OK) headers code.
+     *
+     * @see Response::HTTP_OK
+     *
+     * In the case that the values aren't valid, the response is send with
+     * a 400 (BAD_REQUEST) headers code.
+     *
+     * @see Response::HTTP_BAD_REQUEST
+     *
+     * @throws InvalidOptionsException
+     * @throws AlreadySubmittedException
+     * @throws JWTEncodeFailureException
+     *
+     * @return JsonResponse
+     */
     public function login()
     {
-        // TODO
+        $data = $this->request->getCurrentRequest()->request->all();
+
+        $form = $this->form->create(LoginType::class, [
+            'username' => $this->authentication->getLastUsername(),
+        ]);
+        $form->submit($data);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Generate the token linked to this profile.
+            $token = $this->encoder->encode([
+                'username' => $form['username'],
+            ]);
+
+            return new JsonResponse(
+                [
+                    'message' => 'Connexion successful',
+                    'token' => $token,
+                ],
+                Response::HTTP_OK
+            );
+        }
+
+        return new JsonResponse(
+            [
+                'message' => 'Form invalid.',
+            ],
+            Response::HTTP_BAD_REQUEST
+        );
+    }
+
+    /**
+     * Allow the user authenticated to retrieve his password using
+     * his email and username.
+     *
+     * In the case that the values send are valid, the response
+     * send a 200 (OK) headers code and the credentials are send by email.
+     *
+     * @see Response::HTTP_OK
+     *
+     * In the case that the values send aren't valid, the response
+     * send a 400 (BAD_REQUEST) headers code.
+     *
+     * @see Response::HTTP_BAD_REQUEST
+     *
+     * @throws InvalidOptionsException
+     * @throws AlreadySubmittedException
+     * @throws \LogicException
+     *
+     * @return JsonResponse
+     */
+    public function forgotPassword()
+    {
+        $data = $this->request->getCurrentRequest()->request->all();
+
+        $form = $this->form->create(ForgotPasswordType::class, null, [
+            'csrf_protection' => false,
+        ]);
+        $form->submit($data);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $user = $this->doctrine->getRepository('UserBundle:User')
+                                   ->findOneBy([
+                                       'username' => $data['username'],
+                                   ]);
+
+            if (!$user) {
+                throw new \LogicException(
+                    sprintf(
+                        'The user does not exist into the BDD, 
+                    be sure to have to have submit the right username !'
+                    )
+                );
+            }
+
+            $event = new ForgotPasswordEvent($user);
+            $this->dispatcher->dispatch(ForgotPasswordEvent::NAME, $event);
+
+            return new JsonResponse(
+                [
+                    'message' => 'Credentials send by email.',
+                ],
+                Response::HTTP_OK
+            );
+        }
+
+        return new JsonResponse(
+            [
+                'message' => 'Form invalid.',
+            ],
+            Response::HTTP_BAD_REQUEST
+        );
+    }
+
+    /**
+     * Allow to validate a user using the generated token.
+     *
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     *
+     * @return JsonResponse
+     */
+    public function validateUser()
+    {
+        $token = $this->request->getCurrentRequest()->get('token');
+
+        if (!preg_match('/token_[a-z0-9A-Z]/', $token)) {
+            return new JsonResponse(
+                [
+                    'message' => 'Invalid token'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
+        if ($token) {
+            $user = $this->doctrine->getRepository('UserBundle:User')
+                                   ->findOneBy([
+                                       'token' => $token,
+                                   ]);
+
+            if (!$user || $user->getValidated()) {
+                return new JsonResponse(
+                    [
+                        'message' => 'Bad credentials || Resource already validated'
+                    ],
+                    Response::HTTP_BAD_REQUEST
+                );
+            }
+
+            if ($user->getToken() === $token) {
+                $event = new ConfirmedUserEvent($user);
+                $this->dispatcher->dispatch(ConfirmedUserEvent::NAME, $event);
+            }
+        }
+
+        return new JsonResponse(
+            [
+                'message' => 'Resource validated.'
+            ],
+            Response::HTTP_OK
+        );
     }
 }

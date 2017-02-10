@@ -87,3 +87,15 @@ api_login:
     path:    /login
     methods: 'POST'
     defaults: { _controller: UserBundle:Api/Security:login }
+
+api_forgot_password:
+    path:    /forgot/password
+    methods: 'POST'
+    defaults: { _controller: UserBundle:Api/Security:forgotPassword }
+
+api_validate_token:
+    path:    /validate/profile/{token}
+    methods: 'GET'
+    defaults: { _controller: UserBundle:Api/Security:validatedProfile }
+    requirements:
+        token: \s+

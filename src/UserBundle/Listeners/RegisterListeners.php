@@ -11,18 +11,22 @@
 
 namespace UserBundle\Listeners;
 
-use Symfony\Bundle\TwigBundle\TwigEngine;
-use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
-use Symfony\Component\Workflow\Exception\LogicException;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Workflow\Workflow;
-use UserBundle\Events\ConfirmedUserEvent;
+use Symfony\Bundle\TwigBundle\TwigEngine;
 
 // Entity
 use UserBundle\Events\ForgotPasswordEvent;
 use UserBundle\Events\UserRegisteredEvent;
 use UserBundle\Managers\UserManager;
 use UserBundle\Services\Security;
+
+// Event
+use UserBundle\Events\ConfirmedUserEvent;
+
+// Exceptions
+use Symfony\Component\Workflow\Exception\LogicException;
 
 /**
  * Class RegisterListeners.
@@ -31,29 +35,19 @@ use UserBundle\Services\Security;
  */
 class RegisterListeners
 {
-    /**
-     * @var UserPasswordEncoder
-     */
+    /** @var UserPasswordEncoder */
     private $encoder;
 
-    /**
-     * @var Session
-     */
+    /** @var Session */
     private $session;
 
-    /**
-     * @var Workflow
-     */
+    /** @var Workflow */
     private $workflow;
 
-    /**
-     * @var TwigEngine
-     */
+    /** @var TwigEngine */
     private $templating;
 
-    /**
-     * @var \Swift_Mailer
-     */
+    /** @var \Swift_Mailer */
     private $mailer;
 
     /**
@@ -175,7 +169,10 @@ class RegisterListeners
 
         if (is_object($entity)) {
             // Generate a alternative password.
-            $password = $this->encoder->encodePassword($entity, uniqid('password_', true));
+            $password = $this->encoder->encodePassword(
+                $entity,
+                uniqid('password_', true)
+            );
             $entity->setPassword($password);
 
             $this->session->getFlashBag()->add(

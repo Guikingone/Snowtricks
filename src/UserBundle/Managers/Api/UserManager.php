@@ -16,6 +16,7 @@ namespace UserBundle\Managers\Api;
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
-class ApiUserManager
+class UserManager
 {
+
 }

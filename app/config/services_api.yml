@@ -23,7 +23,7 @@ services:
         arguments:
             - '@doctrine.orm.entity_manager'
             - '@form.factory'
-            - '@security.password_encoder'
+            - '@security.authentication_utils'
             - '@workflow.user_process'
             - '@lexik_jwt_authentication.encoder'
             - '@event_dispatcher'

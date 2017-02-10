@@ -16,12 +16,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 // Exceptions
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMInvalidArgumentException;
+use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTEncodeFailureException;
 use Symfony\Component\Form\Exception\AlreadySubmittedException;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\Workflow\Exception\LogicException;
 
 /**
- * Class SecurityController
+ * Class SecurityController.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
@@ -41,8 +42,32 @@ class SecurityController extends Controller
         return $this->get('api.security')->register();
     }
 
+    /**
+     * @throws InvalidOptionsException
+     * @throws AlreadySubmittedException
+     * @throws JWTEncodeFailureException
+     *
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
     public function loginAction()
     {
         return $this->get('api.security')->login();
+    }
+
+    /**
+     * @throws InvalidOptionsException
+     * @throws AlreadySubmittedException
+     * @throws \LogicException
+     *
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function forgotPasswordAction()
+    {
+        return $this->get('api.security')->forgotPassword();
+    }
+
+    public function validatedProfileAction()
+    {
+        return $this->get('api.security')->validateUser();
     }
 }
