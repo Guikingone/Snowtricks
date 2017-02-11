@@ -34,19 +34,13 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class UserManager
 {
-    /**
-     * @var EntityManager
-     */
+    /** @var EntityManager */
     private $doctrine;
 
-    /**
-     * @var Session
-     */
+    /** @var Session */
     private $session;
 
-    /**
-     * @var TraceableEventDispatcher
-     */
+    /** @var TraceableEventDispatcher */
     private $dispatcher;
 
     /**
