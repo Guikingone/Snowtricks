@@ -12,5 +12,4 @@ use Doctrine\ORM\EntityRepository as Repository;
  */
 class UserRepository extends Repository
 {
-
 }

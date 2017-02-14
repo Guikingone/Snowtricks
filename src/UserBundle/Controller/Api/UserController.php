@@ -14,11 +14,10 @@ namespace UserBundle\Controller\Api;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 /**
- * Class UserController
+ * Class UserController.
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
 class UserController extends Controller
 {
-
 }

@@ -186,14 +186,14 @@ class Security
         $data = $this->request->getCurrentRequest()->request->all();
 
         $form = $this->form->create(LoginType::class, [
-            'username' => $this->authentication->getLastUsername(),
+            '_username' => $this->authentication->getLastUsername(),
         ]);
         $form->submit($data);
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Generate the token linked to this profile.
             $token = $this->encoder->encode([
-                'username' => $form['username'],
+                'username' => $form['_username'],
             ]);
 
             return new JsonResponse(
@@ -223,8 +223,7 @@ class Security
      * @see Response::HTTP_OK
      *
      * In the case that the values send aren't valid, the response
-     * send a 400 (BAD_REQUEST) headers code.
-     *
+     * send a 400 (BAD_REQUEST) headers code
      * @see Response::HTTP_BAD_REQUEST
      *
      * @throws InvalidOptionsException
@@ -292,7 +291,7 @@ class Security
         if (!preg_match('/token_[a-z0-9A-Z]/', $token)) {
             return new JsonResponse(
                 [
-                    'message' => 'Invalid token'
+                    'message' => 'Invalid token',
                 ],
                 Response::HTTP_BAD_REQUEST
             );
@@ -307,7 +306,7 @@ class Security
             if (!$user || $user->getValidated()) {
                 return new JsonResponse(
                     [
-                        'message' => 'Bad credentials || Resource already validated'
+                        'message' => 'Bad credentials || Resource already validated',
                     ],
                     Response::HTTP_BAD_REQUEST
                 );
@@ -321,7 +320,7 @@ class Security
 
         return new JsonResponse(
             [
-                'message' => 'Resource validated.'
+                'message' => 'Resource validated.',
             ],
             Response::HTTP_OK
         );

@@ -31,8 +31,8 @@ class LoginType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('username', TextType::class)
-            ->add('password', PasswordType::class)
+            ->add('_username', TextType::class)
+            ->add('_password', PasswordType::class)
         ;
     }
 
@@ -41,5 +41,10 @@ class LoginType extends AbstractType
         $resolver->setDefaults([
             'csrf_protection' => false,
         ]);
+    }
+
+    public function getBlockPrefix()
+    {
+        return '';
     }
 }

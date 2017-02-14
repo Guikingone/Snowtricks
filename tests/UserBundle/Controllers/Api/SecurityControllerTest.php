@@ -111,6 +111,25 @@ class SecurityControllerTest extends WebTestCase
     }
 
     /**
+     * Test if the login method accept the request.
+     *
+     * @see SecurityController::loginAction()
+     * @see Security::login()
+     */
+    public function testApiLogin_Failure_BadInfos()
+    {
+        $this->client->request('POST', '/api/login', [
+            'username' => 'Root',
+            'password' => 'Ie1Fpodm',
+        ]);
+
+        $this->assertEquals(
+            Response::HTTP_OK,
+            $this->client->getResponse()->getStatusCode()
+        );
+    }
+
+    /**
      * Test if the forgot password action work with valid input.
      *
      * @see SecurityController::forgotPasswordAction()

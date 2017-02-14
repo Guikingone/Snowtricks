@@ -18,5 +18,4 @@ namespace UserBundle\Managers\Api;
  */
 class UserManager
 {
-
 }

@@ -11,6 +11,9 @@
 
 namespace UserBundle\Listeners;
 
+use Lexik\Bundle\JWTAuthenticationBundle\Encoder\DefaultEncoder;
+use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTEncodeFailureException;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Workflow\Workflow;
@@ -44,6 +47,12 @@ class RegisterListeners
     /** @var Workflow */
     private $workflow;
 
+    /** @var RequestStack */
+    private $request;
+
+    /** @var DefaultEncoder */
+    private $jwtEncoder;
+
     /** @var TwigEngine */
     private $templating;
 
@@ -56,6 +65,8 @@ class RegisterListeners
      * @param UserPasswordEncoder $encoder
      * @param Session             $session
      * @param Workflow            $workflow
+     * @param RequestStack        $request
+     * @param DefaultEncoder      $jwtEncoder
      * @param TwigEngine          $templating
      * @param \Swift_Mailer       $mailer
      */
@@ -63,12 +74,16 @@ class RegisterListeners
         UserPasswordEncoder $encoder,
         Session $session,
         Workflow $workflow,
+        RequestStack $request,
+        DefaultEncoder $jwtEncoder,
         TwigEngine $templating,
         \Swift_Mailer $mailer
     ) {
         $this->encoder = $encoder;
         $this->session = $session;
         $this->workflow = $workflow;
+        $this->request = $request;
+        $this->jwtEncoder = $jwtEncoder;
         $this->templating = $templating;
         $this->mailer = $mailer;
     }
@@ -121,6 +136,7 @@ class RegisterListeners
      * @param ConfirmedUserEvent $event
      *
      * @throws LogicException
+     * @throws JWTEncodeFailureException
      * @throws \RuntimeException
      * @throws \Twig_Error
      *
@@ -132,6 +148,12 @@ class RegisterListeners
 
         $user->setValidated(true);
         $user->setRoles(['ROLE_USER']);
+
+        $token = $this->jwtEncoder->encode([
+            'username' => $user->getUsername(),
+        ]);
+
+        $user->setApiKey($token);
 
         $this->workflow->apply($user, 'validation_phase');
 
