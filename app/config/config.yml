@@ -2,7 +2,9 @@ imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
     - { resource: services.yml }
-    - { resource: services_api.yml }
+    - { resource: listeners.yml }
+    - { resource: managers.yml }
+    - { resource: managers_api.yml }
     - { resource: workflows.yml }
 
 parameters:

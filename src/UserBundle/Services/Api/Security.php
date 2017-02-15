@@ -109,8 +109,7 @@ class Security
      * @see Response::HTTP_CREATED
      *
      * In the case that the form is invalid after submission of the
-     * data, the response send a 400 (BAD_REQUEST) headers code.
-     *
+     * data, the response send a 400 (BAD_REQUEST) headers code
      * @see Response::HTTP_BAD_REQUEST
      *
      * @throws LogicException
@@ -171,8 +170,7 @@ class Security
      * @see Response::HTTP_OK
      *
      * In the case that the values aren't valid, the response is send with
-     * a 400 (BAD_REQUEST) headers code.
-     *
+     * a 400 (BAD_REQUEST) headers code
      * @see Response::HTTP_BAD_REQUEST
      *
      * @throws InvalidOptionsException

@@ -34,14 +34,10 @@ use Symfony\Component\Yaml\Exception\ParseException;
  */
 class FileManager
 {
-    /**
-     * @var EntityManager
-     */
+    /** @var EntityManager */
     private $doctrine;
 
-    /**
-     * @var Workflow
-     */
+    /** @var Workflow */
     private $workflow;
 
     // Store the kernel.root.dir
@@ -53,9 +49,7 @@ class FileManager
     // Store the path of files.
     private $paths;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $tricks = [];
 
     /**

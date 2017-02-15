@@ -24,7 +24,7 @@ use UserBundle\Services\Api\Security;
 class SecurityControllerTest extends WebTestCase
 {
     /** @var null */
-    private $client = null;
+    private $client;
 
     /** {@inheritdoc} */
     public function setUp()

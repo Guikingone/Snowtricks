@@ -1,0 +1,26 @@
+services:
+    # AppBundle Managers
+    app.tricks_manager:
+        class: AppBundle\Managers\TricksManager
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@form.factory'
+            - '@event_dispatcher'
+            - '@workflow.tricks_process'
+
+    app.commentary_manager:
+        class: AppBundle\Managers\CommentaryManager
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@form.factory'
+            - '@session'
+            - '@event_dispatcher'
+
+    # UserBundle manager
+    user.user_manager:
+        class: UserBundle\Managers\UserManager
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@session'
+            - '@security.authorization_checker'
+            - '@event_dispatcher'
