@@ -19,6 +19,7 @@ use Doctrine\ORM\ORMInvalidArgumentException;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTEncodeFailureException;
 use Symfony\Component\Form\Exception\AlreadySubmittedException;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Workflow\Exception\LogicException;
 
 /**
@@ -45,6 +46,8 @@ class SecurityController extends Controller
     /**
      * @throws InvalidOptionsException
      * @throws AlreadySubmittedException
+     * @throws UsernameNotFoundException
+     * @throws \InvalidArgumentException
      * @throws JWTEncodeFailureException
      *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
@@ -66,6 +69,12 @@ class SecurityController extends Controller
         return $this->get('api.security')->forgotPassword();
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     *
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
     public function validatedProfileAction()
     {
         return $this->get('api.security')->validateUser();

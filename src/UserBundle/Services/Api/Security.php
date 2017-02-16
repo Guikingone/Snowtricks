@@ -18,7 +18,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Debug\TraceableEventDispatcher;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 use Symfony\Component\Workflow\Workflow;
 
 // Entity
@@ -41,6 +43,7 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\Workflow\Exception\LogicException;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTEncodeFailureException;
 use Symfony\Component\Form\Exception\AlreadySubmittedException;
+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 
 /**
  * Class Security.
@@ -55,8 +58,8 @@ class Security
     /** @var FormFactory */
     private $form;
 
-    /** @var AuthenticationUtils */
-    private $authentication;
+    /** @var TokenStorage */
+    private $tokenStorage;
 
     /** @var Workflow */
     private $workflow;
@@ -75,7 +78,7 @@ class Security
      *
      * @param EntityManager            $doctrine
      * @param FormFactory              $form
-     * @param AuthenticationUtils      $authentication
+     * @param TokenStorage             $tokenStorage
      * @param Workflow                 $workflow
      * @param DefaultEncoder           $encoder
      * @param TraceableEventDispatcher $dispatcher
@@ -84,7 +87,7 @@ class Security
     public function __construct(
         EntityManager $doctrine,
         FormFactory $form,
-        AuthenticationUtils $authentication,
+        TokenStorage $tokenStorage,
         Workflow $workflow,
         DefaultEncoder $encoder,
         TraceableEventDispatcher $dispatcher,
@@ -92,7 +95,7 @@ class Security
     ) {
         $this->doctrine = $doctrine;
         $this->form = $form;
-        $this->authentication = $authentication;
+        $this->tokenStorage = $tokenStorage;
         $this->workflow = $workflow;
         $this->encoder = $encoder;
         $this->dispatcher = $dispatcher;
@@ -109,7 +112,8 @@ class Security
      * @see Response::HTTP_CREATED
      *
      * In the case that the form is invalid after submission of the
-     * data, the response send a 400 (BAD_REQUEST) headers code
+     * data, the response send a 400 (BAD_REQUEST) headers code.
+     *
      * @see Response::HTTP_BAD_REQUEST
      *
      * @throws LogicException
@@ -162,7 +166,7 @@ class Security
     }
 
     /**
-     * Allow to log a user by using the data passed through the request;.
+     * Allow to log a user by using the data passed through the request.
      *
      * In the case that the values are valid, the token is generated and send
      * through a 200 (OK) headers code.
@@ -170,11 +174,14 @@ class Security
      * @see Response::HTTP_OK
      *
      * In the case that the values aren't valid, the response is send with
-     * a 400 (BAD_REQUEST) headers code
+     * a 400 (BAD_REQUEST) headers code.
+     *
      * @see Response::HTTP_BAD_REQUEST
      *
      * @throws InvalidOptionsException
      * @throws AlreadySubmittedException
+     * @throws UsernameNotFoundException
+     * @throws \InvalidArgumentException
      * @throws JWTEncodeFailureException
      *
      * @return JsonResponse
@@ -183,15 +190,38 @@ class Security
     {
         $data = $this->request->getCurrentRequest()->request->all();
 
-        $form = $this->form->create(LoginType::class, [
-            '_username' => $this->authentication->getLastUsername(),
-        ]);
+        $form = $this->form->create(LoginType::class);
         $form->submit($data);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $user = $this->doctrine->getRepository('UserBundle:User')
+                                   ->findOneBy([
+                                       'username' => $data['_username']
+                                   ]);
+
+            if (!$user) {
+                throw new UsernameNotFoundException(
+                    sprintf(
+                        'The username provide is invalid !'
+                    )
+                );
+            }
+
+            $token = new UsernamePasswordToken(
+                $user, $data['_password'], 'api'
+            );
+            $this->tokenStorage->setToken($token);
+
+            // Dispatch the event responsible for the login phase.
+            $event = new InteractiveLoginEvent(
+                $this->request->getCurrentRequest(),
+                $token
+            );
+            $this->dispatcher->dispatch(InteractiveLoginEvent::class, $event);
+
             // Generate the token linked to this profile.
             $token = $this->encoder->encode([
-                'username' => $form['_username'],
+                'username' => $data['_username'],
             ]);
 
             return new JsonResponse(
@@ -221,7 +251,8 @@ class Security
      * @see Response::HTTP_OK
      *
      * In the case that the values send aren't valid, the response
-     * send a 400 (BAD_REQUEST) headers code
+     * send a 400 (BAD_REQUEST) headers code.
+     *
      * @see Response::HTTP_BAD_REQUEST
      *
      * @throws InvalidOptionsException

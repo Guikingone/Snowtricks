@@ -13,7 +13,11 @@ namespace tests\UserBundle\Controllers\Api;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
+
+// Controllers
 use UserBundle\Controller\Api\SecurityController;
+
+// Services
 use UserBundle\Services\Api\Security;
 
 /**
@@ -81,8 +85,8 @@ class SecurityControllerTest extends WebTestCase
     public function testApiLogin()
     {
         $this->client->request('POST', '/api/login', [
-            'username' => 'NanarLand',
-            'password' => 'Ie1FDLNNA@',
+            '_username' => 'NanarLand',
+            '_password' => 'Ie1FDLNNA@',
         ]);
 
         $this->assertEquals(
@@ -119,12 +123,12 @@ class SecurityControllerTest extends WebTestCase
     public function testApiLogin_Failure_BadInfos()
     {
         $this->client->request('POST', '/api/login', [
-            'username' => 'Root',
-            'password' => 'Ie1Fpodm',
+            '_username' => 'Root',
+            '_password' => 'Ie1Fpodm',
         ]);
 
         $this->assertEquals(
-            Response::HTTP_OK,
+            Response::HTTP_FOUND,
             $this->client->getResponse()->getStatusCode()
         );
     }
@@ -186,6 +190,12 @@ class SecurityControllerTest extends WebTestCase
         );
     }
 
+    /**
+     * Test if a user can validate his profile using a token.
+     *
+     * @see SecurityController::validatedProfileAction()
+     * @see Security::validateUser()
+     */
     public function testApiValidateUser()
     {
         $this->client->request('GET', '/api/validate/profile/token_e61e26a5a42d3g9r4');
