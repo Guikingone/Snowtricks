@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace UserBundle\Services;
+namespace UserBundle\Services\Web;
 
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\FormFactory;

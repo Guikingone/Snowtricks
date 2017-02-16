@@ -12,11 +12,10 @@
 $datetime = new DateTime();
 $path = $datetime->format('d-m-Y').'_'.($datetime->format('H') + 1).'h'.$datetime->format('i').'min';
 
+exec('php-cs-fixer fix ./tests --level=symfony');
 exec('php bin/console d:d:d --force');
 exec('php bin/console d:d:c');
 exec('php bin/console d:s:u --force');
-exec('php-cs-fixer fix ./src --level=symfony');
-exec('php-cs-fixer fix ./tests --level=symfony');
 exec('php bin/console d:f:l -n');
 exec('php bin/console appbundle:tricks:hydrate nocache');
 exec('phpunit --coverage-html ./_coverage/'.$path);

@@ -34,7 +34,7 @@ use UserBundle\Managers\UserManager;
 class UserControllerTest extends WebTestCase
 {
     /** @var null */
-    private $client = null;
+    private $client;
 
     /** {@inheritdoc} */
     public function setUp()

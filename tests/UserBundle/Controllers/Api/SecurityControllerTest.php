@@ -34,6 +34,7 @@ class SecurityControllerTest extends WebTestCase
     public function setUp()
     {
         $this->client = static::createClient();
+        $this->client->enableProfiler();
     }
 
     /**
@@ -50,10 +51,21 @@ class SecurityControllerTest extends WebTestCase
             'plainPassword' => 'Ie1FDLNNA@',
         ]);
 
+        $mailer = $this->client->getProfile()->getCollector('swiftmailer');
+
         $this->assertEquals(
             Response::HTTP_CREATED,
             $this->client->getResponse()->getStatusCode()
         );
+
+        $this->assertEquals(1, $mailer->getMessageCount());
+
+        $collectedMessages = $mailer->getMessages();
+        $message = $collectedMessages[0];
+
+        $this->assertInstanceOf(\Swift_Message::class, $message);
+        $this->assertEquals('Snowtricks - Notification system', $message->getSubject());
+        $this->assertEquals('contact@snowtricks.fr', key($message->getFrom()));
     }
 
     /**

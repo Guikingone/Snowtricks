@@ -24,7 +24,7 @@ services:
 
     # User security
     user.security:
-        class: UserBundle\Services\Security
+        class: UserBundle\Services\Web\Security
         arguments:
            - '@doctrine.orm.entity_manager'
            - '@form.factory'
