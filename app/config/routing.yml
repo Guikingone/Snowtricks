@@ -100,3 +100,7 @@ logout:
 api:
     prefix: /api
     resource: "routing_api.yml"
+
+NelmioApiDocBundle:
+    resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
+    prefix:   /app/doc

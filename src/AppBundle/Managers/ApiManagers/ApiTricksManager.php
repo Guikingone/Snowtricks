@@ -239,16 +239,19 @@ class ApiTricksManager
      *
      * In the case that the resource is created but has been found
      * due by a past persist, a 303 (SEE OTHER) headers code is return
-     * with the state of the resource
+     * with the state of the resource.
+     *
      * @see Response::HTTP_SEE_OTHER
      *
      * In the case that the resource is find and could be updated,
      * the response send a 200 (OK) headers code
-     * and the actual state of the resource
+     * and the actual state of the resource.
+     *
      * @see Response::HTTP_OK
      *
      * In the case that the resource could'nt been updated,
-     * the response send a 204 (NO CONTENT) headers code
+     * the response send a 204 (NO CONTENT) headers code.
+     *
      * @see Response::HTTP_NO_CONTENT
      *
      * @throws LogicException
