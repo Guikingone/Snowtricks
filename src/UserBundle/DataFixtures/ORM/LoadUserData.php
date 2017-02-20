@@ -121,6 +121,21 @@ class LoadUserData extends AbstractFixture implements
         $author_V->setLocked(false);
         $author_V->setActive(true);
 
+        // Create a user in order to simulate the authentication process.
+        $author_VI = new User();
+        $author_VI->setFirstname('Eltna');
+        $author_VI->setLastname('Arthco');
+        $author_VI->setUsername('Etna');
+        $author_VI->setRoles(['ROLE_USER']);
+        $author_VI->setPlainPassword('Lk__DTHE');
+        $author_VI->setBirthdate(new \DateTime());
+        $author_VI->setOccupation('Rally Driver');
+        $author_VI->setEmail('duduche@snowtricks.fr');
+        $author_VI->setToken('token_e61e26a5a42d35472');
+        $author_VI->setValidated(false);
+        $author_VI->setLocked(false);
+        $author_VI->setActive(true);
+
         $workflow = $this->container->get('workflow.user_process');
         $encoder = $this->container->get('security.password_encoder');
 
@@ -139,6 +154,9 @@ class LoadUserData extends AbstractFixture implements
         $password = $encoder->encodePassword($author_V, $author_V->getPlainPassword());
         $author_V->setPassword($password);
 
+        $password = $encoder->encodePassword($author_VI, $author_VI->getPlainPassword());
+        $author_VI->setPassword($password);
+
         $workflow->apply($author, 'register_phase');
         $workflow->apply($author_II, 'register_phase');
         $workflow->apply($author_III, 'register_phase');
@@ -147,12 +165,14 @@ class LoadUserData extends AbstractFixture implements
         $workflow->apply($author_IV, 'validation_phase');
         $workflow->apply($author_V, 'register_phase');
         $workflow->apply($author_V, 'validation_phase');
+        $workflow->apply($author_VI, 'register_phase');
 
         $manager->persist($author);
         $manager->persist($author_II);
         $manager->persist($author_III);
         $manager->persist($author_IV);
         $manager->persist($author_V);
+        $manager->persist($author_VI);
         $manager->flush();
 
         $this->addReference('user', $author);

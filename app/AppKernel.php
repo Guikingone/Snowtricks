@@ -18,11 +18,9 @@ class AppKernel extends Kernel
             new AppBundle\AppBundle(),
             new UserBundle\UserBundle(),
 
+            // API bundles
             new \JMS\SerializerBundle\JMSSerializerBundle(),
             new \Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle(),
-            new FOS\RestBundle\FOSRestBundle(),
-            new Nelmio\CorsBundle\NelmioCorsBundle(),
-            new Nelmio\ApiDocBundle\NelmioApiDocBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

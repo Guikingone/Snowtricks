@@ -98,4 +98,4 @@ api_validate_token:
     methods: 'GET'
     defaults: { _controller: UserBundle:Api/Security:validatedProfile }
     requirements:
-        token: \s+
+        token: \S+

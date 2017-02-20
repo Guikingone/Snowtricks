@@ -210,10 +210,42 @@ class SecurityControllerTest extends WebTestCase
      */
     public function testApiValidateUser()
     {
-        $this->client->request('GET', '/api/validate/profile/token_e61e26a5a42d3g9r4');
+        $this->client->request('GET', '/api/validate/profile/token_e61e26a5a42d35472');
 
         $this->assertEquals(
             Response::HTTP_OK,
+            $this->client->getResponse()->getStatusCode()
+        );
+    }
+
+    /**
+     * Test if a user can validate his profile using a token.
+     *
+     * @see SecurityController::validatedProfileAction()
+     * @see Security::validateUser()
+     */
+    public function testApiValidateUser_TokenAlreadyValidated()
+    {
+        $this->client->request('GET', '/api/validate/profile/token_e61e26a5a42d3g9r4');
+
+        $this->assertEquals(
+            Response::HTTP_BAD_REQUEST,
+            $this->client->getResponse()->getStatusCode()
+        );
+    }
+
+    /**
+     * Test if a user can validate his profile using a token.
+     *
+     * @see SecurityController::validatedProfileAction()
+     * @see Security::validateUser()
+     */
+    public function testApiValidateUser_InvalidToken()
+    {
+        $this->client->request('GET', '/api/validate/profile/e61e26a5a42d35472');
+
+        $this->assertEquals(
+            Response::HTTP_BAD_REQUEST,
             $this->client->getResponse()->getStatusCode()
         );
     }

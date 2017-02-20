@@ -28,7 +28,7 @@ use AppBundle\Managers\ApiManagers\ApiTricksManager;
 class TricksControllerTest extends WebTestCase
 {
     /** @var null */
-    private $client = null;
+    private $client;
 
     /** {@inheritdoc} */
     public function setUp()
