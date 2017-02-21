@@ -1,7 +1,98 @@
+# Grabs
+"Mute":
+    groups: Grabs
+    resume: Saisie de la carre frontside de la planche entre les deux pieds avec la main avant.
+"Sad":
+     groups: Grabs
+     resume: Saisie de la carre backside de la planche, entre les deux pieds, avec la main avant.
+"Melancholie":
+     groups: Grabs
+     resume: Saisie de la carre backside de la planche, entre les deux pieds, avec la main avant.
+"Style week":
+     groups: Grabs
+     resume: Saisie de la carre backside de la planche, entre les deux pieds, avec la main avant.
+"Indy":
+     groups: Grabs
+     resume: Saisie de la carre frontside de la planche, entre les deux pieds, avec la main arrière.
+"Stalefish":
+     groups: Grabs
+     resume: Saisie de la carre backside de la planche entre les deux pieds avec la main arrière.
+"Tail grab":
+     groups: Grabs
+     resume: Saisie de la partie arrière de la planche, avec la main arrière.
+"Nose grab":
+    groups: Grabs
+    resume: Saisie de la partie avant de la planche, avec la main avant.
+"Japan ou japan air":
+    groups: Grabs
+    resume: Saisie de l'avant de la planche, avec la main avant, du côté de la carre frontside.
+"Seat belt":
+    groups: Grabs
+    resume: Saisie du carre frontside à l'arrière avec la main avant.
+"Truck driver":
+    groups: Grabs
+    resume: Saisie du carre avant et carre arrière avec chaque main (comme tenir un volant de voiture).
+
+# Rotations
+"180":
+     groups: Rotations
+     resume: Désigne un demi-tour, soit 180 degrés d'angle.
+"360":
+    groups: Rotations
+    resume: Trois six pour un tour complet.
+"540":
+    groups: Rotations
+    resume: Cinq quatre pour un tour et demi.
+"720":
+    groups: Rotations
+    resume: Sept deux pour deux tours complets.
+"900":
+     groups: Rotations
+     resume: Pour deux tours et demi.
+"1080":
+    groups: Rotations
+    resume: Ou big foot pour trois tours.
+"90":
+    groups: Rotation
+    resume: Pour un quart de tour simple.
+"270":
+    groups: Rotation
+    resume: Pour trois quarts de tours.
+"450":
+    groups: Rotation
+    resume: Pour un tour un quart.
+"630":
+    groups: Rotation
+    resume: Pour un tour trois quarts.
+"810":
+    groups: Rotation
+    resume: Pour deux tours un quart.
+
+# Flips
 "Backflip":
-    groups: flip
-    resume: A simple tricks
+    groups: Flip
+    resume: Pour une rotation en arrière.
 
 "FrontFlip":
-    groups: flip
-    resume: A simple second tricks !
+    groups: Flip
+    resume: Pour une rotation en avant.
+
+# Rotations désaxées
+
+# Slides
+"Nose slide":
+    groups: Slides
+    resume: Slide avec le nez de la planche sur la barre.
+"Tail slide":
+    groups: Slides
+    resume: Slide avec l'arrière de la planche sur la barre.
+
+# One Foot tricks
+"Superman":
+    groups: One Foot tricks
+    resume: Mouvement de saut en avant avec le pied droit décroché de la planche et replié vers l'avant.
+
+# Old School
+"Japan air":
+    groups: Old School
+    resume: Saisie de la planche au centre avec fléchissement des jambes vers l'arrière et bombage du torse en avant pour se propuler.

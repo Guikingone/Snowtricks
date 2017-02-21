@@ -11,8 +11,10 @@
 
 namespace AppBundle\Services;
 
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+
+// Exceptions
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 /**
  * Class Uploader.

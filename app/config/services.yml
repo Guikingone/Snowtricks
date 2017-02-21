@@ -10,7 +10,6 @@ services:
     # Manage the upload files or assets.
     app.uploader:
         class: AppBundle\Services\Uploader
-        public: false
         arguments:
             - '%images.uploads.dir%'
 

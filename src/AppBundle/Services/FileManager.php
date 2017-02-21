@@ -172,7 +172,7 @@ class FileManager
             // Find a user who's admin to link the tricks.
             $author = $this->doctrine->getRepository('UserBundle:User')
                                      ->findOneBy([
-                                         'roles' => 'ROLE_ADMIN',
+                                         'validated' => true,
                                      ]);
 
             foreach ($value as $values => $item) {

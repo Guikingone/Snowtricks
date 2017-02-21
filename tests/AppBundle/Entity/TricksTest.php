@@ -35,6 +35,7 @@ class TricksTest extends TestCase
         $tricks->setCreationDate(new \DateTime());
         $tricks->setGroups('Flip');
         $tricks->setResume('A simple backflip content ...');
+        $tricks->setValidated(true);
 
         // Media management.
         $tricks->addVideos('nzT8sZE98Js');
@@ -59,6 +60,7 @@ class TricksTest extends TestCase
         $this->assertContains('Paris.png', $tricks->getImages());
         $this->assertContains('coucou.png', $tricks->getImages());
         $this->assertEquals('coucou.png', $tricks->getImage('coucou.png'));
+        $this->assertTrue($tricks->getValidated());
     }
 
     /**

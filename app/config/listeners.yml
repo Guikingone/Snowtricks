@@ -6,7 +6,6 @@ services:
             - '@security.password_encoder'
             - '@session'
             - '@workflow.user_process'
-            - '@request_stack'
             - '@lexik_jwt_authentication.encoder'
             - '@templating'
             - '@mailer'

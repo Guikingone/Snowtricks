@@ -12,7 +12,7 @@
 namespace tests\UserBundle\Services;
 
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use UserBundle\Services\Security;
+use UserBundle\Services\Web\Security;
 
 /**
  * Class SecurityTest.
