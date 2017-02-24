@@ -1,0 +1,11 @@
+services:
+    api.user_manager:
+        class: UserBundle\Managers\Api\UserManager
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@form.factory'
+
+    api.user_responser:
+         class: UserBundle\Responder\Responder
+         arguments:
+             - '@serializer'

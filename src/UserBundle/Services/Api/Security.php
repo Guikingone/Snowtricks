@@ -354,4 +354,9 @@ class Security
             Response::HTTP_OK
         );
     }
+
+    public function lockUser()
+    {
+
+    }
 }

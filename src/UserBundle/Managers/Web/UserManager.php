@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace UserBundle\Managers;
+namespace UserBundle\Managers\Web;
 
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;

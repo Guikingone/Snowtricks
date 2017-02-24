@@ -15,10 +15,10 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 // Managers
-use UserBundle\Managers\UserManager;
+use UserBundle\Managers\Web\UserManager;
 
 // Services
-use UserBundle\Services\Security;
+use UserBundle\Services\Web\Security;
 
 /**
  * Class UserBundleExtension.
@@ -30,6 +30,8 @@ class UserBundleExtension extends Extension
     /**
      * @param array            $configs
      * @param ContainerBuilder $container
+     *
+     * @throws \Exception
      */
     public function load(array $configs, ContainerBuilder $container)
     {

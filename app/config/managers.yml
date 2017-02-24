@@ -18,7 +18,7 @@ services:
 
     # UserBundle manager
     user.user_manager:
-        class: UserBundle\Managers\UserManager
+        class: UserBundle\Managers\Web\UserManager
         arguments:
             - '@doctrine.orm.entity_manager'
             - '@session'

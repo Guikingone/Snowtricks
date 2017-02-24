@@ -1,3 +1,7 @@
+guikingone_user:
+    resource: "@GuikingoneUserBundle/Resources/config/routing.yml"
+    prefix:   /
+
 # Main
 home:
     path:    /
