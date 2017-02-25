@@ -3,7 +3,7 @@
 /*
  * This file is part of the Snowtricks project.
  *
- * (c) Guillaume Loulier <guillaume.loulier@hotmail.fr>
+ * (c) Guillaume Loulier <contact@guillaumeloulier.fr>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -12,10 +12,28 @@
 namespace UserBundle\Managers\Api;
 
 use Doctrine\ORM\EntityManager;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormFactory;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 
 // Entity
+use Symfony\Component\Workflow\Workflow;
 use UserBundle\Entity\User;
+
+// Form
+use UserBundle\Form\Type\RegisterType;
+
+// Event
+use UserBundle\Events\UserRegisteredEvent;
+
+// Exceptions
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMInvalidArgumentException;
+use Symfony\Component\Form\Exception\AlreadySubmittedException;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
+use Symfony\Component\Workflow\Exception\LogicException;
 
 /**
  * Class ApiUserManager.
@@ -30,12 +48,36 @@ class UserManager
     /** @var FormFactory */
     private $form;
 
+    /** @var EventDispatcherInterface */
+    private $dispatcher;
+
+    /** @var Workflow */
+    private $workflow;
+
+    /** @var RequestStack */
+    private $request;
+
+    /**
+     * UserManager constructor.
+     *
+     * @param EntityManager            $doctrine
+     * @param FormFactory              $form
+     * @param EventDispatcherInterface $dispatcher
+     * @param Workflow                 $workflow
+     * @param RequestStack             $request
+     */
     public function __construct (
         EntityManager $doctrine,
-        FormFactory $form
+        FormFactory $form,
+        EventDispatcherInterface $dispatcher,
+        Workflow $workflow,
+        RequestStack $request
     ) {
         $this->doctrine = $doctrine;
         $this->form = $form;
+        $this->dispatcher = $dispatcher;
+        $this->workflow = $workflow;
+        $this->request = $request;
     }
 
     /**
