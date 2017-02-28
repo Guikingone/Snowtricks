@@ -13,5 +13,4 @@ build:
 
 deploy_staging:
   stage: deploy
-  script:
-    - echo "Deploy to staging server"
+  script: echo "Deploy to staging server"

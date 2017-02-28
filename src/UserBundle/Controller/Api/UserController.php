@@ -20,4 +20,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
  */
 class UserController extends Controller
 {
+    /**
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function getUsersAction()
+    {
+        return $this->get('api.user_manager')->getUsers();
+    }
 }

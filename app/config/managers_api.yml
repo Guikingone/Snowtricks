@@ -18,6 +18,16 @@ services:
             - '@request_stack'
             - '@event_dispatcher'
 
+    api.user_manager:
+        class: UserBundle\Managers\Api\UserManager
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@form.factory'
+            - '@event_dispatcher'
+            - '@workflow.user_process'
+            - '@request_stack'
+            - '@api.user_responder'
+
     api.security:
         class: UserBundle\Services\Api\Security
         arguments:

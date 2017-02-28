@@ -26,6 +26,11 @@ api_single_commentary_single_tricks:
         tricks: \d+
         id: \d+
 
+api_users:
+    path:    /users
+    methods: 'GET'
+    defaults: { _controller: UserBundle:Api/User:getUsers }
+
 # POST routes
 api_single_tricks_new:
     path:    /tricks/new

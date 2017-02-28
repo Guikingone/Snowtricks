@@ -5,6 +5,7 @@ imports:
     - { resource: listeners.yml }
     - { resource: managers.yml }
     - { resource: managers_api.yml }
+    - { resource: responder.yml }
     - { resource: workflows.yml }
 
 parameters:

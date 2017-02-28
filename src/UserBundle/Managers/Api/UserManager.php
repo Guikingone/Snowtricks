@@ -28,6 +28,9 @@ use UserBundle\Form\Type\RegisterType;
 // Event
 use UserBundle\Events\UserRegisteredEvent;
 
+// Responders
+use UserBundle\Responder\JsonResponder;
+
 // Exceptions
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMInvalidArgumentException;
@@ -57,6 +60,9 @@ class UserManager
     /** @var RequestStack */
     private $request;
 
+    /** @var JsonResponder */
+    private $responder;
+
     /**
      * UserManager constructor.
      *
@@ -65,45 +71,66 @@ class UserManager
      * @param EventDispatcherInterface $dispatcher
      * @param Workflow                 $workflow
      * @param RequestStack             $request
+     * @param JsonResponder            $responder
      */
     public function __construct (
         EntityManager $doctrine,
         FormFactory $form,
         EventDispatcherInterface $dispatcher,
         Workflow $workflow,
-        RequestStack $request
+        RequestStack $request,
+        JsonResponder $responder
     ) {
         $this->doctrine = $doctrine;
         $this->form = $form;
         $this->dispatcher = $dispatcher;
         $this->workflow = $workflow;
         $this->request = $request;
+        $this->responder = $responder;
     }
 
     /**
-     * Allow to return all the users.
+     * Return all the users.
      *
-     * @return array|User[]
+     * @return Response
      */
     public function getUsers()
     {
-        return $this->doctrine->getRepository('UserBundle:User')
-                              ->findAll();
+        $users = $this->doctrine->getRepository('UserBundle:User')
+                                ->findAll();
+
+        // Instantiate the responder.
+        $responder = $this->responder;
+
+        return $responder(
+            'Resources found',
+            $users,
+            Response::HTTP_OK
+        );
     }
 
     /**
-     * Return a single user using his firstname.
+     * Return a single user using his lastname.
      *
      * @param string $name
      *
-     * @return null|User
+     * @return Response
      */
     public function getUser(string $name)
     {
-        return $this->doctrine->getRepository('UserBundle:User')
+        $user = $this->doctrine->getRepository('UserBundle:User')
                               ->findOneBy([
                                   'lastname' => $name
                               ]);
+
+        // Instantiate the responder.
+        $responder = $this->responder;
+
+        return $responder(
+            'Resource found',
+            $user,
+            Response::HTTP_OK
+        );
     }
 
     /**
