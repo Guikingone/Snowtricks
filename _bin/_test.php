@@ -16,5 +16,5 @@ exec('php bin/console d:d:d --force');
 exec('php bin/console d:d:c');
 exec('php bin/console d:s:u --force');
 exec('php bin/console d:f:l -n');
-exec('php bin/console appbundle:tricks:hydrate nocache');
+exec('php bin/console appbundle:tricks:hydrate');
 exec('phpunit --coverage-html ./_coverage/'.$path);

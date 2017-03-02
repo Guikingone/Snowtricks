@@ -38,9 +38,8 @@ class LoadTricksCommand extends ContainerAwareCommand
     {
         $this
             ->setName('appbundle:tricks:hydrate')
-            ->addArgument('version', InputArgument::REQUIRED, 'The version of the hydratation')
             ->setDescription('Load the tricks')
-            ->setHelp('Allow to load the tricks in BDD by parsing .yml file')
+            ->setHelp('Allow to load the tricks in BDD by parsing tricks.yml file')
         ;
     }
 
@@ -64,40 +63,21 @@ class LoadTricksCommand extends ContainerAwareCommand
                 '=========================================================================================',
                 '',
             ]);
-        if ($input->getArgument('version') === 'cache') {
-            $progress = new ProgressBar($output, 50);
-            $progress->setFormat('verbose');
-            $progress->start();
-            $progress->advance(25);
-            // Cal the FileManager service with the cache.
-            $this->getContainer()->get('app.manager')->loadTricksWithCache();
-            $progress->advance(25);
-            $progress->finish();
-            $output
-                ->writeln([
-                    '',
-                    '',
-                    '<info>Hydratation finished with the cache, let\'s get to work !.</info>',
-                    '=========================================================================================',
-                    '',
-                ]);
-        } elseif ($input->getArgument('version') === 'nocache') {
-            $progress = new ProgressBar($output, 40);
-            $progress->setFormat('verbose');
-            $progress->start();
-            $progress->advance(20);
-            // Cal the FileManager service without the cache.
-            $this->getContainer()->get('app.manager')->loadTricksWithoutCache();
-            $progress->advance(20);
-            $progress->finish();
-            $output
-                ->writeln([
-                    '',
-                    '',
-                    '<info>Hydratation finished with the nocache version, let\'s get to work !.</info>',
-                    '=========================================================================================',
-                    '',
-                ]);
-        }
+        $progress = new ProgressBar($output, 40);
+        $progress->setFormat('verbose');
+        $progress->start();
+        $progress->advance(20);
+        // Cal the FileManager service without the cache.
+        $this->getContainer()->get('app.manager')->loadTricksWithoutCache();
+        $progress->advance(20);
+        $progress->finish();
+        $output
+            ->writeln([
+                '',
+                '',
+                '<info>Hydratation finished, let\'s get to work !.</info>',
+                '========================================================',
+                '',
+            ]);
     }
 }

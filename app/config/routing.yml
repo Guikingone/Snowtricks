@@ -1,6 +1,5 @@
 # WEB routes
 web:
-    prefix: /web
     resource: "routing_web.yml"
 
 # API routes

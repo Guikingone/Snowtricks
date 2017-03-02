@@ -27,4 +27,14 @@ class UserController extends Controller
     {
         return $this->get('api.user_manager')->getUsers();
     }
+
+    /**
+     * @param string $name
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function getSingleUserAction(string $name)
+    {
+        return $this->get('api.user_manager')->getUser($name);
+    }
 }

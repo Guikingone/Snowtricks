@@ -14,12 +14,12 @@ namespace UserBundle\Managers\Api;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Workflow\Workflow;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 
 // Entity
-use Symfony\Component\Workflow\Workflow;
 use UserBundle\Entity\User;
 
 // Form
@@ -119,9 +119,9 @@ class UserManager
     public function getUser(string $name)
     {
         $user = $this->doctrine->getRepository('UserBundle:User')
-                              ->findOneBy([
-                                  'lastname' => $name
-                              ]);
+                               ->findOneBy([
+                                   'lastname' => $name
+                               ]);
 
         // Instantiate the responder.
         $responder = $this->responder;

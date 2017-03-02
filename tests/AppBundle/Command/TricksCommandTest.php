@@ -25,26 +25,6 @@ class TricksCommandTest extends KernelTestCase
     /**
      * Test if the different tricks are hydrated.
      */
-    public function testTricksAreHydratedWithCache()
-    {
-        $kernel = static::createKernel();
-        $kernel->boot();
-        $application = new Application($kernel);
-
-        $command = $application->find('appbundle:tricks:hydrate');
-        $commandTester = new CommandTester($command);
-        $commandTester->execute([
-            'command' => $command->getName(),
-            'version' => 'cache',
-        ]);
-
-        $output = $commandTester->getDisplay();
-        $this->assertContains('cache', $output);
-    }
-
-    /**
-     * Test if the different tricks are hydrated.
-     */
     public function testTricksAreHydratedWithoutCache()
     {
         $kernel = static::createKernel();
@@ -55,10 +35,9 @@ class TricksCommandTest extends KernelTestCase
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            'version' => 'nocache',
         ]);
 
         $output = $commandTester->getDisplay();
-        $this->assertContains('nocache', $output);
+        $this->assertContains('finished', $output);
     }
 }

@@ -31,6 +31,13 @@ api_users:
     methods: 'GET'
     defaults: { _controller: UserBundle:Api/User:getUsers }
 
+api_single_user:
+    path:    /user/{name}
+    methods: 'GET'
+    defaults: { _controller: UserBundle:Api/User:getSingleUser }
+    requirements:
+        name: \s+
+
 # POST routes
 api_single_tricks_new:
     path:    /tricks/new

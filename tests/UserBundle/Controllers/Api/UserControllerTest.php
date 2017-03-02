@@ -45,5 +45,11 @@ class UserControllerTest extends WebTestCase
 
     public function testSingleUserFound()
     {
+        $this->client->request('GET', '/api/user/1');
+
+        $this->assertEquals(
+            Response::HTTP_OK,
+            $this->client->getResponse()->getStatusCode()
+        );
     }
 }
