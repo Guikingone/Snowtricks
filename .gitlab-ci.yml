@@ -1,8 +1,14 @@
-image: guikingone/dev-env
+images:
+    - guikingone/dev-env
+    - php
+    - debian
 
 before_script:
     - apt-get udpate && apt-get upgrade
     - apt-get install zip unzip
+    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    - php composer-setup.php
+    - php -r "unlink('composer-setup.php');"
 
 stages:
   - test
@@ -12,12 +18,17 @@ stages:
   - deploy
 
 test:
-  stage: test
-  script: echo "Running tests"
+    stage: test
+    image: guikingone/dev-env
+    script:
+        - apt-get update && apt-get upgrade
+        - echo "Running tests"
 
 performances:
    stage: performances
-   script: echo "performances tests"
+   script:
+       - php phpunit.phar -v 
+       - echo "performances tests"
 
 build:
   stage: build
