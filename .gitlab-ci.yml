@@ -9,7 +9,7 @@ test:
     stage: test
     image: guikingone/dev-env
     script:
-        - apt-get update && apt-get upgrade
+        - apt-get update && apt-get upgrade -y
         - echo "Running tests"
 
 performances:
