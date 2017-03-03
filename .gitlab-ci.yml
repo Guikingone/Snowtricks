@@ -1,1 +1,32 @@
 image: guikingone/dev-env
+
+before_script:
+    - apt-get udpate && apt-get upgrade
+    - apt-get install zip unzip
+
+stages:
+  - test
+  - performances
+  - build
+  - frontend
+  - deploy
+
+test:
+  stage: test
+  script: echo "Running tests"
+
+performances:
+   stage: performances
+   script: echo "performances tests"
+
+build:
+  stage: build
+  script: echo "Building the app"
+
+frontend:
+  stage: frontend
+  script: echo "Frontend check"
+
+deploy_staging:
+  stage: deploy
+  script: echo "Deploy to staging server"
