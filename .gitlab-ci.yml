@@ -1,15 +1,3 @@
-images:
-    - guikingone/dev-env
-    - php
-    - debian
-
-before_script:
-    - apt-get udpate && apt-get upgrade
-    - apt-get install zip unzip
-    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-    - php composer-setup.php
-    - php -r "unlink('composer-setup.php');"
-
 stages:
   - test
   - performances
@@ -26,8 +14,12 @@ test:
 
 performances:
    stage: performances
+   image: php
    script:
-       - php phpunit.phar -v 
+       - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+       - php composer-setup.php
+       - php -r "unlink('composer-setup.php');"
+       - php phpunit.phar -v
        - echo "performances tests"
 
 build:
