@@ -12,8 +12,6 @@
 namespace AppBundle\Services;
 
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\Config\FileLocator;
-use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Workflow;

@@ -7,21 +7,15 @@ stages:
 
 test:
     stage: test
-    image: guikingone/dev-env
+    image: guikingone/test-env
     script:
-        - apt-get update && apt-get upgrade -y
-        - echo "Running tests"
+        - phpunit -v
+        - echo "performances tests"
 
 performances:
    stage: performances
-   image: php
+   image: guikingone/test-env
    script:
-       - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-       - php composer-setup.php
-       - php -r "unlink('composer-setup.php');"
-       - wget https://phar.phpunit.de/phpunit.phar
-       - chmod +x phpunit.phar
-       - sudo mv phpunit.phar /usr/local/bin/phpunit
        - phpunit -v
        - echo "performances tests"
 
