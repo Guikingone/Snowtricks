@@ -19,7 +19,10 @@ performances:
        - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
        - php composer-setup.php
        - php -r "unlink('composer-setup.php');"
-       - php phpunit.phar -v
+       - wget https://phar.phpunit.de/phpunit.phar
+       - chmod +x phpunit.phar
+       - sudo mv phpunit.phar /usr/local/bin/phpunit
+       - phpunit -v
        - echo "performances tests"
 
 build:
