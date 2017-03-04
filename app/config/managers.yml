@@ -24,3 +24,4 @@ services:
             - '@session'
             - '@security.authorization_checker'
             - '@event_dispatcher'
+

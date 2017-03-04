@@ -111,3 +111,4 @@ api_validate_token:
     defaults: { _controller: UserBundle:Api/Security:validatedProfile }
     requirements:
         token: \S+
+

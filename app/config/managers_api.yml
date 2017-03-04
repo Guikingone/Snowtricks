@@ -38,3 +38,4 @@ services:
             - '@lexik_jwt_authentication.encoder'
             - '@event_dispatcher'
             - '@request_stack'
+

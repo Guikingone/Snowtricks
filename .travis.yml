@@ -19,3 +19,4 @@ before_script:
 script:
   - phpunit -v
   - php _bin/_test.php
+

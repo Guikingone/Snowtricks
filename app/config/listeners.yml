@@ -53,3 +53,4 @@ services:
         tags:
             - { name: kernel.event_listener, event: commentary.added, method: onCommentaryAdded }
             - { name: kernel.event_listener, event: tricks.deleted, method: onDeleteTricks }
+
