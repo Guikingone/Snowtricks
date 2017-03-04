@@ -10,7 +10,7 @@ stages:
 
 test:
     stage: test
-    image: guikingone/test-env
+    image: guikingone/dev-env
     before_script:
         - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
     script:
@@ -19,7 +19,7 @@ test:
 
 performances:
    stage: performances
-   image: guikingone/test-env
+   image: guikingone/dev-env
    before_script:
        - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
    script:
