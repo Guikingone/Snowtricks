@@ -13,6 +13,10 @@ This project is build with love and passion by Travis, SensioLabsInsight and Git
 
 **_Gitlab_**
 
+[![build status](http://gitlab.guillaumeloulier.fr/root/Snowtricks/badges/master/build.svg)](http://gitlab.guillaumeloulier.fr/root/Snowtricks/commits/master)
+
+[![coverage report](http://gitlab.guillaumeloulier.fr/root/Snowtricks/badges/master/coverage.svg)](http://gitlab.guillaumeloulier.fr/root/Snowtricks/commits/master)
+
 **_Coverage_**
 
 [![Coverage Status](https://coveralls.io/repos/github/Guikingone/Snowtricks/badge.svg?branch=master)](https://coveralls.io/github/Guikingone/Snowtricks?branch=master)
