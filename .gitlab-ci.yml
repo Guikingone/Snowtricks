@@ -1,5 +1,5 @@
 before_script:
-    - docker login -u $docker_username -p $docker_password
+    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 
 stages:
   - test
@@ -11,6 +11,8 @@ stages:
 test:
     stage: test
     image: guikingone/test-env
+    before_script:
+        - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
     script:
         - phpunit -v
         - echo "performances tests"
@@ -18,6 +20,8 @@ test:
 performances:
    stage: performances
    image: guikingone/test-env
+   before_script:
+       - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
    script:
        - phpunit -v
        - echo "performances tests"
