@@ -10,18 +10,14 @@ stages:
 
 test:
     stage: test
-    image: guikingone/dev-env
-    before_script:
-        - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+    image: guikingone/test-env
     script:
         - phpunit -v
         - echo "performances tests"
 
 performances:
    stage: performances
-   image: guikingone/dev-env
-   before_script:
-       - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+   image: guikingone/test-env
    script:
        - phpunit -v
        - echo "performances tests"

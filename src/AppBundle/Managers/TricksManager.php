@@ -12,7 +12,7 @@
 namespace AppBundle\Managers;
 
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Workflow\Workflow;
@@ -52,7 +52,7 @@ class TricksManager
     /** @var FormFactory */
     private $form;
 
-    /** @var TraceableEventDispatcher */
+    /** @var EventDispatcher */
     private $eventDispatcher;
 
     /** @var Workflow */
@@ -63,13 +63,13 @@ class TricksManager
      *
      * @param EntityManager            $doctrine
      * @param FormFactory              $form
-     * @param TraceableEventDispatcher $eventDispatcher
+     * @param EventDispatcher          $eventDispatcher
      * @param Workflow                 $workflow
      */
     public function __construct(
         EntityManager $doctrine,
         FormFactory $form,
-        TraceableEventDispatcher $eventDispatcher,
+        EventDispatcher $eventDispatcher,
         Workflow $workflow
     ) {
         $this->doctrine = $doctrine;
