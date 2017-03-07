@@ -12,7 +12,7 @@
 namespace UserBundle\Managers\Api;
 
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Workflow\Workflow;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -51,7 +51,7 @@ class UserManager
     /** @var FormFactory */
     private $form;
 
-    /** @var EventDispatcher */
+    /** @var EventDispatcherInterface */
     private $dispatcher;
 
     /** @var Workflow */
@@ -68,7 +68,7 @@ class UserManager
      *
      * @param EntityManager            $doctrine
      * @param FormFactory              $form
-     * @param EventDispatcher          $dispatcher
+     * @param EventDispatcherInterface $dispatcher
      * @param Workflow                 $workflow
      * @param RequestStack             $request
      * @param JsonResponder            $responder
@@ -76,7 +76,7 @@ class UserManager
     public function __construct (
         EntityManager $doctrine,
         FormFactory $form,
-        EventDispatcher $dispatcher,
+        EventDispatcherInterface $dispatcher,
         Workflow $workflow,
         RequestStack $request,
         JsonResponder $responder

@@ -13,11 +13,11 @@ namespace AppBundle\Managers\ApiManagers;
 
 use Doctrine\ORM\EntityManager;
 use JMS\Serializer\Serializer;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Debug\TraceableEventDispatcher;
 use Symfony\Component\Workflow\Workflow;
 
 // Entity
@@ -52,7 +52,7 @@ class ApiTricksManager
     /** @var FormFactory */
     private $form;
 
-    /** @var TraceableEventDispatcher */
+    /** @var EventDispatcherInterface */
     private $dispatcher;
 
     /** @var Workflow */
@@ -67,7 +67,7 @@ class ApiTricksManager
      * @param Serializer               $serializer
      * @param EntityManager            $doctrine
      * @param FormFactory              $form
-     * @param TraceableEventDispatcher $dispatcher
+     * @param EventDispatcherInterface $dispatcher
      * @param Workflow                 $workflow
      * @param RequestStack             $requestStack
      */
@@ -75,7 +75,7 @@ class ApiTricksManager
         Serializer $serializer,
         EntityManager $doctrine,
         FormFactory $form,
-        TraceableEventDispatcher $dispatcher,
+        EventDispatcherInterface $dispatcher,
         Workflow $workflow,
         RequestStack $requestStack
     ) {
@@ -96,7 +96,8 @@ class ApiTricksManager
      */
     public function getAllTricks()
     {
-        $tricks = $this->doctrine->getRepository('AppBundle:Tricks')->findAll();
+        $tricks = $this->doctrine->getRepository('AppBundle:Tricks')
+                                 ->findAll();
 
         if (!$tricks) {
             return new JsonResponse([
