@@ -10,7 +10,8 @@ test:
     image: guikingone/test-env
     script:
         - php -v
-        - php composer.phar install
+        - php composer-setup.php
+        - php composer.phar
         - phpunit -v
         - echo "performances tests"
 
