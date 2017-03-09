@@ -18,6 +18,7 @@ performances:
    stage: performances
    image: guikingone/test_env
    script:
+       - composer install
        - phpunit -v
        - echo "performances tests"
 
