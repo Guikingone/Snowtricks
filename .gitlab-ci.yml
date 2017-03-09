@@ -9,6 +9,7 @@ test:
     stage: test
     image: guikingone/test-env
     script:
+        - composer install
         - phpunit -v
         - echo "performances tests"
 
