@@ -9,7 +9,8 @@ test:
     stage: test
     image: guikingone/test-env
     script:
-        - composer.phar install
+        - php -v
+        - php composer.phar install
         - phpunit -v
         - echo "performances tests"
 
