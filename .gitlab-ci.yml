@@ -16,7 +16,7 @@ test:
 
 performances:
    stage: performances
-   image: guikingone/test_env
+   image: guikingone/performances_env
    script:
        - composer install
        - phpunit -v
@@ -32,4 +32,9 @@ frontend:
 
 deploy_staging:
   stage: deploy
-  script: echo "Deploy to staging server"
+  image: guikingone/prod_env
+  only:
+      - master
+  script:
+      -
+      - echo "Deploy to production server"
