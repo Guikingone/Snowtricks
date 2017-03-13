@@ -1,8 +1,3 @@
-before_script:
-    - mkdir -p ~/.ssh
-    - eval $(ssh-agent -s)
-    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-
 stages:
   - test
   - performances
@@ -16,8 +11,8 @@ test:
     script:
         - php -v
         - composer install
+        - echo "Functionnal & Unit tests"
         - phpunit -v
-        - echo "performances tests"
 
 performances:
    stage: performances
@@ -25,12 +20,10 @@ performances:
    script:
        - composer install
        - blackfire-agent -register --server-id $BLACKFIRE_SERVER_ID --server-token $BLACKFIRE_SERVER_TOKEN
+       - yes
        - /etc/init.d/blackfire-agent restart
-       - blackfire config
-       - $BLACKFIRE_CLIENT_ID
-       - $BLACKFIRE_CLIENT_TOKEN
-       - phpunit -v
        - echo "performances tests"
+       - phpunit -v
 
 build:
   stage: build
@@ -45,7 +38,12 @@ deploy_staging:
   image: guikingone/prod_env
   only:
       - master
+  before_script:
+      - mkdir -p ~/.ssh
+      - eval $(ssh-agent -s)
+      - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
   script:
-      - ssh-add <(echo "$SERVER_AUTHENTICATION_KEY")
-      - ssh -p22 server_user@server_ip "mkdir /home/users/guikingone/$PROJECT_NAME"
       - echo "Deploy to production server"
+      - ssh-add <(echo "$SERVER_AUTHENTICATION_KEY")
+      - ssh -p22 server_user@server_ip "mkdir /home/user/$SERVER_OWNER/$PROJECT_NAME"
+      - ssh -p22 server_user@server_ip "cp
