@@ -32,6 +32,9 @@ build:
 
 frontend:
   stage: frontend
+  image: guikingone/front_env
+  before_script:
+      - apt-get update -y && apt-get upgrade -y
   script: echo "Frontend check"
 
 deploy_staging:
