@@ -24,8 +24,11 @@ performances:
    image: guikingone/performances_env
    script:
        - composer install
-       - blackfire-agent -register -id $BLACKFIRE_SERVER_ID -token $BLACKFIRE_SERVER_TOKEN
+       - blackfire-agent -register --server-id $BLACKFIRE_SERVER_ID --server-token $BLACKFIRE_SERVER_TOKEN
        - /etc/init.d/blackfire-agent restart
+       - blackfire config
+       - $BLACKFIRE_CLIENT_ID
+       - $BLACKFIRE_CLIENT_TOKEN
        - phpunit -v
        - echo "performances tests"
 
