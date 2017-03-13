@@ -1,3 +1,6 @@
+before_script:
+    -
+
 stages:
   - test
   - performances
@@ -36,5 +39,6 @@ deploy_staging:
   only:
       - master
   script:
-      -
+      - ssh-add <(echo "$SERVER_AUTHENTICATION_KEY")
+      - ssh -p22 server_user@server_ip "mkdir /home/users/guikingone/$PROJECT_NAME"
       - echo "Deploy to production server"
