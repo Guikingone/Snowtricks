@@ -20,7 +20,6 @@ performances:
    script:
        - composer install
        - blackfire-agent -register --server-id $BLACKFIRE_SERVER_ID --server-token $BLACKFIRE_SERVER_TOKEN
-       - yes
        - /etc/init.d/blackfire-agent restart
        - echo "performances tests"
        - phpunit -v
