@@ -8,19 +8,21 @@ stages:
 test:
     stage: test
     image: guikingone/test_env
-    script:
+    before_script:
         - php -v
         - composer install
+    script:
         - echo "Functionnal & Unit tests"
         - phpunit -v
 
 performances:
    stage: performances
    image: guikingone/performances_env
-   script:
+   before_script:
        - composer install
        - blackfire-agent -register --server-id $BLACKFIRE_SERVER_ID --server-token $BLACKFIRE_SERVER_TOKEN
        - /etc/init.d/blackfire-agent restart
+   script:
        - echo "performances tests"
        - phpunit -v
 
