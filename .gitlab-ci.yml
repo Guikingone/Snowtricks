@@ -11,6 +11,10 @@ test:
     before_script:
         - php -v
         - composer install
+       - composer dump-autoload -o
+        - php bin/console d:d:c
+        - php bin/console d:s:u --force
+        - php bin/console d:f:l -y
     script:
         - echo "Functionnal & Unit tests"
         - phpunit -v
@@ -20,8 +24,12 @@ performances:
    image: guikingone/performances_env
    before_script:
        - composer install
+       - composer dump-autoload -o
        - blackfire-agent -register --server-id $BLACKFIRE_SERVER_ID --server-token $BLACKFIRE_SERVER_TOKEN
        - /etc/init.d/blackfire-agent restart
+       - blackfire config
+       - $BLACKFIRE_CLIENT_ID
+       - $BLACKFIRE_CLIENT_TOKEN
    script:
        - echo "performances tests"
        - phpunit -v
@@ -35,7 +43,8 @@ frontend:
   image: guikingone/front_env
   before_script:
       - apt-get update -y && apt-get upgrade -y
-  script: echo "Frontend check"
+  script:
+      - echo "Frontend check"
 
 deploy_staging:
   stage: deploy
@@ -50,4 +59,3 @@ deploy_staging:
       - echo "Deploy to production server"
       - ssh-add <(echo "$SERVER_AUTHENTICATION_KEY")
       - ssh -p22 server_user@server_ip "mkdir /home/user/$SERVER_OWNER/$PROJECT_NAME"
-      - ssh -p22 server_user@server_ip "cp
