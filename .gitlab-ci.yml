@@ -6,18 +6,18 @@ stages:
   - deploy
 
 test:
-    stage: test
-    image: guikingone/test_env
-    before_script:
-        - php -v
-        - composer install
+   stage: test
+   image: guikingone/test_env
+   before_script:
+       - php -v
+       - composer install
        - composer dump-autoload -o
-        - php bin/console d:d:c
-        - php bin/console d:s:u --force
-        - php bin/console d:f:l -y
-    script:
-        - echo "Functionnal & Unit tests"
-        - phpunit -v
+       - php bin/console d:d:c
+       - php bin/console d:s:u --force
+       - php bin/console d:f:l -y
+   script:
+       - echo "Functionnal & Unit tests"
+       - phpunit -v
 
 performances:
    stage: performances
