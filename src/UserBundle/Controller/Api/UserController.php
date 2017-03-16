@@ -12,6 +12,7 @@
 namespace UserBundle\Controller\Api;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class UserController.
@@ -21,11 +22,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class UserController extends Controller
 {
     /**
+     * @throws \InvalidArgumentException
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function getUsersAction()
     {
-        return $this->get('api.user_manager')->getUsers();
+        $data = $this->get('api.user_manager')->getUsers();
+
+        return new Response($data['data'], $data['http']);
     }
 
     /**

@@ -247,5 +247,4 @@ class UserManager
             Response::HTTP_BAD_REQUEST
         );
     }
-
 }
