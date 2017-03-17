@@ -14,6 +14,7 @@ namespace UserBundle\Managers\Api;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Workflow\Workflow;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -51,6 +52,9 @@ class UserManager
     /** @var FormFactory */
     private $form;
 
+    /** @var SerializerInterface */
+    private $serializer;
+
     /** @var EventDispatcherInterface */
     private $dispatcher;
 
@@ -68,6 +72,7 @@ class UserManager
      *
      * @param EntityManager            $doctrine
      * @param FormFactory              $form
+     * @param SerializerInterface      $serializer
      * @param EventDispatcherInterface $dispatcher
      * @param Workflow                 $workflow
      * @param RequestStack             $request
@@ -76,6 +81,7 @@ class UserManager
     public function __construct (
         EntityManager $doctrine,
         FormFactory $form,
+        SerializerInterface $serializer,
         EventDispatcherInterface $dispatcher,
         Workflow $workflow,
         RequestStack $request,
@@ -123,6 +129,8 @@ class UserManager
                                    'lastname' => $name
                                ]);
 
+        $this->serializer->deserialize($user, User::class, 'json');
+
         // Instantiate the responder.
         $responder = $this->responder;
 
@@ -134,42 +142,60 @@ class UserManager
     }
 
     /**
-     * Return every users not validated.
-     *
-     * @return array|User[]
+     * @return Response
      */
     public function getUsersNotValidated()
     {
-        return $this->doctrine->getRepository('UserBundle:User')
+        $users = $this->doctrine->getRepository('UserBundle:User')
                               ->findBy([
                                   'validated' => false
                               ]);
+
+        $responder = $this->responder;
+
+        return $responder(
+            'Resource found',
+            $users,
+            Response::HTTP_OK
+        );
     }
 
     /**
-     * Return every users validated.
-     *
-     * @return array|User[]
+     * @return Response
      */
     public function getUsersValidated()
     {
-        return $this->doctrine->getRepository('UserBundle:User')
+        $users = $this->doctrine->getRepository('UserBundle:User')
                               ->findBy([
                                   'validated' => true
                               ]);
+
+        $responder = $this->responder;
+
+        return $responder(
+            'Resource found',
+            $users,
+            Response::HTTP_OK
+        );
     }
 
     /**
-     * Return all the users locked.
-     *
-     * @return array|User[]
+     * @return Response
      */
     public function getLockedUsers()
     {
-        return $this->doctrine->getRepository('UserBundle:User')
+        $users =  $this->doctrine->getRepository('UserBundle:User')
                               ->findBy([
                                   'locked' => true
                               ]);
+
+        $responder = $this->responder;
+
+        return $responder(
+            'Resources found',
+            $users,
+            Response::HTTP_OK
+        );
     }
 
     /**

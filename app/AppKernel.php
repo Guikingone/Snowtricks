@@ -19,7 +19,6 @@ class AppKernel extends Kernel
             new UserBundle\UserBundle(),
 
             // API bundles
-            new \JMS\SerializerBundle\JMSSerializerBundle(),
             new \Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle(),
             new \Nelmio\CorsBundle\NelmioCorsBundle(),
         ];

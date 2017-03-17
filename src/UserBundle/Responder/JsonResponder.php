@@ -12,7 +12,7 @@
 namespace UserBundle\Responder;
 
 use Symfony\Component\HttpFoundation\Response;
-use JMS\Serializer\Serializer;
+use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * Class Responder
@@ -21,15 +21,15 @@ use JMS\Serializer\Serializer;
  */
 final class JsonResponder
 {
-    /** @var Serializer */
+    /** @var SerializerInterface */
     private $serializer;
 
     /**
      * Responder constructor.
      *
-     * @param Serializer $serializer
+     * @param SerializerInterface $serializer
      */
-    public function __construct (Serializer $serializer)
+    public function __construct (SerializerInterface $serializer)
     {
         $this->serializer = $serializer;
     }
