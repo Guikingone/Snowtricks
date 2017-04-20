@@ -12,6 +12,7 @@
 namespace AppBundle\Controller\Web;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class AdminController.
@@ -23,7 +24,7 @@ class AdminController extends Controller
     /**
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function adminAction()
+    public function adminAction() : Response
     {
         return $this->render(':Back:admin_index.html.twig');
     }
@@ -31,7 +32,7 @@ class AdminController extends Controller
     /**
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function tricksAction()
+    public function tricksAction() : Response
     {
         $tricks = $this->get('app.tricks_manager')->getAllTricks();
 
@@ -43,7 +44,7 @@ class AdminController extends Controller
     /**
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function usersAction()
+    public function usersAction() : Response
     {
         $users = $this->get('user.user_manager')->getUsers();
 

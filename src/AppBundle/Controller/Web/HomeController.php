@@ -15,6 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
 // Exceptions
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMInvalidArgumentException;
@@ -30,7 +31,7 @@ class HomeController extends Controller
     /**
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function indexAction()
+    public function indexAction() : Response
     {
         $tricks = $this->get('app.tricks_manager')->getAllTricks();
 
@@ -42,7 +43,7 @@ class HomeController extends Controller
     /**
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function tricksAction()
+    public function tricksAction() : Response
     {
         $tricks = $this->get('app.tricks_manager')->getAllTricks();
 
@@ -61,7 +62,7 @@ class HomeController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function tricksDetailsAction(Request $request, string $name)
+    public function tricksDetailsAction(Request $request, string $name) : Response
     {
         $trick = $this->get('app.tricks_manager')->getTricksByName($name);
 
@@ -84,7 +85,7 @@ class HomeController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function tricksAddAction(Request $request)
+    public function tricksAddAction(Request $request) : Response
     {
         $tricks = $this->get('app.tricks_manager')->addTrick($request);
 

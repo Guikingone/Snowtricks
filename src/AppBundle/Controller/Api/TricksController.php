@@ -17,6 +17,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use Symfony\Component\Form\Exception\AlreadySubmittedException;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\Workflow\Exception\LogicException;
 
@@ -32,7 +34,7 @@ class TricksController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function getTricksAction()
+    public function getTricksAction() : Response
     {
         return $this->get('api.tricks_manager')->getAllTricks();
     }
@@ -72,7 +74,7 @@ class TricksController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function putSingleTricksAction()
+    public function putSingleTricksAction() : JsonResponse
     {
         return $this->get('api.tricks_manager')->putSingleTricks();
     }
@@ -86,7 +88,7 @@ class TricksController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function patchSingleTricksAction()
+    public function patchSingleTricksAction() : JsonResponse
     {
         return $this->get('api.tricks_manager')->patchSingleTricks();
     }
@@ -97,7 +99,7 @@ class TricksController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function deleteTricksByIdAction()
+    public function deleteTricksByIdAction() : JsonResponse
     {
         return $this->get('api.tricks_manager')->deleteSingleTricks();
     }

@@ -12,6 +12,7 @@
 namespace AppBundle\Controller\Api;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 // Exceptions
 use Doctrine\ORM\OptimisticLockException;
@@ -33,7 +34,7 @@ class CommentaryController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function getCommentariesByTricksAction(int $id)
+    public function getCommentariesByTricksAction(int $id) : JsonResponse
     {
         return $this->get('api.commentary_manager')->getCommentariesByTricks($id);
     }
@@ -46,7 +47,7 @@ class CommentaryController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function getSingleCommentaryByTricksAction(int $id, int $tricks)
+    public function getSingleCommentaryByTricksAction(int $id, int $tricks) : JsonResponse
     {
         return $this->get('api.commentary_manager')->getSingleCommentaryById($id, $tricks);
     }
@@ -59,7 +60,7 @@ class CommentaryController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function postNewCommentaryByTricksNameAction()
+    public function postNewCommentaryByTricksNameAction() : JsonResponse
     {
         return $this->get('api.commentary_manager')->postNewCommentary();
     }
@@ -72,7 +73,7 @@ class CommentaryController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function putSingleCommentaryByIdAction()
+    public function putSingleCommentaryByIdAction() : JsonResponse
     {
         return $this->get('api.commentary_manager')->putSingleCommentary();
     }
@@ -83,7 +84,7 @@ class CommentaryController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function deleteSingleCommentaryByIdAction()
+    public function deleteSingleCommentaryByIdAction() : JsonResponse
     {
         return $this->get('api.commentary_manager')->deleteCommentary();
     }

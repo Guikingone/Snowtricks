@@ -14,7 +14,9 @@ namespace AppBundle\Controller\Web;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\Workflow\Exception\LogicException;
 
@@ -34,7 +36,7 @@ class TricksAdminController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function tricksValidationAction($name)
+    public function tricksValidationAction($name) : RedirectResponse
     {
         return $this->get('app.tricks_manager')->validateTricks($name);
     }
@@ -49,7 +51,7 @@ class TricksAdminController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function tricksRefusedAction($name)
+    public function tricksRefusedAction($name) : RedirectResponse
     {
         return $this->get('app.tricks_manager')->refuseTricks($name);
     }
@@ -65,7 +67,7 @@ class TricksAdminController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function tricksUpdateAction(Request $request, $name)
+    public function tricksUpdateAction(Request $request, $name) : Response
     {
         $tricks = $this->get('app.tricks_manager')->updateTricks($request, $name);
 
@@ -79,10 +81,12 @@ class TricksAdminController extends Controller
      *
      * @throws \InvalidArgumentException
      * @throws \LogicException
+     * @throws ORMInvalidArgumentException
+     * @throws OptimisticLockException
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function tricksDeleteAction(string $name)
+    public function tricksDeleteAction(string $name) : RedirectResponse
     {
         return $this->get('app.tricks_manager')->deleteTricks($name);
     }

@@ -19,6 +19,9 @@ use AppBundle\Entity\Commentary;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
+// Serializer
+use Symfony\Component\Serializer\Annotation\Groups;
+
 // Security
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
@@ -150,6 +153,7 @@ class User implements
 
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Tricks", mappedBy="author")
+     * @Groups({"tricks"})
      */
     private $tricks;
 

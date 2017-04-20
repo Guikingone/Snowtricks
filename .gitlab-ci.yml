@@ -5,6 +5,11 @@ stages:
   - frontend
   - deploy
 
+before_script:
+    - mkdir -p ~/.ssh
+    - eval $(ssh-agent -s)
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+
 test:
    stage: test
    image: guikingone/test_env
@@ -51,10 +56,6 @@ deploy_staging:
   image: guikingone/prod_env
   only:
       - master
-  before_script:
-      - mkdir -p ~/.ssh
-      - eval $(ssh-agent -s)
-      - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
   script:
       - echo "Deploy to production server"
       - ssh-add <(echo "$SERVER_AUTHENTICATION_KEY")

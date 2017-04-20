@@ -83,9 +83,10 @@ class TricksManager
      *
      * @return Tricks[]|array
      */
-    public function getAllTricks()
+    public function getAllTricks() : array
     {
-        return $this->doctrine->getRepository('AppBundle:Tricks')->findAll();
+        return $this->doctrine->getRepository('AppBundle:Tricks')
+                              ->findAll();
     }
 
     /**
@@ -97,7 +98,8 @@ class TricksManager
      */
     public function getTricksByName(string $name)
     {
-        return $this->doctrine->getRepository('AppBundle:Tricks')->findOneBy(['name' => $name]);
+        return $this->doctrine->getRepository('AppBundle:Tricks')
+                              ->findOneBy(['name' => $name]);
     }
 
     /**
