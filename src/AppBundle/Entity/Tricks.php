@@ -13,8 +13,12 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Serializer\Annotation\Groups;
+
+// Entity
 use UserBundle\Entity\User;
+
+// Serializer
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Tricks.

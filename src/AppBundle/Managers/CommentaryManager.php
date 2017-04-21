@@ -12,10 +12,8 @@
 namespace AppBundle\Managers;
 
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Debug\TraceableEventDispatcher;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
@@ -37,7 +35,6 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMInvalidArgumentException;
-use Symfony\Component\Serializer\Serializer;
 
 /**
  * Class CommentaryManager.
@@ -46,22 +43,13 @@ use Symfony\Component\Serializer\Serializer;
  */
 class CommentaryManager
 {
-    /** @var Serializer */
-    private $serializer;
-
-    /**
-     * @var EntityManager
-     */
+    /** @var EntityManager */
     private $doctrine;
 
-    /**
-     * @var FormFactory
-     */
+    /** @var FormFactory */
     private $form;
 
-    /**
-     * @var Session
-     */
+    /** @var Session */
     private $session;
 
     /** @var TraceableEventDispatcher */
@@ -70,14 +58,12 @@ class CommentaryManager
     /**
      * CommentaryManager constructor.
      *
-     * @param Serializer               $serializer
      * @param EntityManager            $doctrine
      * @param FormFactory              $form
      * @param Session                  $session
      * @param TraceableEventDispatcher $dispatcher
      */
     public function __construct(
-        Serializer $serializer,
         EntityManager $doctrine,
         FormFactory $form,
         Session $session,
@@ -102,7 +88,8 @@ class CommentaryManager
      */
     public function getCommentaryByTricks(string $name, int $id)
     {
-        return $this->doctrine->getRepository('AppBundle:Commentary')->getCommentaryByTricks($name, $id);
+        return $this->doctrine->getRepository(Commentary::class)
+                              ->getCommentaryByTricks($name, $id);
     }
 
     /**
@@ -112,9 +99,10 @@ class CommentaryManager
      *
      * @return \AppBundle\Entity\Commentary[]|array
      */
-    public function getCommentariesByTricks(string $tricks)
+    public function getCommentariesByTricks(string $tricks) : array
     {
-        return $this->doctrine->getRepository('AppBundle:Commentary')->getCommentariesByTricks($tricks);
+        return $this->doctrine->getRepository(Commentary::class)
+                              ->getCommentariesByTricks($tricks);
     }
 
     /**
@@ -126,7 +114,7 @@ class CommentaryManager
      *
      * @return FormView
      */
-    public function addCommentary(Request $request)
+    public function addCommentary(Request $request) : FormView
     {
         $commentary = new Commentary();
 
@@ -157,7 +145,7 @@ class CommentaryManager
      *
      * @return RedirectResponse
      */
-    public function deleteCommentaries(string $name)
+    public function deleteCommentaries(string $name) : RedirectResponse
     {
         if (!is_string($name)) {
             throw new \InvalidArgumentException(
@@ -169,7 +157,7 @@ class CommentaryManager
         }
 
         if (is_string($name)) {
-            $trick = $this->doctrine->getRepository('AppBundle:Tricks')
+            $trick = $this->doctrine->getRepository(Tricks::class)
                                     ->findOneBy([
                                         'name' => $name,
                                     ]);
@@ -204,7 +192,7 @@ class CommentaryManager
      *
      * @return RedirectResponse
      */
-    public function deleteCommentary(string $name, int $id)
+    public function deleteCommentary(string $name, int $id) : RedirectResponse
     {
         if (!is_string($name) || !is_int($id)) {
             throw new \InvalidArgumentException(
@@ -215,7 +203,7 @@ class CommentaryManager
             );
         }
 
-        $commentary = $this->doctrine->getRepository('AppBundle:Commentary')
+        $commentary = $this->doctrine->getRepository(Commentary::class)
                                      ->getCommentaryByTricks($name, $id);
 
         if ($commentary) {
