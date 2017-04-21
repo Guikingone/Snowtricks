@@ -47,11 +47,15 @@ class User implements
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @Groups({"commentaries", "author"})
      */
     private $id;
 
     /**
      * @var string
+     *
+     * @Groups({"author"})
      *
      * @ORM\Column(name="firstname", type="string", length=155, nullable=true)
      */
@@ -60,12 +64,16 @@ class User implements
     /**
      * @var string
      *
+     * @Groups({"author"})
+     *
      * @ORM\Column(name="lastname", type="string", length=155, nullable=true)
      */
     private $lastname;
 
     /**
      * @var \DateTime
+     *
+     * @Groups({"author"})
      *
      * @ORM\Column(name="birthdate", type="datetime", nullable=true)
      */
@@ -74,12 +82,16 @@ class User implements
     /**
      * @var string
      *
+     * @Groups({"author"})
+     *
      * @ORM\Column(name="occupation", type="string", length=200, nullable=true)
      */
     private $occupation;
 
     /**
      * @var string
+     *
+     * @Groups({"commentaries", "author"})
      *
      * @ORM\Column(name="username", type="string", length=100, nullable=false)
      */
@@ -100,12 +112,16 @@ class User implements
     /**
      * @var string
      *
+     * @Groups({"commentaries", "author"})
+     *
      * @ORM\Column(name="email", type="string", length=100, nullable=true)
      */
     private $email;
 
     /**
      * @var array
+     *
+     * @Groups({"author"})
      *
      * @ORM\Column(name="roles", type="array", nullable=true)
      */
@@ -128,6 +144,8 @@ class User implements
     /**
      * @var bool
      *
+     * @Groups({"author"})
+     *
      * @ORM\Column(name="validated", type="boolean")
      */
     private $validated;
@@ -135,12 +153,16 @@ class User implements
     /**
      * @var bool
      *
+     * @Groups({"author"})
+     *
      * @ORM\Column(name="locked", type="boolean")
      */
     private $locked;
 
     /**
      * @var bool
+     *
+     * @Groups({"author"})
      *
      * @ORM\Column(name="active", type="boolean")
      */

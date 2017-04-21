@@ -85,7 +85,7 @@ class TricksManager
      */
     public function getAllTricks() : array
     {
-        return $this->doctrine->getRepository('AppBundle:Tricks')
+        return $this->doctrine->getRepository(Tricks::class)
                               ->findAll();
     }
 
@@ -98,7 +98,7 @@ class TricksManager
      */
     public function getTricksByName(string $name)
     {
-        return $this->doctrine->getRepository('AppBundle:Tricks')
+        return $this->doctrine->getRepository(Tricks::class)
                               ->findOneBy(['name' => $name]);
     }
 
@@ -111,7 +111,8 @@ class TricksManager
      */
     public function getTricksById(int $id)
     {
-        return $this->doctrine->getRepository('AppBundle:Tricks')->findOneBy(['id' => $id]);
+        return $this->doctrine->getRepository(Tricks::class)
+                              ->findOneBy(['id' => $id]);
     }
 
     /**
@@ -125,7 +126,7 @@ class TricksManager
      *
      * @return FormView
      */
-    public function addTrick(Request $request)
+    public function addTrick(Request $request) : FormView
     {
         $trick = new Tricks();
 

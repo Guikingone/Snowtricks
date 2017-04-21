@@ -12,12 +12,12 @@
 namespace AppBundle\Managers\ApiManagers;
 
 use Doctrine\ORM\EntityManager;
-use JMS\Serializer\Serializer;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Workflow\Workflow;
 
 // Entity
@@ -94,9 +94,9 @@ class ApiTricksManager
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function getAllTricks()
+    public function getAllTricks() : Response
     {
-        $tricks = $this->doctrine->getRepository('AppBundle:Tricks')
+        $tricks = $this->doctrine->getRepository(Tricks::class)
                                  ->findAll();
 
         if (!$tricks) {
@@ -106,7 +106,7 @@ class ApiTricksManager
             ]);
         }
 
-        $object = $this->serializer->serialize($tricks, 'json');
+        $object = $this->serializer->serialize($tricks, 'json', ['groups' => ['commentary']]);
 
         return new Response(
             $object,
@@ -124,7 +124,7 @@ class ApiTricksManager
      */
     public function getSingleTricks(string $name)
     {
-        $trick = $this->doctrine->getRepository('AppBundle:Tricks')
+        $trick = $this->doctrine->getRepository(Tricks::class)
                                 ->findOneBy([
                                     'name' => $name,
                                 ]);
@@ -136,7 +136,7 @@ class ApiTricksManager
             ]);
         }
 
-        $object = $this->serializer->serialize($trick, 'json');
+        $object = $this->serializer->serialize($trick, 'json',  ['groups' => ['commentary', 'author']]);
 
         return new Response(
             $object,
@@ -187,7 +187,7 @@ class ApiTricksManager
         if ($form->isSubmitted() && $form->isValid()) {
             // Search if a equivalent resource has been created.
             $data = $form->getData();
-            $trick = $this->doctrine->getRepository('AppBundle:Tricks')
+            $trick = $this->doctrine->getRepository(Tricks::class)
                                     ->findOneBy([
                                         'name' => $data->getName(),
                                     ]);
@@ -267,7 +267,7 @@ class ApiTricksManager
     {
         $id = $this->request->getCurrentRequest()->get('id');
 
-        $trick = $this->doctrine->getRepository('AppBundle:Tricks')
+        $trick = $this->doctrine->getRepository(Tricks::class)
                                 ->findOneBy([
                                     'id' => $id,
                                 ]);
@@ -288,7 +288,7 @@ class ApiTricksManager
             if ($form->isSubmitted() && $form->isValid()) {
                 // Search if a equivalent resource has been created.
                 $object = $form->getData();
-                $trick = $this->doctrine->getRepository('AppBundle:Tricks')
+                $trick = $this->doctrine->getRepository(Tricks::class)
                                         ->findOneBy([
                                             'name' => $object->getName(),
                                         ]);
@@ -372,11 +372,11 @@ class ApiTricksManager
      *
      * @return JsonResponse
      */
-    public function patchSingleTricks()
+    public function patchSingleTricks() : JsonResponse
     {
         $id = $this->request->getCurrentRequest()->get('id');
 
-        $trick = $this->doctrine->getRepository('AppBundle:Tricks')
+        $trick = $this->doctrine->getRepository(Tricks::class)
                                 ->findOneBy([
                                     'id' => $id,
                                 ]);
@@ -418,11 +418,11 @@ class ApiTricksManager
      *
      * @return JsonResponse
      */
-    public function deleteSingleTricks()
+    public function deleteSingleTricks() : JsonResponse
     {
         $id = $this->request->getCurrentRequest()->get('id');
 
-        $trick = $this->doctrine->getRepository('AppBundle:Tricks')
+        $trick = $this->doctrine->getRepository(Tricks::class)
                                 ->findOneBy([
                                     'id' => $id,
                                 ]);

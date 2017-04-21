@@ -12,8 +12,10 @@
 namespace AppBundle\Managers;
 
 use Doctrine\ORM\EntityManager;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Debug\TraceableEventDispatcher;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
@@ -35,6 +37,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMInvalidArgumentException;
+use Symfony\Component\Serializer\Serializer;
 
 /**
  * Class CommentaryManager.
@@ -43,6 +46,9 @@ use Doctrine\ORM\ORMInvalidArgumentException;
  */
 class CommentaryManager
 {
+    /** @var Serializer */
+    private $serializer;
+
     /**
      * @var EntityManager
      */
@@ -64,12 +70,14 @@ class CommentaryManager
     /**
      * CommentaryManager constructor.
      *
+     * @param Serializer               $serializer
      * @param EntityManager            $doctrine
      * @param FormFactory              $form
      * @param Session                  $session
      * @param TraceableEventDispatcher $dispatcher
      */
     public function __construct(
+        Serializer $serializer,
         EntityManager $doctrine,
         FormFactory $form,
         Session $session,

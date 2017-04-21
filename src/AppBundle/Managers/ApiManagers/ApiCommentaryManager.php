@@ -12,7 +12,7 @@
 namespace AppBundle\Managers\ApiManagers;
 
 use Doctrine\ORM\EntityManager;
-use JMS\Serializer\Serializer;
+use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -80,6 +80,31 @@ class ApiCommentaryManager
     }
 
     /**
+     * @throws \InvalidArgumentException
+     *
+     * @return JsonResponse|Response
+     */
+    public function getCommentaries()
+    {
+        $commentaries = $this->doctrine->getRepository(Commentary::class)->findAll();
+
+        if (!$commentaries) {
+            return new JsonResponse([
+                'message' => 'Resource not found',
+                Response::HTTP_NOT_FOUND,
+            ]);
+        }
+
+        $data = $this->serializer->serialize($commentaries, 'json', ['groups' => ['commentaries']]);
+
+        return new Response(
+            $data,
+            Response::HTTP_OK,
+            ['Content-Type' => 'application/json']
+        );
+    }
+
+    /**
      * @param int $id
      *
      * @throws \InvalidArgumentException
@@ -88,7 +113,7 @@ class ApiCommentaryManager
      */
     public function getCommentariesByTricks(int $id)
     {
-        $commentaries = $this->doctrine->getRepository('AppBundle:Commentary')
+        $commentaries = $this->doctrine->getRepository(Commentary::class)
                                        ->findBy([
                                            'tricks' => $id,
                                        ]);
@@ -119,7 +144,7 @@ class ApiCommentaryManager
      */
     public function getSingleCommentaryById(int $id, int $tricks)
     {
-        $commentary = $this->doctrine->getRepository('AppBundle:Commentary')
+        $commentary = $this->doctrine->getRepository(Commentary::class)
                                      ->findOneBy([
                                          'id' => $id,
                                          'tricks' => $tricks,
@@ -164,7 +189,7 @@ class ApiCommentaryManager
      *
      * @return JsonResponse
      */
-    public function postNewCommentary()
+    public function postNewCommentary() : JsonResponse
     {
         $commentary = new Commentary();
 
@@ -179,7 +204,7 @@ class ApiCommentaryManager
         if ($form->isSubmitted() && $form->isValid()) {
             // Search if a equivalent resource has been created.
             $data = $form->getData();
-            $object = $this->doctrine->getRepository('AppBundle:Commentary')
+            $object = $this->doctrine->getRepository(Commentary::class)
                                            ->findOneBy([
                                                'content' => $data->getContent(),
                                            ]);
@@ -251,11 +276,11 @@ class ApiCommentaryManager
      *
      * @return JsonResponse
      */
-    public function putSingleCommentary()
+    public function putSingleCommentary() : JsonResponse
     {
         $id = $this->request->getCurrentRequest()->get('id');
 
-        $commentary = $this->doctrine->getRepository('AppBundle:Commentary')
+        $commentary = $this->doctrine->getRepository(Commentary::class)
                                 ->findOneBy([
                                     'id' => $id,
                                 ]);
@@ -271,7 +296,7 @@ class ApiCommentaryManager
             if ($form->isSubmitted() && $form->isValid()) {
                 // Search if a equivalent resource has been created.
                 $data = $form->getData();
-                $commentary = $this->doctrine->getRepository('AppBundle:Commentary')
+                $commentary = $this->doctrine->getRepository(Commentary::class)
                                         ->findOneBy([
                                             'content' => $data->getContent(),
                                         ]);
@@ -347,11 +372,11 @@ class ApiCommentaryManager
      *
      * @return JsonResponse
      */
-    public function deleteCommentary()
+    public function deleteCommentary() : JsonResponse
     {
         $id = $this->request->getCurrentRequest()->get('id');
 
-        $commentary = $this->doctrine->getRepository('AppBundle:Commentary')
+        $commentary = $this->doctrine->getRepository(Commentary::class)
                                      ->findOneBy([
                                          'id' => $id,
                                      ]);

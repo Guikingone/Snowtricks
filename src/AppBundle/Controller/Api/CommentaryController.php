@@ -28,6 +28,16 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 class CommentaryController extends Controller
 {
     /**
+     * @throws \InvalidArgumentException
+     *
+     * @return mixed
+     */
+    public function getCommentariesAction()
+    {
+        return $this->get('api.commentary_manager')->getCommentaries();
+    }
+
+    /**
      * @param int $id
      *
      * @throws \InvalidArgumentException

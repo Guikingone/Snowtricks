@@ -11,6 +11,11 @@ api_single_tricks:
     requirements:
         id: \s+
 
+api_commentaries:
+    path:    /commentaries
+    methods: 'GET'
+    defaults: { _controller: AppBundle:Api/Commentary:getCommentaries }
+
 api_commentary_single_tricks:
     path:    /tricks/{id}/commentaries
     methods: 'GET'

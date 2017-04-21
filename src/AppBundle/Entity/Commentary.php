@@ -34,7 +34,7 @@ class Commentary
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      *
-     * @Groups({"commentary"})
+     * @Groups({"commentary", "commentaries"})
      */
     private $id;
 
@@ -43,7 +43,7 @@ class Commentary
      *
      * @ORM\Column(name="publication_date", type="datetime")
      *
-     * @Groups({"commentary"})
+     * @Groups({"commentary", "commentaries"})
      */
     private $publicationDate;
 
@@ -52,7 +52,7 @@ class Commentary
      *
      * @ORM\Column(name="content", type="string", length=255, nullable=false)
      *
-     * @Groups({"commentary"})
+     * @Groups({"commentary", "commentaries"})
      */
     private $content;
 
@@ -63,6 +63,8 @@ class Commentary
     private $author;
 
     /**
+     * @Groups({"commentary", "commentaries"})
+     *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Tricks", inversedBy="commentary", cascade={"persist", "remove"})
      * @ORM\JoinColumn(name="tricks_id", referencedColumnName="id")
      */
@@ -73,7 +75,7 @@ class Commentary
      *
      * @return int
      */
-    public function getId()
+    public function getId() : int
     {
         return $this->id;
     }
@@ -85,7 +87,7 @@ class Commentary
      *
      * @return Commentary
      */
-    public function setPublicationDate($publicationDate)
+    public function setPublicationDate($publicationDate) : Commentary
     {
         $this->publicationDate = $publicationDate;
 
@@ -97,7 +99,7 @@ class Commentary
      *
      * @return \DateTime
      */
-    public function getPublicationDate()
+    public function getPublicationDate() : \DateTime
     {
         return $this->publicationDate;
     }
@@ -109,7 +111,7 @@ class Commentary
      *
      * @return Commentary
      */
-    public function setContent($content)
+    public function setContent($content) : Commentary
     {
         $this->content = $content;
 
@@ -121,7 +123,7 @@ class Commentary
      *
      * @return string
      */
-    public function getContent()
+    public function getContent() : string
     {
         return $this->content;
     }
@@ -133,7 +135,7 @@ class Commentary
      *
      * @return Commentary
      */
-    public function setTricks(Tricks $tricks = null)
+    public function setTricks(Tricks $tricks = null) : Commentary
     {
         $this->tricks = $tricks;
 
@@ -145,7 +147,7 @@ class Commentary
      *
      * @return \AppBundle\Entity\Tricks
      */
-    public function getTricks()
+    public function getTricks() : Tricks
     {
         return $this->tricks;
     }
@@ -157,7 +159,7 @@ class Commentary
      *
      * @return Commentary
      */
-    public function setAuthor(User $author = null)
+    public function setAuthor(User $author = null) : Commentary
     {
         $this->author = $author;
 
@@ -169,7 +171,7 @@ class Commentary
      *
      * @return \UserBundle\Entity\User
      */
-    public function getAuthor()
+    public function getAuthor() : User
     {
         return $this->author;
     }
