@@ -121,24 +121,30 @@ class UserManager
      *
      * @param string $name
      *
+     * @throws \InvalidArgumentException
+     *
      * @return Response
      */
-    public function getUser(string $name)
+    public function getUser(string $name) : Response
     {
-        $user = $this->doctrine->getRepository('UserBundle:User')
+        $user = $this->doctrine->getRepository(User::class)
                                ->findOneBy([
                                    'lastname' => $name
                                ]);
 
-        $this->serializer->deserialize($user, User::class, 'json');
+        if (!$user) {
+            return new JsonResponse([
+                'message' => 'Resource not found',
+                Response::HTTP_NOT_FOUND
+            ]);
+        }
 
-        // Instantiate the responder.
-        $responder = $this->responder;
+        $data = $this->serializer->serialize($user, 'json', ['groups' => 'users']);
 
-        return $responder(
-            'Resource found',
-            $user,
-            Response::HTTP_OK
+        return new Response(
+            $data,
+            Response::HTTP_OK,
+            ['Content-Type' => 'application/json']
         );
     }
 

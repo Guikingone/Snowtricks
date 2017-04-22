@@ -48,7 +48,7 @@ class User implements
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      *
-     * @Groups({"tricks", "commentaries", "users"})
+     * @Groups({"users", "tricks", "commentaries"})
      */
     private $id;
 
@@ -91,7 +91,7 @@ class User implements
     /**
      * @var string
      *
-     * @Groups({"tricks", "commentaries", "users"})
+     * @Groups({"users", tricks", "commentaries"})
      *
      * @ORM\Column(name="username", type="string", length=100, nullable=false)
      */
@@ -114,7 +114,7 @@ class User implements
     /**
      * @var string
      *
-     * @Groups({"tricks", "commentaries", "users"})
+     * @Groups({"users", "tricks", "commentaries"})
      *
      * @ORM\Column(name="email", type="string", length=100, nullable=true)
      */
@@ -123,7 +123,7 @@ class User implements
     /**
      * @var array
      *
-     * @Groups({"tricks", "users"})
+     * @Groups({"users", "tricks"})
      *
      * @ORM\Column(name="roles", type="array", nullable=true)
      */
