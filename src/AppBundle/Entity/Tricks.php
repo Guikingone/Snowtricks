@@ -37,14 +37,14 @@ class Tricks
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      *
-     * @Groups({"commentary", "commentaries", "author"})
+     * @Groups({"tricks", "commentaries", "users"})
      */
     private $id;
 
     /**
      * @var string
      *
-     * @Groups({"commentary", "commentaries", "author"})
+     * @Groups({"tricks", "commentaries", "users"})
      *
      * @ORM\Column(name="name", type="string", length=100, nullable=false)
      */
@@ -53,7 +53,7 @@ class Tricks
     /**
      * @var \DateTime
      *
-     * @Groups({"commentary", "commentaries", "author"})
+     * @Groups({"tricks", "commentaries", "users"})
      *
      * @ORM\Column(name="creation_date", type="datetime")
      */
@@ -62,7 +62,7 @@ class Tricks
     /**
      * @var string
      *
-     * @Groups({"commentary", "commentaries", "author"})
+     * @Groups({"tricks", "commentaries", "users"})
      *
      * @ORM\Column(name="groups", type="string", length=100, nullable=false)
      */
@@ -71,7 +71,7 @@ class Tricks
     /**
      * @var string
      *
-     * @Groups({"commentary", "commentaries", "author"})
+     * @Groups({"tricks", "commentaries", "users"})
      *
      * @ORM\Column(name="resume", type="text", nullable=false)
      */
@@ -80,7 +80,7 @@ class Tricks
     /**
      * @var array
      *
-     * @Groups({"commentary", "commentaries", "author"})
+     * @Groups({"tricks", "commentaries", "users"})
      *
      * @ORM\Column(name="images", type="array", nullable=true)
      */
@@ -89,7 +89,7 @@ class Tricks
     /**
      * @var array
      *
-     * @Groups({"commentary", "commentaries", "author"})
+     * @Groups({"tricks", "commentaries", "users"})
      *
      * @ORM\Column(name="videos", type="array", nullable=true)
      */
@@ -98,7 +98,7 @@ class Tricks
     /**
      * @var bool
      *
-     * @Groups({"commentary", "commentaries", "author"})
+     * @Groups({"tricks", "commentaries", "users"})
      *
      * @ORM\Column(name="published", type="boolean")
      */
@@ -107,7 +107,7 @@ class Tricks
     /**
      * @var bool
      *
-     * @Groups({"commentary", "commentaries", "author"})
+     * @Groups({"tricks", "commentaries", "users"})
      *
      * @ORM\Column(name="validated", type="boolean")
      */
@@ -116,14 +116,14 @@ class Tricks
     /**
      * @var array
      *
-     * @Groups({"commentary", "commentaries", "author"})
+     * @Groups({"tricks", "commentaries", "users"})
      *
      * @ORM\Column(name="current_state", type="array", nullable=false)
      */
     public $currentState;
 
     /**
-     * @Groups({"commentaries", "author"})
+     * @Groups({"tricks", "commentaries"})
      *
      * @ORM\ManyToOne(targetEntity="UserBundle\Entity\User", inversedBy="tricks", cascade={"persist"})
      * @ORM\JoinColumn(name="author_id", referencedColumnName="id")
@@ -131,7 +131,7 @@ class Tricks
     private $author;
 
     /**
-     * @Groups({"commentary"})
+     * @Groups({"tricks"})
      *
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Commentary", mappedBy="tricks", cascade={"persist", "remove"})
      */

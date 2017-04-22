@@ -1,6 +1,0 @@
-services:
-     api.user_responder:
-         class: UserBundle\Responder\JsonResponder
-         arguments:
-             - '@serializer'
-         public: false

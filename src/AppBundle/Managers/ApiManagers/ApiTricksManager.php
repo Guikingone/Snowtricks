@@ -106,7 +106,7 @@ class ApiTricksManager
             ]);
         }
 
-        $object = $this->serializer->serialize($tricks, 'json', ['groups' => ['commentary']]);
+        $object = $this->serializer->serialize($tricks, 'json', ['groups' => ['tricks']]);
 
         return new Response(
             $object,
@@ -136,7 +136,7 @@ class ApiTricksManager
             ]);
         }
 
-        $object = $this->serializer->serialize($trick, 'json',  ['groups' => ['commentary', 'author']]);
+        $object = $this->serializer->serialize($trick, 'json',  ['groups' => ['tricks']]);
 
         return new Response(
             $object,

@@ -48,14 +48,14 @@ class User implements
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      *
-     * @Groups({"commentaries", "author"})
+     * @Groups({"tricks", "commentaries", "users"})
      */
     private $id;
 
     /**
      * @var string
      *
-     * @Groups({"author"})
+     * @Groups({"users"})
      *
      * @ORM\Column(name="firstname", type="string", length=155, nullable=true)
      */
@@ -64,7 +64,7 @@ class User implements
     /**
      * @var string
      *
-     * @Groups({"author"})
+     * @Groups({"users"})
      *
      * @ORM\Column(name="lastname", type="string", length=155, nullable=true)
      */
@@ -73,7 +73,7 @@ class User implements
     /**
      * @var \DateTime
      *
-     * @Groups({"author"})
+     * @Groups({"users"})
      *
      * @ORM\Column(name="birthdate", type="datetime", nullable=true)
      */
@@ -82,7 +82,7 @@ class User implements
     /**
      * @var string
      *
-     * @Groups({"author"})
+     * @Groups({"users"})
      *
      * @ORM\Column(name="occupation", type="string", length=200, nullable=true)
      */
@@ -91,7 +91,7 @@ class User implements
     /**
      * @var string
      *
-     * @Groups({"commentaries", "author"})
+     * @Groups({"tricks", "commentaries", "users"})
      *
      * @ORM\Column(name="username", type="string", length=100, nullable=false)
      */
@@ -105,6 +105,8 @@ class User implements
     /**
      * @var string
      *
+     * @Groups({"users"})
+     *
      * @ORM\Column(name="password", type="string", length=64, nullable=false)
      */
     private $password;
@@ -112,7 +114,7 @@ class User implements
     /**
      * @var string
      *
-     * @Groups({"commentaries", "author"})
+     * @Groups({"tricks", "commentaries", "users"})
      *
      * @ORM\Column(name="email", type="string", length=100, nullable=true)
      */
@@ -121,7 +123,7 @@ class User implements
     /**
      * @var array
      *
-     * @Groups({"author"})
+     * @Groups({"tricks", "users"})
      *
      * @ORM\Column(name="roles", type="array", nullable=true)
      */
@@ -130,12 +132,16 @@ class User implements
     /**
      * @var string
      *
+     * @Groups({"users"})
+     *
      * @ORM\Column(name="token", type="string", length=36, nullable=true)
      */
     private $token;
 
     /**
      * @var string
+     *
+     * @Groups({"users"})
      *
      * @ORM\Column(name="api_key", type="string", nullable=true)
      */
@@ -144,7 +150,7 @@ class User implements
     /**
      * @var bool
      *
-     * @Groups({"author"})
+     * @Groups({"users"})
      *
      * @ORM\Column(name="validated", type="boolean")
      */
@@ -153,7 +159,7 @@ class User implements
     /**
      * @var bool
      *
-     * @Groups({"author"})
+     * @Groups({"users"})
      *
      * @ORM\Column(name="locked", type="boolean")
      */
@@ -162,29 +168,34 @@ class User implements
     /**
      * @var bool
      *
-     * @Groups({"author"})
+     * @Groups({"users"})
      *
      * @ORM\Column(name="active", type="boolean")
      */
     private $active;
 
     /**
+     * @var array
+     *
+     * @Groups({"users"})
+     *
+     * @ORM\Column(name="current_status", type="array")
+     */
+    public $currentStatus;
+
+    /**
+     * @Groups({"users", "commentary"})
+     *
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Commentary", mappedBy="author")
      */
     private $commentary;
 
     /**
+     * @Groups({"users", "commentary"})
+     *
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Tricks", mappedBy="author")
-     * @Groups({"tricks"})
      */
     private $tricks;
-
-    /**
-     * @var array
-     *
-     * @ORM\Column(name="current_status", type="array")
-     */
-    public $currentStatus;
 
     /**
      * Constructor.

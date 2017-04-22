@@ -26,11 +26,9 @@ class UserController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function getUsersAction()
+    public function getUsersAction() : Response
     {
-        $data = $this->get('api.user_manager')->getUsers();
-
-        return new Response($data['data'], $data['http']);
+        return $this->get('api.user_manager')->getUsers();
     }
 
     /**
@@ -38,7 +36,7 @@ class UserController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function getSingleUserAction(string $name)
+    public function getSingleUserAction(string $name) : Response
     {
         return $this->get('api.user_manager')->getUser($name);
     }

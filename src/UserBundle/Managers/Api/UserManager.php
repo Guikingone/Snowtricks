@@ -14,6 +14,7 @@ namespace UserBundle\Managers\Api;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Workflow\Workflow;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -28,9 +29,6 @@ use UserBundle\Form\Type\RegisterType;
 
 // Event
 use UserBundle\Events\UserRegisteredEvent;
-
-// Responders
-use UserBundle\Responder\JsonResponder;
 
 // Exceptions
 use Doctrine\ORM\OptimisticLockException;
@@ -52,7 +50,7 @@ class UserManager
     /** @var FormFactory */
     private $form;
 
-    /** @var SerializerInterface */
+    /** @var Serializer */
     private $serializer;
 
     /** @var EventDispatcherInterface */
@@ -64,54 +62,57 @@ class UserManager
     /** @var RequestStack */
     private $request;
 
-    /** @var JsonResponder */
-    private $responder;
-
     /**
      * UserManager constructor.
      *
+     * @param Serializer               $serializer
      * @param EntityManager            $doctrine
      * @param FormFactory              $form
-     * @param SerializerInterface      $serializer
      * @param EventDispatcherInterface $dispatcher
      * @param Workflow                 $workflow
      * @param RequestStack             $request
-     * @param JsonResponder            $responder
      */
     public function __construct (
+        Serializer $serializer,
         EntityManager $doctrine,
         FormFactory $form,
-        SerializerInterface $serializer,
         EventDispatcherInterface $dispatcher,
         Workflow $workflow,
-        RequestStack $request,
-        JsonResponder $responder
+        RequestStack $request
     ) {
+        $this->serializer = $serializer;
         $this->doctrine = $doctrine;
         $this->form = $form;
         $this->dispatcher = $dispatcher;
         $this->workflow = $workflow;
         $this->request = $request;
-        $this->responder = $responder;
     }
 
     /**
      * Return all the users.
      *
+     * @throws \InvalidArgumentException
+     *
      * @return Response
      */
-    public function getUsers()
+    public function getUsers() : Response
     {
-        $users = $this->doctrine->getRepository('UserBundle:User')
+        $users = $this->doctrine->getRepository(User::class)
                                 ->findAll();
 
-        // Instantiate the responder.
-        $responder = $this->responder;
+        if (!$users) {
+            return new JsonResponse([
+                'message' => 'Resources not found.',
+                Response::HTTP_NOT_FOUND
+            ]);
+        }
 
-        return $responder(
-            'Resources found',
-            $users,
-            Response::HTTP_OK
+        $data = $this->serializer->serialize($users, 'json', ['groups' => 'users']);
+
+        return new Response(
+            $data,
+            Response::HTTP_OK,
+            ['Content-Type' => 'application/json']
         );
     }
 

@@ -34,7 +34,7 @@ class Commentary
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      *
-     * @Groups({"commentary", "commentaries"})
+     * @Groups({"tricks", "commentaries", "users"})
      */
     private $id;
 
@@ -43,7 +43,7 @@ class Commentary
      *
      * @ORM\Column(name="publication_date", type="datetime")
      *
-     * @Groups({"commentary", "commentaries"})
+     * @Groups({"tricks", "commentaries", "users"})
      */
     private $publicationDate;
 
@@ -52,21 +52,25 @@ class Commentary
      *
      * @ORM\Column(name="content", type="string", length=255, nullable=false)
      *
-     * @Groups({"commentary", "commentaries"})
+     * @Groups({"tricks", "commentaries", "users"})
      */
     private $content;
 
     /**
+     *
      * @ORM\ManyToOne(targetEntity="UserBundle\Entity\User", inversedBy="commentary", cascade={"persist"})
      * @ORM\JoinColumn(name="author_id", referencedColumnName="id")
+     *
+     * @Groups({"tricks", "commentaries"})
      */
     private $author;
 
     /**
-     * @Groups({"commentary", "commentaries"})
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Tricks", inversedBy="commentary", cascade={"persist", "remove"})
      * @ORM\JoinColumn(name="tricks_id", referencedColumnName="id")
+     *
+     * @Groups({"commentaries"})
      */
     private $tricks;
 
