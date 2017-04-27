@@ -91,7 +91,7 @@ class User implements
     /**
      * @var string
      *
-     * @Groups({"users", tricks", "commentaries"})
+     * @Groups({"users", "tricks", "commentaries"})
      *
      * @ORM\Column(name="username", type="string", length=100, nullable=false)
      */

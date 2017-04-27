@@ -12,9 +12,9 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 // Entity
-use Symfony\Component\Serializer\Annotation\Groups;
 use UserBundle\Entity\User;
 
 /**

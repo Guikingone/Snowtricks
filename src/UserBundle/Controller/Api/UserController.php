@@ -34,6 +34,8 @@ class UserController extends Controller
     /**
      * @param string $name
      *
+     * @throws \InvalidArgumentException
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function getSingleUserAction(string $name) : Response
