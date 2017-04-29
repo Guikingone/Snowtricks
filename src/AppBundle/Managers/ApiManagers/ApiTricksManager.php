@@ -13,7 +13,6 @@ namespace AppBundle\Managers\ApiManagers;
 
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -49,9 +48,6 @@ class ApiTricksManager
     /** @var EntityManager */
     private $doctrine;
 
-    /** @var FormFactory */
-    private $form;
-
     /** @var EventDispatcherInterface */
     private $dispatcher;
 
@@ -66,7 +62,6 @@ class ApiTricksManager
      *
      * @param Serializer               $serializer
      * @param EntityManager            $doctrine
-     * @param FormFactory              $form
      * @param EventDispatcherInterface $dispatcher
      * @param Workflow                 $workflow
      * @param RequestStack             $requestStack
@@ -74,14 +69,12 @@ class ApiTricksManager
     public function __construct(
         Serializer $serializer,
         EntityManager $doctrine,
-        FormFactory $form,
         EventDispatcherInterface $dispatcher,
         Workflow $workflow,
         RequestStack $requestStack
     ) {
         $this->serializer = $serializer;
         $this->doctrine = $doctrine;
-        $this->form = $form;
         $this->dispatcher = $dispatcher;
         $this->workflow = $workflow;
         $this->request = $requestStack;
@@ -96,20 +89,24 @@ class ApiTricksManager
      */
     public function getAllTricks() : Response
     {
-        $tricks = $this->doctrine->getRepository(Tricks::class)
+        $data = $this->doctrine->getRepository(Tricks::class)
                                  ->findAll();
 
-        if (!$tricks) {
+        if (!$data) {
             return new JsonResponse([
                 'message' => 'Resources not found',
                 Response::HTTP_NOT_FOUND,
             ]);
         }
 
-        $object = $this->serializer->serialize($tricks, 'json', ['groups' => ['tricks']]);
+        $tricks = $this->serializer->serialize(
+            $data,
+            'json',
+            ['groups' => ['tricks']]
+        );
 
         return new Response(
-            $object,
+            $tricks,
             Response::HTTP_OK,
             ['Content-Type' => 'application/json']
         );
@@ -124,22 +121,26 @@ class ApiTricksManager
      */
     public function getSingleTricks(string $name)
     {
-        $trick = $this->doctrine->getRepository(Tricks::class)
+        $data = $this->doctrine->getRepository(Tricks::class)
                                 ->findOneBy([
                                     'name' => $name,
                                 ]);
 
-        if (!$trick) {
+        if (!$data) {
             return new JsonResponse([
                 'message' => 'Resource not found',
                 Response::HTTP_NOT_FOUND,
             ]);
         }
 
-        $object = $this->serializer->serialize($trick, 'json',  ['groups' => ['tricks']]);
+        $tricks = $this->serializer->serialize(
+            $data,
+            'json',
+            ['groups' => ['tricks']]
+        );
 
         return new Response(
-            $object,
+            $tricks,
             Response::HTTP_OK,
             ['Content-Type' => 'application/json']
         );
@@ -148,85 +149,75 @@ class ApiTricksManager
     /**
      * Create a new Tricks using the data's passed through the request.
      *
+     * In the case that the request don't contain any data, the response contain
+     * a 400 (BAD REQUEST) headers code.
+     *
+     * @see Response::HTTP_BAD_REQUEST
+     *
      * In the case that the resource already exist, the response contain
      * a 303 (SEE OTHER) headers code and the content of the resource found.
      *
      * @see Response::HTTP_SEE_OTHER
      *
      * In the case the resource does not exist, the response contain
-     * a 201 (CREATED) headers code and the content of the resource created
+     * a 201 (CREATED) headers code and the content of the resource created.
+     *
      * @see Response::HTTP_CREATED
      *
-     * In the case that the form isn't valid, the response contain
-     * a 400 (BAD REQUEST) headers code
-     * @see Response::HTTP_BAD_REQUEST
      *
+     * @throws \LogicException
      * @throws LogicException
-     * @throws InvalidOptionsException
-     * @throws AlreadySubmittedException
      * @throws ORMInvalidArgumentException
      * @throws OptimisticLockException
      *
-     * @return \Symfony\Component\Form\FormInterface|JsonResponse
+     * @return JsonResponse
      */
-    public function postNewTricks()
+    public function postNewTricks() : JsonResponse
     {
-        $tricks = new Tricks();
+        $data = $this->request->getCurrentRequest()->getContent();
 
-        // Init the workflow phase.
-        $this->workflow->apply($tricks, 'start_phase');
-
-        // Grab the data passed through the request.
-        $data = $this->request->getCurrentRequest()->request->all();
-
-        $form = $this->form->create(TricksType::class, $tricks, [
-            'csrf_protection' => false,
-        ]);
-        $form->submit($data);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Search if a equivalent resource has been created.
-            $data = $form->getData();
-            $trick = $this->doctrine->getRepository(Tricks::class)
-                                    ->findOneBy([
-                                        'name' => $data->getName(),
-                                    ]);
-
-            if ($trick) {
-                return new JsonResponse(
-                    [
-                        'message' => 'Resource already found.',
-                        'name' => $trick->getName(),
-                        'groups' => $trick->getGroups(),
-                        'resume' => $trick->getResume(),
-                    ],
-                    Response::HTTP_SEE_OTHER
-                );
-            }
-
-            // Send a new event to perform new instance actions.
-            $event = new TricksAddedEvent($tricks);
-            $this->dispatcher->dispatch(TricksAddedEvent::NAME, $event);
-
-            $this->doctrine->persist($tricks);
-            $this->doctrine->flush();
-
+        if (!$data) {
             return new JsonResponse(
-                [
-                    'message' => 'Resource created',
-                    'name' => $tricks->getName(),
-                    'groups' => $tricks->getGroups(),
-                    'resume' => $tricks->getResume(),
-                ],
-                Response::HTTP_CREATED
+                ['message' => 'No data passed.'],
+                Response::HTTP_BAD_REQUEST
             );
         }
 
+        $trick = $this->serializer->deserialize(
+            $data,
+            Tricks::class,
+            'json'
+        );
+
+        $clone = $this->doctrine->getRepository(Tricks::class)
+                                ->findOneBy([
+                                    'name' => $trick->getName()
+                                ]);
+
+        if ($clone) {
+            return new JsonResponse(
+                [
+                    'message' => 'Resource already exist.',
+                    'data' => $clone
+                ],
+                Response::HTTP_SEE_OTHER
+            );
+        }
+
+        $this->workflow->apply($trick, 'start_phase');
+
+        $event = new TricksAddedEvent($trick);
+        $this->dispatcher->dispatch(TricksAddedEvent::NAME, $event);
+
+        $this->doctrine->persist($trick);
+        $this->doctrine->flush();
+
         return new JsonResponse(
             [
-                'message' => 'Form invalid',
+                'message' => 'Resource created and saved.',
+                'data' => $trick
             ],
-            Response::HTTP_BAD_REQUEST
+            Response::HTTP_CREATED
         );
     }
 
