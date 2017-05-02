@@ -1,0 +1,119 @@
+# GET routes
+api_tricks:
+    path:     /tricks
+    methods: 'GET'
+    defaults: { _controller: AppBundle:Api/Tricks:getTricks }
+
+api_single_tricks:
+    path:     /tricks/{name}
+    methods: 'GET'
+    defaults: { _controller: AppBundle:Api/Tricks:getTricksByName }
+    requirements:
+        id: \s+
+
+api_commentaries:
+    path:    /commentaries
+    methods: 'GET'
+    defaults: { _controller: AppBundle:Api/Commentary:getCommentaries }
+
+api_commentary_single_tricks:
+    path:    /tricks/{id}/commentaries
+    methods: 'GET'
+    defaults: { _controller: AppBundle:Api/Commentary:getCommentariesByTricks }
+    requirements:
+        id: \d+
+
+api_single_commentary_single_tricks:
+    path:    /tricks/{tricks}/commentary/{id}
+    methods: 'GET'
+    defaults: { _controller: AppBundle:Api/Commentary:getSingleCommentaryByTricks }
+    requirements:
+        tricks: \d+
+        id: \d+
+
+api_users:
+    path:    /users
+    methods: 'GET'
+    defaults: { _controller: UserBundle:Api/User:getUsers }
+
+api_single_user:
+    path:    /user/{name}
+    methods: 'GET'
+    defaults: { _controller: UserBundle:Api/User:getSingleUser }
+    requirements:
+        name: \s+
+
+# POST routes
+api_single_tricks_new:
+    path:    /tricks/new
+    methods: 'POST'
+    defaults: { _controller: AppBundle:Api/Tricks:postTricks }
+
+api_single_commentary_new_single_tricks:
+    path:    /tricks/{name}/commentary/new
+    methods: 'POST'
+    defaults: { _controller: AppBundle:Api/Commentary:postNewCommentaryByTricksName }
+    requirements:
+        id: \s+
+
+# PUT routes
+api_single_tricks_put:
+    path:    /tricks/put/{id}
+    methods: 'PUT'
+    defaults: { _controller: AppBundle:Api/Tricks:putSingleTricks }
+    requirements:
+        id: \d+
+
+api_single_commentary_put:
+    path:    /commentary/put/{id}
+    methods: 'PUT'
+    defaults: { _controller: AppBundle:Api/Commentary:putSingleCommentaryById }
+    requirements:
+        id: \d+
+
+# PATCH routes
+api_single_tricks_patch:
+    path:    /tricks/patch/{id}
+    methods: 'PATCH'
+    defaults: { _controller: AppBundle:Api/Tricks:patchSingleTricks }
+    requirements:
+        id: \d+
+
+# DELETE routes
+api_single_tricks_delete:
+    path:    /tricks/delete/{id}
+    methods: 'DELETE'
+    defaults: { _controller: AppBundle:Api/Tricks:deleteTricksById }
+    requirements:
+        id: \d+
+
+api_single_commentary_delete:
+    path:    /commentary/delete/{id}
+    methods: 'DELETE'
+    defaults: { _controller: AppBundle:Api/Commentary:deleteSingleCommentaryById }
+    requirements:
+        id: \d+
+
+# Security routes
+api_register:
+    path:    /register
+    methods: 'POST'
+    defaults: { _controller: UserBundle:Api/Security:register }
+
+api_login:
+    path:    /login
+    methods: 'POST'
+    defaults: { _controller: UserBundle:Api/Security:login }
+
+api_forgot_password:
+    path:    /forgot/password
+    methods: 'POST'
+    defaults: { _controller: UserBundle:Api/Security:forgotPassword }
+
+api_validate_token:
+    path:    /validate/profile/{token}
+    methods: 'GET'
+    defaults: { _controller: UserBundle:Api/Security:validatedProfile }
+    requirements:
+        token: \S+
+

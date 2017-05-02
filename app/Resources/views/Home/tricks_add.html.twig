@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {{ form_start(tricks) }}
+        {{ form_row(tricks) }}
+        <button type="submit" name="submit">Ajouter</button>
+        <button id="add_images" class="secondary button">
+            Ajouter une image
+        </button>
+        <button id="add_videos" class="secondary button">
+            Ajouter une video
+        </button>
+    {{ form_end(tricks) }}
+{% endblock %}

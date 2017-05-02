@@ -1,0 +1,96 @@
+home:
+    path:    /
+    methods: 'GET'
+    defaults: { _controller: AppBundle:Web/Home:index }
+
+tricks:
+    path:     /tricks
+    methods: 'GET'
+    defaults: { _controller: AppBundle:Web/Home:tricks }
+
+tricks_add:
+    path:     /tricks/add
+    methods: ['GET', 'POST']
+    defaults: { _controller: AppBundle:Web/Home:tricksAdd }
+
+tricks_details:
+    path:     /tricks/{name}
+    methods: ['GET', 'POST']
+    defaults: { _controller: AppBundle:Web/Home:tricksDetails }
+
+# Back
+admin:
+    path:    /admin
+    methods: ['GET', 'POST']
+    defaults: { _controller: AppBundle:Web/Admin:admin }
+
+admin_tricks:
+    path:    /admin/tricks
+    methods: ['GET', 'POST']
+    defaults: { _controller: AppBundle:Web/Admin:tricks }
+
+# Back User CRUD
+admin_users:
+    path:    /admin/users
+    methods: ['GET', 'POST']
+    defaults: { _controller: AppBundle:Web/Admin:users }
+
+admin_unlock_users:
+    path:    /admin/user/unlock/{name}
+    methods: 'GET'
+    defaults: { _controller: UserBundle:User:userUnlocked }
+
+admin_lock_users:
+    path:    /admin/user/lock/{name}
+    methods: 'GET'
+    defaults: { _controller: UserBundle:User:userLocked }
+
+# Back Tricks CRUD
+admin_validate_tricks:
+    path:    /admin/tricks/validate/{name}
+    methods: 'GET'
+    defaults: { _controller: AppBundle:Web/TricksAdmin:tricksValidation }
+
+admin_refuse_tricks:
+    path:    /admin/tricks/refuse/{name}
+    methods: 'GET'
+    defaults: { _controller: AppBundle:Web/TricksAdmin:tricksRefused }
+
+admin_update_tricks:
+    path:    /admin/tricks/update/{name}
+    methods: ['GET', 'POST']
+    defaults: { _controller: AppBundle:Web/TricksAdmin:tricksUpdate }
+
+admin_delete_tricks:
+    path:    /admin/tricks/delete/{name}
+    methods: 'GET'
+    defaults: { _controller: AppBundle:Web/TricksAdmin:tricksDelete }
+
+# User
+register:
+    path:    /community/register
+    methods: ['GET', 'POST']
+    defaults: { _controller: UserBundle:Security:register }
+
+login:
+    path:    /community/login
+    methods: ['GET', 'POST']
+    defaults: { _controller: UserBundle:Security:login }
+
+forgot_password:
+    path:    /community/password/forgot
+    methods: ['GET', 'POST']
+    defaults: { _controller: UserBundle:Security:forgotPassword }
+
+profile:
+    path:    /community/profile/{username}
+    methods: 'GET'
+    defaults: { _controller: UserBundle:User:profile }
+
+validate_users:
+    path:    /community/users/validate/{token}
+    methods: 'GET'
+    defaults: { _controller: UserBundle:User:validateUser }
+
+logout:
+    path:    /logout

@@ -1,0 +1,8 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {{ form_start(tricks) }}
+        {{ form_row(tricks) }}
+    <button type="submit" name="submit">Modifier</button>
+    {{ form_end(tricks) }}
+{% endblock %}

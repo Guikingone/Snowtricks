@@ -1,3 +1,9 @@
-home:
-    path:    /
-    defaults: { _controller: AppBundle:Home:index }
+# WEB routes
+web:
+    resource: "routing_web.yml"
+
+# API routes
+api:
+    prefix: /api
+    resource: "routing_api.yml"
+

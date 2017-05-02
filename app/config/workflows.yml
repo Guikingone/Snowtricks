@@ -1,0 +1,48 @@
+# Workflow phase
+framework:
+    workflows:
+       # Ticket workflow
+       tricks_process:
+           type: 'workflow'
+           marking_store:
+               type: 'multiple_state'
+               arguments:
+                   - 'currentState'
+           supports:
+               - AppBundle\Entity\Tricks
+           places:
+               - initialisation
+               - validation
+               - publication
+               - online
+           transitions:
+               start_phase:
+                   from: initialisation
+                   to: validation
+               validation_phase:
+                   from: validation
+                   to: publication
+               publication_phase:
+                   from: publication
+                   to: online
+       # User process
+       user_process:
+           type: 'workflow'
+           marking_store:
+               type: 'multiple_state'
+               arguments:
+                   - 'currentStatus'
+           supports:
+               - UserBundle\Entity\User
+           places:
+              - inscription
+              - validation
+              - connexion
+           transitions:
+               register_phase:
+                   from: inscription
+                   to: validation
+               validation_phase:
+                   from: validation
+                   to: connexion
+

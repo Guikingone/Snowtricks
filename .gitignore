@@ -15,14 +15,13 @@
 /vendor/
 /web/bundles/
 
-# IDE
-.idea/
-
-.DS_Store
-node_modules/
 dist/
-npm-debug.log
 
 # Compiled files
 /web/prod/*
 
+# Coverage
+/_coverage/
+
+# Quality
+/_quality/

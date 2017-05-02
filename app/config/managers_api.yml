@@ -1,0 +1,41 @@
+services:
+    api.tricks_manager:
+        class: AppBundle\Managers\ApiManagers\ApiTricksManager
+        arguments:
+            - '@serializer'
+            - '@doctrine.orm.entity_manager'
+            - '@form.factory'
+            - '@event_dispatcher'
+            - '@workflow.tricks_process'
+            - '@request_stack'
+
+    api.commentary_manager:
+        class: AppBundle\Managers\ApiManagers\ApiCommentaryManager
+        arguments:
+            - '@serializer'
+            - '@doctrine.orm.entity_manager'
+            - '@form.factory'
+            - '@request_stack'
+            - '@event_dispatcher'
+
+    api.user_manager:
+        class: UserBundle\Managers\Api\APIUserManager
+        arguments:
+            - '@serializer'
+            - '@doctrine.orm.entity_manager'
+            - '@form.factory'
+            - '@event_dispatcher'
+            - '@workflow.user_process'
+            - '@request_stack'
+
+    api.security:
+        class: UserBundle\Services\Api\Security
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@form.factory'
+            - '@security.token_storage'
+            - '@workflow.user_process'
+            - '@lexik_jwt_authentication.encoder'
+            - '@event_dispatcher'
+            - '@request_stack'
+

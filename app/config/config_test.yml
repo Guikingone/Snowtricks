@@ -14,3 +14,9 @@ web_profiler:
 
 swiftmailer:
     disable_delivery: true
+
+# Used for test purpose from the admin part.
+security:
+    firewalls:
+        main:
+            http_basic: ~

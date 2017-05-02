@@ -1,1 +1,58 @@
-# To define
+stages:
+  - test
+  - performances
+  - server_config
+  - deploy
+
+before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - mkdir -p ~/.ssh
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SERVER_PRIVATE_KEY")
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+
+test:
+    stage: test
+    image: guikingone/test_env
+    before_script:
+        - composer install
+    script:
+        - echo 'Tests in progress'
+
+performances:
+    stage: performances
+    image: guikingone/test_env
+    before_script:
+        - composer install
+    script:
+        - echo 'Performances tests in progress'
+
+server_config:
+    stage: server_config
+    image: guikingone/prod_env
+    only:
+        - master
+    script:
+        - echo 'server configuration in progress'
+        - ssh $server_user@$server_host "mkdir -p /home/$SERVER_OWNER/www/$PROJECT_NAME"
+        - ssh $server_user@$server_host "ln -s -f /home/$SERVER_OWNER/www/$PROJECT_NAME /var/www/$PROJECT_NAME"
+        - ssh $server_user@$server_host "chown -hR $SERVER_OWNER:users /home/$SERVER_OWNER/www/$PROJECT_NAME && chmod -R 777 /home/$SERVER_OWNER/www/$PROJECT_NAME"
+        - echo 'Projet folder created and configured'
+        - scp -r /etc/apache2/sites-available/$PROJECT_NAME.conf $server_user@$server_host:/etc/apache2/sites-available/$PROJECT_NAME.conf
+        - ssh $server_user@$server_host "a2ensite $PROJECT_NAME.conf && a2enmod ssl && service apache2 restart"
+        - ssh $server_user@$server_host "systemctl status apache2.service"
+        - echo 'Project server configuration activated'
+
+deploy:
+    stage: deploy
+    image: guikingone/prod_env
+    only:
+        - master
+    script:
+        - echo 'Deployment in progress'
+        - scp -r ./* $server_user@$server_host:/home/$SERVER_OWNER/www/$PROJECT_NAME
+        - ssh $server_user@$server_host "cd /home/$SERVER_OWNER/www/$PROJECT_NAME && composer install && composer dump-autoload -o"
+        - ssh $server_user@$server_host "rm -rf /home/$SERVER_OWNER/www/$PROJECT_NAME/var/cache/*"
+        - ssh $server_user@$server_host "systemctl status apache2.service"
+        - echo 'Project binaries moved and installed'
+

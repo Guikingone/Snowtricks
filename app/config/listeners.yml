@@ -1,0 +1,56 @@
+services:
+    # User form listeners.
+    app.user_listener:
+        class: UserBundle\Listeners\RegisterListeners
+        arguments:
+            - '@security.password_encoder'
+            - '@session'
+            - '@workflow.user_process'
+            - '@lexik_jwt_authentication.encoder'
+            - '@templating'
+            - '@mailer'
+        tags:
+            - { name: kernel.event_listener, event: user.registered, method: onUserRegistered }
+            - { name: kernel.event_listener, event: user.validated, method: onValidatedUser }
+            - { name: kernel.event_listener, event: forgot.password, method: onForgotPassword }
+
+    # Doctrine listeners
+    app.doctrine_listeners:
+        class: AppBundle\DoctrineListeners\AppBundleListeners
+        arguments:
+            - '%images.uploads.dir%'
+        tags:
+            - { name: doctrine.event_listener, event: postLoad }
+
+    # Tricks listeners.
+    app.trick_listener:
+        class: AppBundle\Listeners\TricksListeners
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@workflow.tricks_process'
+            - '@app.uploader'
+            - '@templating'
+            - '@security.authorization_checker'
+            - '@session'
+            - '@mailer'
+            - '%images.uploads.dir%'
+        tags:
+            - { name: kernel.event_listener, event: tricks.added, method: onNewTricks, priority: -255 }
+            - { name: kernel.event_listener, event: tricks.updated, method: onUpdateTricks, priority: -255 }
+            - { name: kernel.event_listener, event: tricks.validated, method: onValidateTricks, priority: -255 }
+            - { name: kernel.event_listener, event: tricks.refused, method: onRefusetricks, priority: -255 }
+            - { name: kernel.event_listener, event: tricks.deleted, method: onDeleteTricks, priority: -255 }
+
+    # Commentary listeners
+    app.commentary_listener:
+        class: AppBundle\Listeners\CommentaryListeners
+        arguments:
+           - '@doctrine.orm.entity_manager'
+           - '@security.token_storage'
+           - '@request_stack'
+           - '@templating'
+           - '@mailer'
+        tags:
+            - { name: kernel.event_listener, event: commentary.added, method: onCommentaryAdded }
+            - { name: kernel.event_listener, event: tricks.deleted, method: onDeleteTricks }
+

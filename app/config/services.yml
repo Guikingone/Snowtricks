@@ -1,9 +1,33 @@
-# Learn more about services, parameters and containers at
-# http://symfony.com/doc/current/service_container.html
-parameters:
-#    parameter_name: value
-
 services:
-#    service_name:
-#        class: AppBundle\Directory\ClassName
-#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    # File manager
+    app.manager:
+        class: AppBundle\Services\FileManager
+        arguments:
+           - '%kernel.root_dir%'
+           - '@doctrine.orm.entity_manager'
+           - '@workflow.tricks_process'
+
+    # Manage the upload files or assets.
+    app.uploader:
+        class: AppBundle\Services\Uploader
+        arguments:
+            - '%images.uploads.dir%'
+
+    # Tricks hydrate command
+    app.command.tricks_hydrate:
+        class: AppBundle\Command\LoadTricksCommand
+        arguments:
+            - '%kernel.root_dir%'
+        tags:
+           - { name: console.command }
+
+    # User security
+    user.security:
+        class: UserBundle\Services\Web\Security
+        arguments:
+           - '@doctrine.orm.entity_manager'
+           - '@form.factory'
+           - '@security.authentication_utils'
+           - '@workflow.user_process'
+           - '@event_dispatcher'
+
