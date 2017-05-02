@@ -13,13 +13,13 @@ namespace AppBundle\Controller\Api;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
+// Responses
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
+
 // Exceptions
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMInvalidArgumentException;
-use Symfony\Component\Form\Exception\AlreadySubmittedException;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\Workflow\Exception\LogicException;
 
 /**
@@ -52,55 +52,56 @@ class TricksController extends Controller
     }
 
     /**
+     * @throws \LogicException
      * @throws LogicException
-     * @throws InvalidOptionsException
-     * @throws AlreadySubmittedException
      * @throws ORMInvalidArgumentException
      * @throws OptimisticLockException
      *
-     * @return \Symfony\Component\Form\FormInterface|\Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonResponse
      */
-    public function postTricksAction()
+    public function postTricksAction() : JsonResponse
     {
         return $this->get('api.tricks_manager')->postNewTricks();
     }
 
     /**
+     * @param $id
+     *
+     * @throws \LogicException
      * @throws LogicException
-     * @throws InvalidOptionsException
-     * @throws AlreadySubmittedException
      * @throws ORMInvalidArgumentException
      * @throws OptimisticLockException
      *
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonResponse
      */
-    public function putSingleTricksAction() : JsonResponse
+    public function putSingleTricksAction($id) : JsonResponse
     {
-        return $this->get('api.tricks_manager')->putSingleTricks();
+        return $this->get('api.tricks_manager')->putSingleTricks($id);
     }
 
     /**
-     * @throws LogicException
-     * @throws InvalidOptionsException
-     * @throws AlreadySubmittedException
-     * @throws ORMInvalidArgumentException
+     * @param $id
+     *
+     * @throws \LogicException
      * @throws OptimisticLockException
      *
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonResponse
      */
-    public function patchSingleTricksAction() : JsonResponse
+    public function patchSingleTricksAction($id) : JsonResponse
     {
-        return $this->get('api.tricks_manager')->patchSingleTricks();
+        return $this->get('api.tricks_manager')->patchSingleTricks($id);
     }
 
     /**
+     * @param $id
+     *
      * @throws ORMInvalidArgumentException
      * @throws OptimisticLockException
      *
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonResponse
      */
-    public function deleteTricksByIdAction() : JsonResponse
+    public function deleteTricksByIdAction($id) : JsonResponse
     {
-        return $this->get('api.tricks_manager')->deleteSingleTricks();
+        return $this->get('api.tricks_manager')->deleteSingleTricks($id);
     }
 }

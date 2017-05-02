@@ -58,11 +58,11 @@ api_single_commentary_new_single_tricks:
 
 # PUT routes
 api_single_tricks_put:
-    path:    /tricks/put/{tricks}
+    path:    /tricks/put/{id}
     methods: 'PUT'
     defaults: { _controller: AppBundle:Api/Tricks:putSingleTricks }
     requirements:
-        tricks: \d+
+        id: \d+
 
 api_single_commentary_put:
     path:    /commentary/put/{id}

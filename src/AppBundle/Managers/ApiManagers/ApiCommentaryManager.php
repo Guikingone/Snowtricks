@@ -80,13 +80,16 @@ class ApiCommentaryManager
     }
 
     /**
+     * Return all the commentaries.
+     *
      * @throws \InvalidArgumentException
      *
      * @return JsonResponse|Response
      */
     public function getCommentaries()
     {
-        $commentaries = $this->doctrine->getRepository(Commentary::class)->findAll();
+        $commentaries = $this->doctrine->getRepository(Commentary::class)
+                                       ->findAll();
 
         if (!$commentaries) {
             return new JsonResponse([
@@ -95,7 +98,11 @@ class ApiCommentaryManager
             ]);
         }
 
-        $data = $this->serializer->serialize($commentaries, 'json', ['groups' => ['commentaries']]);
+        $data = $this->serializer->serialize(
+            $commentaries,
+            'json',
+            ['groups' => ['commentaries']]
+        );
 
         return new Response(
             $data,
@@ -105,7 +112,9 @@ class ApiCommentaryManager
     }
 
     /**
-     * @param int $id
+     * Return all the commentaries linked to a tricks.
+     *
+     * @param int $id                       The id of the tricks.
      *
      * @throws \InvalidArgumentException
      *
@@ -125,7 +134,10 @@ class ApiCommentaryManager
             ]);
         }
 
-        $data = $this->serializer->serialize($commentaries, 'json');
+        $data = $this->serializer->serialize(
+            $commentaries,
+            'json'
+        );
 
         return new Response(
             $data,
@@ -135,14 +147,16 @@ class ApiCommentaryManager
     }
 
     /**
-     * @param int $id
-     * @param int $tricks
+     * Return a single Commentary using his id and the Tricks id.
+     *
+     * @param int $id                       The id of the Commentary.
+     * @param int $tricks                   The id of the Tricks.
      *
      * @throws \InvalidArgumentException
      *
      * @return JsonResponse|Response
      */
-    public function getSingleCommentaryById(int $id, int $tricks)
+    public function getSingleCommentaryByIdAndTricksId(int $id, int $tricks)
     {
         $commentary = $this->doctrine->getRepository(Commentary::class)
                                      ->findOneBy([
@@ -157,7 +171,10 @@ class ApiCommentaryManager
             ]);
         }
 
-        $data = $this->serializer->serialize($commentary, 'json');
+        $data = $this->serializer->serialize(
+            $commentary,
+            'json'
+        );
 
         return new Response(
             $data,
@@ -356,16 +373,7 @@ class ApiCommentaryManager
     }
 
     /**
-     * Allow to delete a resource using his id.
-     *
-     * In the case that the resource is found, the resource is deleted
-     * and the response is send using a 204 (NO_CONTENT) headers code.
-     *
-     * @see Response::HTTP_NO_CONTENT
-     *
-     * In the case that the resource isn't found, the response is
-     * send using a 404 (NOT_FOUND) headers code
-     * @see Response::HTTP_NOT_FOUND
+     * Allow to delete a commentary using his id.
      *
      * @throws ORMInvalidArgumentException
      * @throws OptimisticLockException

@@ -11,6 +11,8 @@
 
 namespace AppBundle\Managers\ApiManagers;
 
+use AppBundle\Events\Tricks\TricksDeletedEvent;
+use AppBundle\Events\Tricks\TricksUpdatedEvent;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -22,8 +24,6 @@ use Symfony\Component\Workflow\Workflow;
 // Entity
 use AppBundle\Entity\Tricks;
 
-// Form
-use AppBundle\Form\Type\TricksType;
 
 // Events
 use AppBundle\Events\Tricks\TricksAddedEvent;
@@ -31,8 +31,6 @@ use AppBundle\Events\Tricks\TricksAddedEvent;
 // Exceptions
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMInvalidArgumentException;
-use Symfony\Component\Form\Exception\AlreadySubmittedException;
-use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\Workflow\Exception\LogicException;
 
 /**
@@ -81,7 +79,7 @@ class ApiTricksManager
     }
 
     /**
-     * Return every tricks saved into json format.
+     * Return all the tricks.
      *
      * @throws \InvalidArgumentException
      *
@@ -113,7 +111,9 @@ class ApiTricksManager
     }
 
     /**
-     * @param string $name
+     * Return a single tricks using his name.
+     *
+     * @param string $name                  The name of the Tricks.
      *
      * @throws \InvalidArgumentException
      *
@@ -148,22 +148,6 @@ class ApiTricksManager
 
     /**
      * Create a new Tricks using the data's passed through the request.
-     *
-     * In the case that the request don't contain any data, the response contain
-     * a 400 (BAD REQUEST) headers code.
-     *
-     * @see Response::HTTP_BAD_REQUEST
-     *
-     * In the case that the resource already exist, the response contain
-     * a 303 (SEE OTHER) headers code and the content of the resource found.
-     *
-     * @see Response::HTTP_SEE_OTHER
-     *
-     * In the case the resource does not exist, the response contain
-     * a 201 (CREATED) headers code and the content of the resource created.
-     *
-     * @see Response::HTTP_CREATED
-     *
      *
      * @throws \LogicException
      * @throws LogicException
@@ -222,204 +206,142 @@ class ApiTricksManager
     }
 
     /**
-     * Allow to put (aka update) a certain part of the resource find by his id.
+     * Allow to update a Tricks using his id.
      *
-     * In the case that the resource isn't found, a new resource with the current
-     * content passed through the request is created with the 201 (CREATED) headers code.
+     * @param int $id               The id of the Tricks updated.
      *
-     * @see Response::HTTP_CREATED
-     *
-     * In the case that the resource is created but has been found
-     * due by a past persist, a 303 (SEE OTHER) headers code is return
-     * with the state of the resource.
-     *
-     * @see Response::HTTP_SEE_OTHER
-     *
-     * In the case that the resource is find and could be updated,
-     * the response send a 200 (OK) headers code
-     * and the actual state of the resource.
-     *
-     * @see Response::HTTP_OK
-     *
-     * In the case that the resource could'nt been updated,
-     * the response send a 204 (NO CONTENT) headers code.
-     *
-     * @see Response::HTTP_NO_CONTENT
-     *
+     * @throws \LogicException
      * @throws LogicException
-     * @throws InvalidOptionsException
-     * @throws AlreadySubmittedException
      * @throws ORMInvalidArgumentException
      * @throws OptimisticLockException
      *
      * @return JsonResponse
      */
-    public function putSingleTricks()
+    public function putSingleTricks($id) : JsonResponse
     {
-        $id = $this->request->getCurrentRequest()->get('id');
-
-        $trick = $this->doctrine->getRepository(Tricks::class)
+        $tricks = $this->doctrine->getRepository(Tricks::class)
                                 ->findOneBy([
                                     'id' => $id,
                                 ]);
 
-        if (!$trick) {
-            $tricks = new Tricks();
+        if (!$tricks) {
+            $clone = $this->request->getCurrentRequest()->getContent();
 
-            $data = $this->request->getCurrentRequest()->request->all();
+            $trick = $this->serializer->deserialize(
+                $clone,
+                Tricks::class,
+                'json'
+            );
+            $this->workflow->apply($trick, 'start_phase');
 
-            // Init the workflow phase.
-            $this->workflow->apply($tricks, 'start_phase');
+            $event = new TricksAddedEvent($trick);
+            $this->dispatcher->dispatch(TricksAddedEvent::NAME, $event);
 
-            $form = $this->form->create(TricksType::class, $tricks, [
-                'csrf_protection' => false,
-            ]);
-            $form->submit($data);
-
-            if ($form->isSubmitted() && $form->isValid()) {
-                // Search if a equivalent resource has been created.
-                $object = $form->getData();
-                $trick = $this->doctrine->getRepository(Tricks::class)
-                                        ->findOneBy([
-                                            'name' => $object->getName(),
-                                        ]);
-
-                if ($trick) {
-                    return new JsonResponse(
-                        [
-                            'message' => 'Resource already found.',
-                            'name' => $trick->getName(),
-                            'groups' => $trick->getGroups(),
-                            'resume' => $trick->getResume(),
-                        ],
-                        Response::HTTP_SEE_OTHER
-                    );
-                }
-
-                // Send a new event to perform new instance actions.
-                $event = new TricksAddedEvent($tricks);
-                $this->dispatcher->dispatch(TricksAddedEvent::NAME, $event);
-
-                $this->doctrine->persist($tricks);
-                $this->doctrine->flush();
-
-                return new JsonResponse(
-                    [
-                        'message' => 'Resource created',
-                        'name' => $tricks->getName(),
-                        'groups' => $tricks->getGroups(),
-                        'resume' => $tricks->getResume(),
-                    ],
-                    Response::HTTP_CREATED
-                );
-            }
-        }
-
-        $data = $this->request->getCurrentRequest()->request->all();
-
-        $form = $this->form->create(TricksType::class, $trick, [
-            'csrf_protection' => false,
-        ]);
-        $form->submit($data);
-
-        if ($form->isSubmitted() && $form->isValid()) {
+            $this->doctrine->persist($trick);
             $this->doctrine->flush();
 
             return new JsonResponse(
                 [
-                    'message' => 'Resource updated',
-                    'name' => $trick->getName(),
-                    'groups' => $trick->getGroups(),
-                    'resume' => $trick->getResume(),
+                    'message' => 'Resource created.',
+                    'data' => $trick
                 ],
-                Response::HTTP_OK
+                Response::HTTP_CREATED
             );
         }
 
-        return new JsonResponse(
-            [
-                'message' => 'Resource not updated',
-            ],
-            Response::HTTP_NO_CONTENT
-        );
-    }
+        $data = $this->request->getCurrentRequest()->getContent();
 
-    /**
-     * Allow to patch (aka update with minimal modifications) a single resource.
-     *
-     * In the case that the resource is found using his id, the data passed through
-     * the request are send to the form and 'patch'
-     * (aka update with minimal modifications) only the requested input,
-     * once the patch is applied, the response is send using a 200 (OK) headers code
-     * and the state of the resource after patch.
-     *
-     * @see Response::HTTP_OK
-     *
-     * @throws LogicException
-     * @throws InvalidOptionsException
-     * @throws AlreadySubmittedException
-     * @throws ORMInvalidArgumentException
-     * @throws OptimisticLockException
-     *
-     * @return JsonResponse
-     */
-    public function patchSingleTricks() : JsonResponse
-    {
-        $id = $this->request->getCurrentRequest()->get('id');
-
-        $trick = $this->doctrine->getRepository(Tricks::class)
-                                ->findOneBy([
-                                    'id' => $id,
-                                ]);
-
-        $data = $this->request->getCurrentRequest()->request->all();
-
-        $form = $this->form->create(TricksType::class, $trick, [
-            'csrf_protection' => false,
-        ]);
-        $form->submit($data, false);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->doctrine->flush();
-
+        if (!$data) {
             return new JsonResponse(
                 [
-                    'message' => 'Resource updated',
-                    'name' => $trick->getName(),
-                    'groups' => $trick->getGroups(),
-                    'resume' => $trick->getResume(),
+                    'message' => 'No data passed',
+                    'data' => $tricks
                 ],
-                Response::HTTP_OK
+                Response::HTTP_BAD_REQUEST
             );
         }
 
+        $this->serializer->deserialize(
+            $data,
+            $tricks,
+            'json'
+        );
+
+        $event = new TricksUpdatedEvent($tricks);
+        $this->dispatcher->dispatch(TricksUpdatedEvent::NAME, $event);
+
+        $this->doctrine->flush();
+
         return new JsonResponse(
             [
-                'message' => 'Resource not found',
+                'message' => 'Resource updated.',
+                'data' => $tricks
             ],
-            Response::HTTP_NOT_FOUND
+            Response::HTTP_OK
         );
     }
 
     /**
-     * Allow to delete a resource using his id stored inside the request.
+     * Allow to patch a Tricks using the data passed trough the request.
+     *
+     * @param int $id                   The id of the tricks patched.
+     *
+     * @throws \LogicException
+     * @throws OptimisticLockException
+     *
+     * @return JsonResponse
+     */
+    public function patchSingleTricks($id) : JsonResponse
+    {
+        $tricks = $this->doctrine->getRepository(Tricks::class)
+                                ->findOneBy([
+                                    'id' => $id,
+                                ]);
+
+        $data = $this->request->getCurrentRequest()->getContent();
+
+        $this->serializer->deserialize(
+            $data,
+            $tricks,
+            'json'
+        );
+
+        $event = new TricksUpdatedEvent($tricks);
+        $this->dispatcher->dispatch(TricksUpdatedEvent::NAME, $event);
+
+        $this->doctrine->flush();
+
+        return new JsonResponse(
+            [
+                'message' => 'Resource patched.',
+                'data' => $tricks
+            ],
+            Response::HTTP_OK
+        );
+    }
+
+    /**
+     * Allow to delete a resource using his id.
+     *
+     * @param int $id                       The id of the tricks deleted.
      *
      * @throws ORMInvalidArgumentException
      * @throws OptimisticLockException
      *
      * @return JsonResponse
      */
-    public function deleteSingleTricks() : JsonResponse
+    public function deleteSingleTricks($id) : JsonResponse
     {
-        $id = $this->request->getCurrentRequest()->get('id');
+        $tricks = $this->doctrine->getRepository(Tricks::class)
+                                 ->findOneBy([
+                                     'id' => $id,
+                                 ]);
 
-        $trick = $this->doctrine->getRepository(Tricks::class)
-                                ->findOneBy([
-                                    'id' => $id,
-                                ]);
+        if ($tricks) {
+            $event = new TricksDeletedEvent($tricks);
+            $this->dispatcher->dispatch(TricksDeletedEvent::NAME, $event);
 
-        if ($trick) {
-            $this->doctrine->remove($trick);
+            $this->doctrine->remove($tricks);
             $this->doctrine->flush();
 
             return new JsonResponse(
@@ -431,7 +353,9 @@ class ApiTricksManager
         }
 
         return new JsonResponse(
-            ['message' => 'Resource not found'],
+            [
+                'message' => 'Resource not found'
+            ],
             Response::HTTP_NOT_FOUND
         );
     }

@@ -59,7 +59,7 @@ class CommentaryController extends Controller
      */
     public function getSingleCommentaryByTricksAction(int $id, int $tricks) : JsonResponse
     {
-        return $this->get('api.commentary_manager')->getSingleCommentaryById($id, $tricks);
+        return $this->get('api.commentary_manager')->getSingleCommentaryByIdAndTricksId($id, $tricks);
     }
 
     /**
