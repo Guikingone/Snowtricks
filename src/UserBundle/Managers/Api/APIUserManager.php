@@ -41,7 +41,7 @@ use Symfony\Component\Workflow\Exception\LogicException;
  *
  * @author Guillaume Loulier <contact@guillaumeloulier.fr>
  */
-class UserManager
+class APIUserManager
 {
     /** @var EntityManager */
     private $doctrine;
@@ -156,73 +156,131 @@ class UserManager
     }
 
     /**
-     * @return Response
+     * Return all the users who's not validated.
+     *
+     * @return JsonResponse|Response
      */
     public function getUsersNotValidated()
     {
-        $users = $this->doctrine->getRepository('UserBundle:User')
-                              ->findBy([
-                                  'validated' => false
-                              ]);
+        $users = $this->doctrine->getRepository(User::class)
+                                ->findBy([
+                                    'validated' => false
+                                ]);
 
-        $responder = $this->responder;
+        if (!$users) {
+            return new JsonResponse(
+                ['message' => 'No ressources found.'],
+                Response::HTTP_NOT_FOUND
+            );
+        }
 
-        return $responder(
-            'Resource found',
+        $data = $this->serializer->serialize(
             $users,
-            Response::HTTP_OK
+            'json',
+            ['groups' => ['users']]
+        );
+
+        return new Response(
+            $data,
+            Response::HTTP_OK,
+            ['Content-Type' => 'application/json']
         );
     }
 
     /**
-     * @return Response
+     * Return all the users validated.
+     *
+     * @return JsonResponse|Response
      */
     public function getUsersValidated()
     {
-        $users = $this->doctrine->getRepository('UserBundle:User')
-                              ->findBy([
-                                  'validated' => true
-                              ]);
+        $users = $this->doctrine->getRepository(User::class)
+                                ->findBy([
+                                    'validated' => true
+                                ]);
 
-        $responder = $this->responder;
+        if (!$users) {
+            return new JsonResponse(
+                ['message' => 'No ressources found.'],
+                Response::HTTP_NOT_FOUND
+            );
+        }
 
-        return $responder(
-            'Resource found',
+        $data = $this->serializer->serialize(
             $users,
-            Response::HTTP_OK
+            'json',
+            ['groups' => ['users']]
+        );
+
+        return new Response(
+            $data,
+            Response::HTTP_OK,
+            ['Content-Type' => 'application/json']
         );
     }
 
     /**
-     * @return Response
+     * Return all the locked users.
+     *
+     * @return JsonResponse|Response
      */
     public function getLockedUsers()
     {
-        $users =  $this->doctrine->getRepository('UserBundle:User')
-                              ->findBy([
-                                  'locked' => true
-                              ]);
+        $users =  $this->doctrine->getRepository(User::class)
+                                 ->findBy([
+                                     'locked' => true
+                                 ]);
 
-        $responder = $this->responder;
+        if (!$users) {
+            return new JsonResponse(
+                ['message' => 'Resouces not found'],
+                Response::HTTP_NOT_FOUND
+            );
+        }
 
-        return $responder(
-            'Resources found',
+        $data = $this->serializer->serialize(
             $users,
-            Response::HTTP_OK
+            'json',
+            ['groups' => ['users']]
+        );
+
+        return new Response(
+            $data,
+            Response::HTTP_OK,
+            ['Content-Type' => 'application/json']
         );
     }
 
     /**
-     * Return all the users unlocked.
+     * Return all the unlocked users.
      *
-     * @return array|User[]
+     * @return JsonResponse|Response
      */
     public function getUnlockedUsers()
     {
-        return $this->doctrine->getRepository('UserBundle:User')
-                              ->findBy([
-                                  'locked' => false
-                              ]);
+        $users =  $this->doctrine->getRepository(User::class)
+                                ->findBy([
+                                    'locked' => false
+                                ]);
+
+        if (!$users) {
+            return new JsonResponse(
+                ['message' => 'Resouces not found'],
+                Response::HTTP_NOT_FOUND
+            );
+        }
+
+        $data = $this->serializer->serialize(
+            $users,
+            'json',
+            ['groups' => ['users']]
+        );
+
+        return new Response(
+            $data,
+            Response::HTTP_OK,
+            ['Content-Type' => 'application/json']
+        );
     }
 
     /**
@@ -247,7 +305,7 @@ class UserManager
      *
      * @return JsonResponse
      */
-    public function register()
+    public function postUser()
     {
         $user = new User();
 

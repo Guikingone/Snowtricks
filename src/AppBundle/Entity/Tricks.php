@@ -13,6 +13,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 // Entity
 use UserBundle\Entity\User;
@@ -47,6 +48,7 @@ class Tricks
      * @Groups({"tricks", "commentaries", "users"})
      *
      * @ORM\Column(name="name", type="string", length=100, nullable=false)
+     * @Assert\NotBlank()
      */
     private $name;
 
@@ -56,6 +58,8 @@ class Tricks
      * @Groups({"tricks", "commentaries", "users"})
      *
      * @ORM\Column(name="creation_date", type="datetime")
+     * @Assert\DateTime()
+     * @Assert\NotBlank()
      */
     private $creationDate;
 
@@ -65,6 +69,7 @@ class Tricks
      * @Groups({"tricks", "commentaries", "users"})
      *
      * @ORM\Column(name="groups", type="string", length=100, nullable=false)
+     * @Assert\NotBlank()
      */
     private $groups;
 
@@ -74,6 +79,7 @@ class Tricks
      * @Groups({"tricks", "commentaries", "users"})
      *
      * @ORM\Column(name="resume", type="text", nullable=false)
+     * @Assert\NotBlank()
      */
     private $resume;
 
@@ -136,6 +142,15 @@ class Tricks
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Commentary", mappedBy="tricks", cascade={"persist", "remove"})
      */
     private $commentary;
+
+    /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        $this->creationDate = new \DateTime();
+        $this->commentary = new ArrayCollection();
+    }
 
     /**
      * Get id.
@@ -377,14 +392,6 @@ class Tricks
     public function getValidated()
     {
         return $this->validated;
-    }
-
-    /**
-     * Constructor.
-     */
-    public function __construct()
-    {
-        $this->commentary = new ArrayCollection();
     }
 
     /**

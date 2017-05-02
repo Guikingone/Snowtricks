@@ -19,7 +19,7 @@ services:
             - '@event_dispatcher'
 
     api.user_manager:
-        class: UserBundle\Managers\Api\UserManager
+        class: UserBundle\Managers\Api\APIUserManager
         arguments:
             - '@serializer'
             - '@doctrine.orm.entity_manager'

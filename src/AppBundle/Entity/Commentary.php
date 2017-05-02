@@ -13,6 +13,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 // Entity
 use UserBundle\Entity\User;
@@ -42,6 +43,7 @@ class Commentary
      * @var \DateTime
      *
      * @ORM\Column(name="publication_date", type="datetime")
+     * @Assert\DateTime()
      *
      * @Groups({"tricks", "commentaries", "users"})
      */
@@ -51,6 +53,7 @@ class Commentary
      * @var string
      *
      * @ORM\Column(name="content", type="string", length=255, nullable=false)
+     * @Assert\NotBlank()
      *
      * @Groups({"tricks", "commentaries", "users"})
      */
@@ -60,6 +63,7 @@ class Commentary
      *
      * @ORM\ManyToOne(targetEntity="UserBundle\Entity\User", inversedBy="commentary", cascade={"persist"})
      * @ORM\JoinColumn(name="author_id", referencedColumnName="id")
+     * @Assert\NotBlank()
      *
      * @Groups({"tricks", "commentaries"})
      */
@@ -69,10 +73,19 @@ class Commentary
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Tricks", inversedBy="commentary", cascade={"persist", "remove"})
      * @ORM\JoinColumn(name="tricks_id", referencedColumnName="id")
+     * @Assert\NotBlank()
      *
      * @Groups({"commentaries"})
      */
     private $tricks;
+
+    /**
+     * Commentary constructor.
+     */
+    public function __construct ()
+    {
+        $this->publicationDate = new \DateTime();
+    }
 
     /**
      * Get id.

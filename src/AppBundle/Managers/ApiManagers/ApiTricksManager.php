@@ -11,8 +11,6 @@
 
 namespace AppBundle\Managers\ApiManagers;
 
-use AppBundle\Events\Tricks\TricksDeletedEvent;
-use AppBundle\Events\Tricks\TricksUpdatedEvent;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,9 +22,10 @@ use Symfony\Component\Workflow\Workflow;
 // Entity
 use AppBundle\Entity\Tricks;
 
-
 // Events
 use AppBundle\Events\Tricks\TricksAddedEvent;
+use AppBundle\Events\Tricks\TricksDeletedEvent;
+use AppBundle\Events\Tricks\TricksUpdatedEvent;
 
 // Exceptions
 use Doctrine\ORM\OptimisticLockException;
