@@ -15,7 +15,6 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Workflow\Workflow;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -107,7 +106,11 @@ class UserManager
             ]);
         }
 
-        $data = $this->serializer->serialize($users, 'json', ['groups' => 'users']);
+        $data = $this->serializer->serialize(
+            $users,
+            'json',
+            ['groups' => 'users']
+        );
 
         return new Response(
             $data,
@@ -139,7 +142,11 @@ class UserManager
             ]);
         }
 
-        $data = $this->serializer->serialize($user, 'json', ['groups' => 'users']);
+        $data = $this->serializer->serialize(
+            $user,
+            'json',
+            ['groups' => 'users']
+        );
 
         return new Response(
             $data,

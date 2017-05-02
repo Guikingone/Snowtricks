@@ -10,16 +10,12 @@
         "classmap": [
             "app/AppKernel.php",
             "app/AppCache.php"
-        ],
-        "optimize-autoloader": true,
-        "classmap-authoritative": true
+        ]
     },
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"
-        },
-        "optimize-autoloader": true,
-        "classmap-authoritative": true
+        }
     },
     "require": {
         "php": ">=5.5.9",
@@ -72,7 +68,9 @@
     "config": {
         "platform": {
             "php": "5.5.9"
-        }
+        },
+        "optimize-autoloader": true,
+        "classmap-authoritative": true
     },
     "extra": {
         "symfony-app-dir": "app",
